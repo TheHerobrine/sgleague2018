@@ -145,11 +145,6 @@ body
 	padding-bottom: 19px
 }
 
-.partners
-{
-	padding: 25px 100px;
-}
-
 .partners img
 {
 	padding: 10px 0px;
@@ -160,7 +155,6 @@ body
 	#header
 	{
 		height: 220px;
-		color: #ffc68f;
 		text-align: center;
 	}
 
@@ -185,128 +179,83 @@ body
 		padding: 15px 20px;
 	}
 
-	#logo .logoTtl, #logo .logoStl
+	.partners
 	{
-		font-weight: 700;
-		font-size: 32px;
-		text-transform: uppercase;
-	}
-
-	#logo .logoTtl
-	{
-		position: absolute;
-		top: 70px;
-		left: 160px;
-		transition: all .2s ease-in-out;
-	}
-
-	#logo .logoStl
-	{
-		position: absolute;
-		top: 110px;
-		left: 140px;
-		border-bottom: 5px solid #ff6600;
-		transition: all .2s ease-in-out;
-	}
-
-	#logo a:hover .logoTtl
-	{
-		left: 170px;
-	}
-
-	#logo a:hover .logoStl
-	{
-		left: 150px;
-	}
-
-	#partners
-	{
-		margin-top: 80px;
-	}
-
-	#partners i
-	{
-		position: relative;
-		bottom: 25px;
-	}
-
-	#partners img
-	{
-		padding: 0px 15px;
+		padding: 25px 100px;
+		width: 120px;
 	}
 }
 
-@media only screen and (max-width: 1369px)
+@media only screen and (max-width: 1369px) and (min-width: 1060px)
 {
 	#header
 	{
 		height: 140px;
-		color: #ffc68f;
+		text-align: center;
 	}
 
 	#logo
 	{
-		padding: 15px 10px;
+		padding: 10px 10px;
 		position: relative;
-		width: 300px;
+		width: 200px;
+		display: inline-block;
 	}
 
 	#logoImg
 	{
-		width: 100px;
+		width: 200px;
 		height: auto;
+		transition: .3s all ease-in-out;
 	}
 
-	#logo .logoTtl, #logo .logoStl
+	#logoImg:hover
 	{
-		font-weight: 700;
-		font-size: 20px;
-		text-transform: uppercase;
+		width: 180px;
+		padding: 5px 10px;
 	}
 
-	#logo .logoTtl
+	.partners
 	{
-		position: absolute;
-		top: 55px;
-		left: 110px;
-		transition: all .2s ease-in-out;
+		padding: 50px 0px;
+		width: 400px;
+	}
+}
+
+
+@media only screen and (max-width: 1059px)
+{
+	#header
+	{
+		height: 140px;
+		text-align: center;
 	}
 
-	#logo .logoStl
+	#logo
 	{
-		position: absolute;
-		top: 80px;
-		left: 95px;
-		border-bottom: 3px solid #ff6600;
-		transition: all .2s ease-in-out;
-	}
-
-	#logo a:hover .logoTtl
-	{
-		left: 120px;
-	}
-
-	#logo a:hover .logoStl
-	{
-		left: 105px;
-	}
-
-	#partners
-	{
-		margin-top: 40px;
-	}
-
-	#partners i
-	{
+		padding: 10px 10px;
 		position: relative;
-		bottom: 15px;
+		width: 200px;
+		display: inline-block;
 	}
 
-	#partners img
+	#logoImg
 	{
-		padding: 0px 15px;
-		width: 80px;
+		width: 200px;
 		height: auto;
+		transition: .3s all ease-in-out;
+	}
+
+	#logoImg:hover
+	{
+		width: 180px;
+		padding: 5px 10px;
+	}
+
+	.partners
+	{
+		padding: 20px 0px;
+		width: 300px;
 	}
 }
 
