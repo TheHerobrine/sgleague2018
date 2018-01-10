@@ -6,8 +6,8 @@ class Database
 	public function __construct()
 	{
 		$hote = "localhost";
-		$db = "sgleague";
-		$login = "sgleague";
+		$db = "sgleague2018";
+		$login = "sgleague2018";
 		$pass = ""; // Z'avez cru quoi ?
 		
 		try

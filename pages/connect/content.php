@@ -106,18 +106,16 @@ else
 		$form_pass = isset($_POST['pass']) ? $_POST['pass'] : '';
 
 
-		$temp = $database->req('SELECT id, login, pass, salt, type FROM sgl_users WHERE LOWER(login)=LOWER("'.addslashes($form_login).'") AND activation=""');
+		$temp = $database->req('CALL CONNECT_USER("'.addslashes($form_login).'", "'.addslashes($form_pass).'", "'.addslashes(CONFIG_SALT).'")');
 		$data = $temp->fetch();
 
-		$hash = sha1($data["salt"].$form_pass.CONFIG_SALT);
-
-		if ($hash == $data["pass"])
+		if ($data["RESULT"])
 		{
 			$connect_flag = true;
 
-			$_SESSION["sgl_id"] = $data["id"];
-			$_SESSION["sgl_login"] = $data["login"];
-			$_SESSION["sgl_type"] = $data["type"];
+			$_SESSION["sgl_id"] = $data["SU_UID"];
+			$_SESSION["sgl_login"] = $data["SU_LOGIN"];
+			$_SESSION["sgl_type"] = $data["SU_TYPE"];
 		}
 	}
 
