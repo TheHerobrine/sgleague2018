@@ -14,7 +14,7 @@ if ((isset($_GET["disconnect"])) AND $csrf_check)
 				<i>&ldquo;</i>A summoner has left the game<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
-				- Un joueur de la SGL 2016
+				- Un joueur de la SGL 2017
 			</span>
 		</div>
 		<br />
@@ -49,7 +49,7 @@ else if (isset($_GET["recover"]))
 			$subject = "Regénération de votre mot de passe";
 			$content = "Alors comme ça on a oublié son mot de passe ?\n\n
 Pas de soucis, il suffit de cliquer sur ce lien pour en recevoir un nouveau : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=activation&hitc=".strtolower($form_login)."&key=".$resetsalt.">\n
-Si vous avez des problèmes de connexion, n'hésitez pas à passer sur discord ! <https://discord.gg/SGL17>\n\nL'équipe de la Student Gaming League 2017";
+Si vous avez des problèmes de connexion, n'hésitez pas à passer sur discord ! <https://discord.gg/sgnw>\n\nL'équipe de la Student Gaming League 2017";
 
 			include_once("./class/Mail.class.php");
 			new Mail($data["mail"], $subject, $content);
@@ -67,7 +67,7 @@ Si vous avez des problèmes de connexion, n'hésitez pas à passer sur discord !
 				<i>&ldquo;</i>Mundo say his own name a lot,<br />or else he forget! Has happened before.<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
-				- Un joueur de la SGL 2016
+				- Un joueur de la SGL 2017
 			</span>
 		</div>
 		<?php if(isset($flag_recover)){?>
@@ -133,7 +133,7 @@ else
 				<i>&ldquo;</i><?=htmlspecialchars($data["login"])?> used password.<br />It's super effective!<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
-				- Un joueur de la SGL 2016
+				- Un joueur de la SGL 2017
 			</span>
 		</div>
 		<br />
@@ -157,7 +157,7 @@ else
 				<i>&ldquo;</i>Welcome back, commander.<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
-				- Un joueur de la SGL 2016
+				- Un joueur de la SGL 2017
 			</span>
 		</div>
 		<?=isset($_POST["sent"])?"<div class=\"error\" style=\"text-align:center;\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Hum... Vous êtes sûr que c'est le bon mot de passe ? Et que votre compte est activé ?</div>":""?>

@@ -1,7 +1,7 @@
 <?php
 class Database
 {
-    private $database;
+	private $database;
 	
 	public function __construct()
 	{

@@ -6,7 +6,7 @@
 				<i>&ldquo;</i>Mundo va où il veut<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
-				- Un joueur de la SGL 2016
+				- Un joueur de la SGL 2017
 			</span>
 		</div>
 		<p>Mais pas vous. Vous, vous devez d'abord vous connecter si vous vous voulez aller où vous voulez.</p>

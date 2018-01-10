@@ -210,7 +210,7 @@ Vous pourrez ensuite créer ou rejoindre une équipe pour vos jeux préférés.\
 				<i>&ldquo;</i>Easy peasy, lemon squeezy<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
-				- Un joueur de la SGL 2016
+				- Un joueur de la SGL 2017
 			</span>
 		</div>
 		<p>Et voilà, la première étape vers la victoire et la domination mondiale ! Plus qu'à aller cliquer sur le lien d'activation qu'on vient de vous envoyer (à cette adresse si vous avez déjà oublié ce que vous aviez mis : <?=htmlspecialchars($form_mail)?>).<br /><br />PENSEZ A CHECKER VOS SPAMS !</p>
@@ -232,7 +232,7 @@ else
 				<i>&ldquo;</i>Are we rushin' in, or are we goin'<br />sneaky-beaky like?<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
-				- Un joueur de la SGL 2016
+				- Un joueur de la SGL 2017
 			</span>
 		</div>
 		<p>La citation du dessus se traduit approximativement par "on y va jusqu'au bout, rapidement ou lentement", et comme vous êtes quelqu'un de bien, vous allez continuer l'inscription JUSQ'-AU-BOUT (et rapidement en plus) !</p>
