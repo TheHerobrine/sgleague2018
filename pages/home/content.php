@@ -48,8 +48,8 @@
 <div class="triangle"><i class="fa fa-trophy" aria-hidden="true"></i><br />
 <span class="tdesc">4 jeux vidéo</span></div>
 
-<div class="triangle"><i class="fa fa-thumbs-up" aria-hidden="true"></i><br />
-<span class="tdesc">fun infini</span></div>
+<div class="triangle"><i class="fa fa-gift" aria-hidden="true"></i><br />
+<span class="tdesc">5000€ prize</span></div>
 
 <br/>
 <canvas class="dataline glslCanvas" data-fragment-url="./style/frag/data_02.frag"></canvas>

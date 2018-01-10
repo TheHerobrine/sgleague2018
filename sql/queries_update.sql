@@ -49,7 +49,7 @@ CREATE PROCEDURE UPDATE_SGL_USER_PASS( IN id_user INTEGER, IN old_pass VARCHAR(5
     SELECT SU_UID INTO id_user_confirmed FROM T_SGL_USER WHERE SU_UID=id_user AND (SU_PASS=SHA1(CONCAT(CONCAT(SU_SALT,old_pass),config_salt)) OR SU_RESETPASS=reset_pass);
 
     IF id_user_confirmed IS NOT NULL THEN
-      UPDATE T_SGL_USER SET SU_PASS=SHA1(CONCAT(CONCAT(new_salt,new_pass),config_salt), SU_SALT=new_salt WHERE SU_UID=id_user_confirmed;
+      UPDATE T_SGL_USER SET SU_PASS=SHA1(CONCAT(CONCAT(new_salt,new_pass),config_salt)), SU_SALT=new_salt WHERE SU_UID=id_user_confirmed;
       SELECT TRUE as RESULT;
     ELSE
       SELECT FALSE as RESULT;
