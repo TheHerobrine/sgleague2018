@@ -42,19 +42,19 @@ DROP PROCEDURE IF EXISTS UPDATE_SGL_USER_INFORMATION|
 -- UPDATE_SGL_USER_PASS
 -- ---
 CREATE PROCEDURE UPDATE_SGL_USER_PASS( IN id_user INTEGER, IN old_pass VARCHAR(512), IN reset_pass VARCHAR(512), IN new_pass VARCHAR(512), IN new_salt VARCHAR(512), IN config_salt VARCHAR(512))
-  BEGIN
-    DECLARE id_user_confirmed INTEGER DEFAULT NULL;
-    DECLARE pass_hash VARCHAR(512) DEFAULT NULL;
+BEGIN
+  DECLARE id_user_confirmed INTEGER DEFAULT NULL;
+  DECLARE pass_hash VARCHAR(512) DEFAULT NULL;
 
-    SELECT SU_UID INTO id_user_confirmed FROM T_SGL_USER WHERE SU_UID=id_user AND (SU_PASS=SHA1(CONCAT(CONCAT(SU_SALT,old_pass),config_salt)) OR SU_RESETPASS=reset_pass);
+  SELECT SU_UID INTO id_user_confirmed FROM T_SGL_USER WHERE SU_UID=id_user AND (SU_PASS=SHA1(CONCAT(CONCAT(SU_SALT,old_pass),config_salt)) OR SU_RESETPASS=reset_pass);
 
-    IF id_user_confirmed IS NOT NULL THEN
-      UPDATE T_SGL_USER SET SU_PASS=SHA1(CONCAT(CONCAT(new_salt,new_pass),config_salt)), SU_SALT=new_salt WHERE SU_UID=id_user_confirmed;
-      SELECT TRUE as RESULT;
-    ELSE
-      SELECT FALSE as RESULT;
-    END IF;
-  END |
+  IF id_user_confirmed IS NOT NULL THEN
+    UPDATE T_SGL_USER SET SU_PASS=SHA1(CONCAT(CONCAT(new_salt,new_pass),config_salt)), SU_SALT=new_salt WHERE SU_UID=id_user_confirmed;
+    SELECT TRUE as RESULT;
+  ELSE
+    SELECT FALSE as RESULT;
+  END IF;
+END |
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- UPDATE_SGL_USER_INFORMATION
