@@ -98,8 +98,8 @@ class Form {
 							$this->valid = false;
 							return false;
 						}
-						if(isset($field['Tregex']) AND !preg_match($field['Fregex'],$_POST[$key])){
-							$this->unvalidated_message = $key . ' : Regex : "' . $field['Fregex'] . '" didn\'t match : "' . $_POST[$key] . '"';
+						if(isset($field['Tregex']) AND !preg_match($field['Tregex'],$_POST[$key])){
+							$this->unvalidated_message = $key . ' : Regex : "' . $field['Tregex'] . '" didn\'t match : "' . $_POST[$key] . '"';
 							$this->unvalidated_code = 12;
 							$this->valid = false;
 							return false;
