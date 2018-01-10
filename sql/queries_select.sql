@@ -24,7 +24,7 @@ DELIMITER |
 -- Insert procedure
 
 -- Other
-DROP PROCEDURE IF EXISTS CONNECT_USER;
+DROP PROCEDURE IF EXISTS CONNECT_USER|
 
 -- ************************************************************************************************ --
 -- ----------------------------- Create Queries --------------------------------------------------- --
@@ -35,12 +35,12 @@ DROP PROCEDURE IF EXISTS CONNECT_USER;
 -- Error:1 <= Bad login or password
 -- ---
 
-CREATE PROCEDURE CONNECT_USER( IN login_or_mail INTEGER, IN pass VARCHAR(512), IN config_salt VARCHAR(512))
+CREATE PROCEDURE CONNECT_USER( IN login_or_mail VARCHAR(512), IN pass VARCHAR(512), IN config_salt VARCHAR(512))
 BEGIN
   DECLARE id_user_confirmed INTEGER DEFAULT NULL;
 
   SELECT SU_UID INTO id_user_confirmed FROM T_SGL_USER
-    WHERE (SU_LOGIN=login_or_mail OR SU_MAIL=login_or_mail) AND (SU_PASS=SHA1(CONCAT(CONCAT(SU_SALT,pass),config_salt)));
+    WHERE (LOWER(SU_LOGIN)=LOWER(login_or_mail) OR LOWER(SU_MAIL)=LOWER(login_or_mail)) AND (SU_PASS=SHA1(CONCAT(CONCAT(SU_SALT,pass),config_salt))) AND activation IS NULL;
 
   IF id_user_confirmed IS NOT NULL THEN
     SELECT TRUE as RESULT, SU_UID,SU_ID_PARENT_SU,SU_ID_CARD_F,SU_ID_S,SU_LOGIN,SU_MAIL,SU_TYPE,SU_GENDER,SU_BIRTH_DATE,SU_FIRST_NAME,SU_LAST_NAME FROM T_SGL_USER WHERE SU_UID=id_user_confirmed;
