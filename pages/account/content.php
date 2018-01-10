@@ -166,7 +166,7 @@ $birth_year = intval(date('Y', $data["birth"]));
 				<i>&ldquo;</i>Glorious PC gaming master race<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
-				- Un joueur de la SGL 2016
+				- Un joueur de la SGL 2017
 			</span>
 		</div>
 		<br />
@@ -177,7 +177,7 @@ $birth_year = intval(date('Y', $data["birth"]));
 					<div class="smallquote">Non, c'est même pas la peine d'essayer de le changer.</div></td></tr>
 					<tr><td><h3>Discord :</h3></td><td><input type="text" name="discord" value="<?=htmlspecialchars($data["discord"])?>" /><br />
 					<?=$error_discord?>
-					<div class="smallquote">Votre pseudo discord. Indispensable si vous êtes chef d'équipe ! <a href="https://discord.gg/SGL17">Lien du discord de la SGL</a></div></td></tr>
+					<div class="smallquote">Votre pseudo discord. Indispensable si vous êtes chef d'équipe ! <a href="https://discord.gg/sgnw">Lien du discord de la SGL</a></div></td></tr>
 				</table>
 
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Modification du mot de passe</td><td><hr class="line" /></td></tr></table></p>

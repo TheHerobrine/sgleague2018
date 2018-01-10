@@ -104,7 +104,7 @@ else
 				<i>&ldquo;</i>Il a activé ! Reported hax.<br/>Good VACation...<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
-				- Un joueur de la SGL 2016
+				- Un joueur de la SGL 2017
 			</span>
 		</div>
 		<?=($check_data<0)?'<div class="error" style="text-align:center;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'.$error_data.'</div>':
