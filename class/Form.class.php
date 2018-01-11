@@ -4,6 +4,27 @@ include_once('File.class.php');
 include_once('Database.class.php');
 
 /**
+ * Exmple d'utilisation
+ * $fields = array(
+ * 	'field1' => array('type' => 'integer'),
+ * 	'field2' => array('type' => 'string', 'length' => '15', 'Tregex' => 'doiefjzoiefj'),
+ * 	'field3' => array('type' => 'mail')
+ * );
+ * $query = "CALL MA_QUERY(:field1, :field2, :field3)";
+ *
+ * $form = new Form(new Database(), $query, $fields);
+ * if($form->is_valid()){
+ * 	$result = $form->send();
+ * } else {
+ *	$error_code = $form->unvalidated_code;
+ * 	// 1[0-2] - 'string pas valid'
+ * 	// 2[0-1] - 'date ou datetime pas valid'
+ * 	// 3[0] - 'mail pas valid'
+ *
+ */
+
+
+/**
  * Form class, used to check data before to sens to database
  *
  * it's based on arrays $_POST
