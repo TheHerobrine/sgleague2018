@@ -22,13 +22,15 @@ class Database
 
 	public function req_get($req)
 	{
-		return $this->database->query($req);
+		$return = $this->database->query($req) or die(print_r($this->database->errorInfo())); 
+		return $return;
 	}
 
 	public function req_post($req, array $params)
 	{
 		$resp = $this->database->prepare($req);
-		return $resp->execute($params);
+		$resp->execute($params);
+		return $resp;
 	}
 }
 ?>

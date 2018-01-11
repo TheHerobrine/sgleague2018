@@ -98,26 +98,39 @@ else
 
 	if (isset($_POST["sent"]))
 	{
-		include_once("./class/Database.class.php");
+		include_once("./class/Form.class.php");
 
-		$database = new Database();
+		$fields = array(
+			'login' => array('type' => 'string', 'length' => '128'),
+			'pass' => array('type' => 'string', 'length' => '128'),
+			'salt' => array('type' => 'value', 'value' => CONFIG_SALT)
+		);
 
-		$form_login = isset($_POST['login']) ? $_POST['login'] : '';
-		$form_pass = isset($_POST['pass']) ? $_POST['pass'] : '';
+		$query = "CALL CONNECT_USER(:login, :pass, :salt)";
 
+		$form = new Form(new Database(), $query, $fields);
 
-		$temp = $database->req('CALL CONNECT_USER("'.addslashes($form_login).'", "'.addslashes($form_pass).'", "'.addslashes(CONFIG_SALT).'")');
-		$data = $temp->fetch();
-
-		if ($data["RESULT"])
+		if($form->is_valid())
 		{
-			$connect_flag = true;
+			$temp = $form->send();
+			$data = $temp->fetch();
 
-			$_SESSION["sgl_id"] = $data["SU_UID"];
-			$_SESSION["sgl_login"] = $data["SU_LOGIN"];
-			$_SESSION["sgl_type"] = $data["SU_TYPE"];
+			if ($data["RESULT"])
+			{
+				$connect_flag = true;
+
+				$_SESSION["sgl_id"] = $data["SU_UID"];
+				$_SESSION["sgl_login"] = $data["SU_LOGIN"];
+				$_SESSION["sgl_type"] = $data["SU_TYPE"];
+			}
+
+		}
+		else
+		{
+			$error_code = $form->unvalidated_code;
 		}
 	}
+
 
 	if ($connect_flag)
 	{
