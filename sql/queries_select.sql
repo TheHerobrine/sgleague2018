@@ -57,3 +57,21 @@ BEGIN
     SELECT FALSE as RESULT, 1 as ERROR;
   END IF;
 END|
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------- --
+-- SELECT_SGL_USER_INFORMATION
+-- Error:1 <= Access denied
+-- ---
+
+CREATE PROCEDURE SELECT_SGL_USER_INFORMATION( IN id_user INTEGER, IN id_user_check INTEGER)
+BEGIN
+  DECLARE id_user_confirmed INTEGER DEFAULT NULL;
+
+  SELECT SU_UID INTO id_user_confirmed FROM T_SGL_USER WHERE SU_UID=id_user AND (SU_UID=id_user_check OR SU_ID_PARENT_SU=id_user_check);
+
+  IF id_user_confirmed IS NOT NULL THEN
+    SELECT TRUE as RESULT, SU_UID, SU_ID_CARD_F, SU_ID_S, SU_MAIL, SU_GENDER, SU_BIRTH_DATE, SU_FIRST_NAME, SU_LAST_NAME FROM T_SGL_USER WHERE SU_UID=id_user_confirmed;
+  ELSE
+    SELECT FALSE as RESULT;
+  END IF;
+END|
