@@ -31,6 +31,15 @@ DROP PROCEDURE IF EXISTS CONNECT_USER|
 -- ************************************************************************************************ --
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
+-- SELECT_FILE
+-- ---
+
+CREATE PROCEDURE SELECT_FILE( IN id_file INTEGER)
+BEGIN
+  SELECT F_UID, F_NAME, F_PATH,F_SIZE, F_TYPE, F_MD5 FROM T_FILE WHERE F_UID=id_file;
+END|
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- CONNECT_USER
 -- Error:1 <= Bad login or password
 -- ---
@@ -47,4 +56,4 @@ BEGIN
   ELSE
     SELECT FALSE as RESULT, 1 as ERROR;
   END IF;
-END |
+END|
