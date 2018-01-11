@@ -222,8 +222,6 @@ class Form
 	{
 		if($this->is_valid())
 		{
-			echo $this->sql;
-			print_r($this->values);
 			return $this->database->req_post($this->sql, $this->values);
 		}
 		else
