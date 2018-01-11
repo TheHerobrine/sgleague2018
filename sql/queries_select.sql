@@ -75,3 +75,12 @@ BEGIN
     SELECT FALSE as RESULT;
   END IF;
 END|
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------- --
+-- SELECT_SOON_SGL_USER_INFORMATION
+-- ---
+
+CREATE PROCEDURE SELECT_SOON_SGL_USER_INFORMATION( IN id_user INTEGER )
+BEGIN
+  SELECT SU_UID FROM T_SGL_USER WHERE SU_ID_PARENT_SU=id_user;
+END|
