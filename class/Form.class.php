@@ -8,9 +8,11 @@ include_once('Database.class.php');
  * $fields = array(
  * 	'field1' => array('type' => 'integer'),
  * 	'field2' => array('type' => 'string', 'length' => '15', 'Tregex' => 'doiefjzoiefj'),
- * 	'field3' => array('type' => 'mail')
+ * 	'field3' => array('type' => 'mail'),
+ *  'field4' => array('type' => 'value', 'value' => 'patate')
+ *
  * );
- * $query = "CALL MA_QUERY(:field1, :field2, :field3)";
+ * $query = "CALL MA_QUERY(:field1, :field2, :field3, :field4)";
  *
  * $form = new Form(new Database(), $query, $fields);
  * if($form->is_valid()){
@@ -20,7 +22,8 @@ include_once('Database.class.php');
  * 	// 1[0-2] - 'string pas valid'
  * 	// 2[0-1] - 'date ou datetime pas valid'
  * 	// 3[0] - 'mail pas valid'
- *
+ *	// 4[0-3] - Field missing or not valid
+ * }
  */
 
 
@@ -166,6 +169,23 @@ class Form {
 						} else {
 							$this->values[$key]=$_POST[$key];
 						}
+						break;
+
+					case 'value':
+						if(!$field['value']) {
+							$this->unvalidated_message = $key . ' : Value is not set : ';
+							$this->unvalidated_code = 42;
+							$this->valid = false;
+							return false;
+						}
+						$this->values[$key] = $field['value'];
+						break;
+
+					default:
+						$this->unvalidated_message = $key . ' : Is not valid type';
+						$this->unvalidated_code = 41;
+						$this->valid = false;
+						return false;
 						break;
 				}
 			} else {
