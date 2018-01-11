@@ -36,8 +36,8 @@ include_once('Database.class.php');
  * @package SQL\Form
  * @tags Form
  */
-class Form {
-
+class Form
+{
 	/**
 	 * uses to communicate with database
 	 * @var Database $database
@@ -80,9 +80,10 @@ class Form {
 	 */
 	public $unvalidated_code;
 
-	public function __construct(Database &$bdd, $query, array $fields_array)  {
-
-		if(empty($fields_array) OR !is_array($fields_array)) {
+	public function __construct(Database &$bdd, $query, array $fields_array) 
+	{
+		if(empty($fields_array) OR !is_array($fields_array))
+		{
 			throw new Exception('$fields_array is not an array');
 		}
 
@@ -95,17 +96,19 @@ class Form {
 	 * valid form's fields contained in $_POST
 	 * @return bool
 	 */
-	public function is_valid() {
-
+	public function is_valid()
+	{
 		if($this->valid) {
 			return $this->valid;
 		}
 
 		foreach ($this->fields as $key => $field) {
 
-			if(isset($_POST[$key])) {
+			if(isset($_POST[$key]) || ($field['type'] == "value"))
+			{
 
-				switch ($field['type']) {
+				switch ($field['type'])
+				{
 
 					case 'integer':
 						$this->values[$key]=(int)$_POST[$key];
@@ -116,46 +119,54 @@ class Form {
 						break;
 
 					case 'string':
-						if(isset($field['Fregex']) AND preg_match($field['Fregex'],$_POST[$key])){
+						if(isset($field['Fregex']) AND preg_match($field['Fregex'],$_POST[$key]))
+						{
 							$this->unvalidated_message = $key . ' : Regex : "' . $field['Fregex'] . '" matched : "' . $_POST[$key] . '"';
 							$this->unvalidated_code = 11;
 							$this->valid = false;
 							return false;
 						}
-						if(isset($field['Tregex']) AND !preg_match($field['Tregex'],$_POST[$key])){
+						if(isset($field['Tregex']) AND !preg_match($field['Tregex'],$_POST[$key]))
+						{
 							$this->unvalidated_message = $key . ' : Regex : "' . $field['Tregex'] . '" didn\'t match : "' . $_POST[$key] . '"';
 							$this->unvalidated_code = 12;
 							$this->valid = false;
 							return false;
 						}
-						$str = '"'.addslashes(substr($_POST[$key],0,$field['length'])).'"';
-						if(isset($field['length']) AND strlen($str) > $field['length']){
-							$this->unvalidated_message = $key . ' : String is too long : ' . $str;
+						if(isset($field['length']) AND strlen($_POST[$key]) > $field['length'])
+						{
+							$this->unvalidated_message = $key . ' : String is too long : ' . $_POST[$key];
 							$this->unvalidated_code = 10;
 							$this->valid = false;
 							return false;
 						}
-						$this->values[$key]=$str;
+						$this->values[$key] = $_POST[$key];
 						break;
 
 					case 'date':
-						if(!preg_match("/^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$/",htmlspecialchars($_POST[$key]))) {
+						if(!preg_match("/^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$/",htmlspecialchars($_POST[$key])))
+						{
 							$this->unvalidated_message = $key . ' : Date is not valid : ' . $_POST[$key];
 							$this->unvalidated_code = 20;
 							$this->valid = false;
 							return false;
-						} else {
+						}
+						else
+						{
 							$this->values[$key]=$_POST[$key];
 						}
 						break;
 
 					case 'datetime':
-						if(!preg_match("/^[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$/",htmlspecialchars($_POST[$key]))) {
+						if(!preg_match("/^[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$/",htmlspecialchars($_POST[$key])))
+						{
 							$this->unvalidated_message = $key . ' : Datetime is not valid : ' . $_POST[$key];
 							$this->unvalidated_code = 21;
 							$this->valid = false;
 							return false;
-						} else {
+						}
+						else
+						{
 							$this->values[$key]=$_POST[$key];
 						}
 						break;
@@ -166,13 +177,16 @@ class Form {
 							$this->unvalidated_code = 30;
 							$this->valid = false;
 							return false;
-						} else {
+						}
+						else
+						{
 							$this->values[$key]=$_POST[$key];
 						}
 						break;
 
 					case 'value':
-						if(!$field['value']) {
+						if(!$field['value'])
+						{
 							$this->unvalidated_message = $key . ' : Value is not set : ';
 							$this->unvalidated_code = 42;
 							$this->valid = false;
@@ -188,12 +202,12 @@ class Form {
 						return false;
 						break;
 				}
-			} else {
+			}/* else {
 				$this->unvalidated_message = $key . ' : Is missing';
 				$this->unvalidated_code = 40;
 				$this->valid = false;
 				return false;
-			}
+			}*/
 		}
 
 		$this->valid = true;
@@ -206,9 +220,12 @@ class Form {
 	 */
 	public function send()
 	{
-		if($this->is_valid()) {
+		if($this->is_valid())
+		{
 			return $this->database->req_post($this->sql, $this->values);
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 	}
