@@ -77,10 +77,10 @@ BEGIN
 END|
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
--- SELECT_SOON_SGL_USER_INFORMATION
+-- SELECT_SONS_SGL_USER_INFORMATION
 -- ---
 
-CREATE PROCEDURE SELECT_SOON_SGL_USER_INFORMATION( IN id_user INTEGER )
+CREATE PROCEDURE SELECT_SONS_SGL_USER_INFORMATION( IN id_user INTEGER )
 BEGIN
   SELECT SU_UID FROM T_SGL_USER WHERE SU_ID_PARENT_SU=id_user;
 END|
