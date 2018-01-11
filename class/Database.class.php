@@ -28,7 +28,8 @@ class Database
 	public function req_post($req, array $params)
 	{
 		$resp = $this->database->prepare($req);
-		return $resp->execute($params);
+		$resp->execute($params);
+		return $resp;
 	}
 }
 ?>
