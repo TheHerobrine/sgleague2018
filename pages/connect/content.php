@@ -29,17 +29,17 @@ else if (isset($_GET["recover"]))
 	if (isset($_POST["sent"]))
 	{
 		include_once("./generic/randomstr.php");
-		$resetsalt = random_str(20);
+		$reset_pass = random_str(20);
 
 		include_once("./class/Form.class.php");
 
 		$fields = array(
 			'login' => array('type' => 'string', 'length' => '128'),
-			'resetsalt' => array('type' => 'value', 'value' => $resetsalt)
+			'resetsalt' => array('type' => 'value', 'value' => $reset_pass)
 		);
 
 		//TODO_QUERY: doit fonctionner aussi avec le mail
-		$query = "UPDATE t_sgl_user SET SU_RESET_PASS=:resetsalt WHERE LOWER(SU_LOGIN)=LOWER(:login) AND SU_ACTIVATION IS NULL";
+		$query = "UPDATE t_sgl_user SET SU_RESETPASS=:reset_pass WHERE LOWER(SU_LOGIN)=LOWER(:login) AND SU_ACTIVATION IS NULL";
 
 		$form = new Form(new Database(), $query, $fields);
 
@@ -57,17 +57,16 @@ else if (isset($_GET["recover"]))
 
 		$form = new Form(new Database(), $query, $fields);
 
-		
-		$return = $form->send();
 		if($form->is_valid())
 		{
+			$return = $form->send();
 			$data = $return->fetch();
 
 			if ($data["SU_MAIL"])
 			{
 				$subject = "Regénération de votre mot de passe";
 				$content = "Alors comme ça on a oublié son mot de passe ?\n\n
-Pas de soucis, il suffit de cliquer sur ce lien pour en recevoir un nouveau : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=activation&hitc=".$data["SU_LOGIN"]."&key=".$resetsalt.">\n
+Pas de soucis, il suffit de cliquer sur ce lien pour en recevoir un nouveau : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=activation&wvp=".$data["SU_LOGIN"]."&key=".$resetsalt.">\n
 Si vous avez des problèmes de connexion, n'hésitez pas à passer sur discord ! <https://discord.gg/sgnw>\n\nL'équipe de la Student Gaming League 2018";
 
 				include_once("./class/Mail.class.php");
@@ -100,7 +99,7 @@ Si vous avez des problèmes de connexion, n'hésitez pas à passer sur discord !
 		</div>
 		<?php if(isset($flag_recover)){?>
 		<br /><p style="text-align:center; font-weight: bold">C'est bon, <b>tout est réglé</b> ! On viens de vous envoyer un <b>mail</b> pour <b>regénérer un mot de passe</b>.</p><br />
-		<?php }else{ ?>
+		<?php }else{ ?>	
 		<p style="text-align: center;">La prochaine fois, faites comme mundo pour ne plus oublier votre mot de passe ! Quoique le dire à voix haute n'est peut être pas une super idée...</p>
 		<?php } ?>
 		<div class="form">
@@ -136,12 +135,11 @@ else
 
 		$query = "CALL CONNECT_USER(:login, :pass, :salt)";
 
-		$form = new Form(new Database(), $query, $fields);
-
-		
-		$return = $form->send();
+		$form = new Form(new Database(), $query, $fields, true, true);
 		if($form->is_valid())
 		{
+			$return = $form->send();
+		
 			$data = $return->fetch();
 
 			if ($data["RESULT"])

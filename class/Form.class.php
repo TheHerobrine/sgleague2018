@@ -115,6 +115,8 @@ class Form
 			return $this->valid;
 		}
 
+		$this->valid = true;
+
 		if ($this->post)
 		{
 			$method = $_POST;
@@ -147,21 +149,18 @@ class Form
 							$this->unvalidated_message = $key . ' : Regex : "' . $field['Fregex'] . '" matched : "' . $method[$key] . '"';
 							$this->unvalidated_code = 11;
 							$this->valid = false;
-							return false;
 						}
 						if(isset($field['Tregex']) AND !preg_match($field['Tregex'],$method[$key]))
 						{
 							$this->unvalidated_message = $key . ' : Regex : "' . $field['Tregex'] . '" didn\'t match : "' . $method[$key] . '"';
 							$this->unvalidated_code = 12;
 							$this->valid = false;
-							return false;
 						}
 						if(isset($field['length']) AND strlen($method[$key]) > $field['length'])
 						{
 							$this->unvalidated_message = $key . ' : String is too long : ' . $method[$key];
 							$this->unvalidated_code = 10;
 							$this->valid = false;
-							return false;
 						}
 						$this->values[$key] = $method[$key];
 						break;
@@ -172,7 +171,6 @@ class Form
 							$this->unvalidated_message = $key . ' : Date is not valid : ' . $method[$key];
 							$this->unvalidated_code = 20;
 							$this->valid = false;
-							return false;
 						}
 						else
 						{
@@ -186,7 +184,6 @@ class Form
 							$this->unvalidated_message = $key . ' : Datetime is not valid : ' . $method[$key];
 							$this->unvalidated_code = 21;
 							$this->valid = false;
-							return false;
 						}
 						else
 						{
@@ -199,7 +196,6 @@ class Form
 							$this->unvalidated_message = $key . ' : Mail is not valid : ' . $method[$key];
 							$this->unvalidated_code = 30;
 							$this->valid = false;
-							return false;
 						}
 						else
 						{
@@ -213,7 +209,6 @@ class Form
 							$this->unvalidated_message = $key . ' : Value is not set : ';
 							$this->unvalidated_code = 42;
 							$this->valid = false;
-							return false;
 						}
 						$this->values[$key] = $field['value'];
 						break;
@@ -222,7 +217,6 @@ class Form
 						$this->unvalidated_message = $key . ' : Is not valid type';
 						$this->unvalidated_code = 41;
 						$this->valid = false;
-						return false;
 						break;
 				}
 			}/* else {
@@ -233,7 +227,13 @@ class Form
 			}*/
 		}
 
-		$this->valid = true;
+		if ($this->debug)
+		{
+			echo '<div class="debug"><b>VALID('.$this->valid.')</b><br />';
+			print_r($this->values);
+			echo '</div>';
+		}
+		
 		return $this->valid;
 	}
 
@@ -245,16 +245,14 @@ class Form
 	{
 		if ($this->debug)
 		{
-			echo '<div class="debug"><b>SEND()</b><br />'.$this->sql.'<br /><pre>';
-			print_r($this->values);
-			echo '</pre>';
+			echo '<div class="debug"><b>SEND()</b><br />'.$this->sql.'<br />';
 		}
 
 		if($this->is_valid())
 		{
 			if ($this->debug)
 			{
-				echo '</div>';
+				echo 'Valid</div>';
 			}
 			return $this->database->req_post($this->sql, $this->values);
 		}
