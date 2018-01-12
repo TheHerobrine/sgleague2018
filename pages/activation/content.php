@@ -62,7 +62,7 @@ else if ((isset($_GET["key"])) AND (isset($_GET["hitc"])))
 
 			$subject = "Votre nouveau mot de passe !";
 			$content = "Et le voici, tout beau, tout neuf : ".$rand_pass."\n
-Ne le perdez pas celui là ! Vous pouvez vous connecter ici : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=connect>\n\nL'équipe de la Student Gaming League 2017";
+Ne le perdez pas celui là ! Vous pouvez vous connecter ici : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=connect>\n\nL'équipe de la Student Gaming League 2018";
 
 			include_once("./class/Mail.class.php");
 			new Mail($data["mail"], $subject, $content);

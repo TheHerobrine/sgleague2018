@@ -483,6 +483,15 @@ body
 	color: #ff6600;
 }
 
+.debug
+{
+	background: rgba(255, 200, 0, 0.5);
+	border: 1px solid #ff6600;
+	padding: 10px;
+	font-size: 12px;
+	margin: 5px 0px;
+}
+
 .top_ban
 {
 	width: 100%;

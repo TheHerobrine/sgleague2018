@@ -26,36 +26,63 @@ if ((isset($_GET["disconnect"])) AND $csrf_check)
 }
 else if (isset($_GET["recover"]))
 {
-
-// TODO : mail + regénération de mot de passe
-
 	if (isset($_POST["sent"]))
 	{
-		$form_login = isset($_POST['login']) ? $_POST['login'] : '';
-
-		include_once("./class/Database.class.php");
-		$database = new Database();
-
 		include_once("./generic/randomstr.php");
 		$resetsalt = random_str(20);
 
-		$database->req('UPDATE sgl_users SET resetpass="'.$resetsalt.'" WHERE LOWER(login)=LOWER("'.addslashes($form_login).'") AND activation=""');
+		include_once("./class/Form.class.php");
 
-		$temp = $database->req('SELECT mail FROM sgl_users WHERE LOWER(login)=LOWER("'.addslashes($form_login).'") AND activation=""');
-		$data = $temp->fetch();
+		$fields = array(
+			'login' => array('type' => 'string', 'length' => '128'),
+			'resetsalt' => array('type' => 'value', 'value' => $resetsalt)
+		);
 
-		if (isset($data["mail"]))
+		//TODO_QUERY: doit fonctionner aussi avec le mail
+		$query = "UPDATE t_sgl_user SET SU_RESET_PASS=:resetsalt WHERE LOWER(SU_LOGIN)=LOWER(:login) AND SU_ACTIVATION IS NULL";
+
+		$form = new Form(new Database(), $query, $fields);
+
+		if($form->is_valid())
 		{
-			$subject = "Regénération de votre mot de passe";
-			$content = "Alors comme ça on a oublié son mot de passe ?\n\n
-Pas de soucis, il suffit de cliquer sur ce lien pour en recevoir un nouveau : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=activation&hitc=".strtolower($form_login)."&key=".$resetsalt.">\n
-Si vous avez des problèmes de connexion, n'hésitez pas à passer sur discord ! <https://discord.gg/sgnw>\n\nL'équipe de la Student Gaming League 2017";
-
-			include_once("./class/Mail.class.php");
-			new Mail($data["mail"], $subject, $content);
+			$temp = $form->send();
 		}
 
-		$flag_recover = true;
+		$fields = array(
+			'login' => array('type' => 'string', 'length' => '128')
+		);
+
+		//TODO_QUERY: doit fonctionner aussi avec le mail
+		$query = "SELECT SU_MAIL, SU_LOGIN FROM t_sgl_user WHERE LOWER(SU_LOGIN)=LOWER(:login) AND SU_ACTIVATION IS NULL";
+
+		$form = new Form(new Database(), $query, $fields);
+
+		if($form->is_valid())
+		{
+			$temp = $form->send();
+			$data = $temp->fetch();
+
+			if ($data["SU_MAIL"])
+			{
+				$subject = "Regénération de votre mot de passe";
+				$content = "Alors comme ça on a oublié son mot de passe ?\n\n
+Pas de soucis, il suffit de cliquer sur ce lien pour en recevoir un nouveau : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=activation&hitc=".$data["SU_LOGIN"]."&key=".$resetsalt.">\n
+Si vous avez des problèmes de connexion, n'hésitez pas à passer sur discord ! <https://discord.gg/sgnw>\n\nL'équipe de la Student Gaming League 2018";
+
+				include_once("./class/Mail.class.php");
+				new Mail($data["SU_MAIL"], $subject, $content);
+
+				$flag_recover = true;
+			}
+
+		}
+		else
+		{
+			$error_code = $form->unvalidated_code;
+		}
+
+		//TODO_ALGO: message si l'utilisateur n'existe pas
+		
 	}
 
 	?>
@@ -123,11 +150,6 @@ else
 				$_SESSION["sgl_login"] = $data["SU_LOGIN"];
 				$_SESSION["sgl_type"] = $data["SU_TYPE"];
 			}
-
-		}
-		else
-		{
-			$error_code = $form->unvalidated_code;
 		}
 	}
 
@@ -141,7 +163,7 @@ else
 		<h1><i class="fa fa-angle-right" aria-hidden="true"></i> Connexion réussie</h1>
 		<div class="quote">
 			<span class="qcontent">
-				<i>&ldquo;</i><?=htmlspecialchars($data["login"])?> used password.<br />It's super effective!<i>&rdquo;</i>
+				<i>&ldquo;</i><?=htmlspecialchars($data["SU_LOGIN"])?> used password.<br />It's super effective!<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
 				- Un joueur de la SGL 2017
