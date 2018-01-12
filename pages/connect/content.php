@@ -57,10 +57,11 @@ else if (isset($_GET["recover"]))
 
 		$form = new Form(new Database(), $query, $fields);
 
+		
+		$return = $form->send();
 		if($form->is_valid())
 		{
-			$temp = $form->send();
-			$data = $temp->fetch();
+			$data = $return->fetch();
 
 			if ($data["SU_MAIL"])
 			{
@@ -137,10 +138,11 @@ else
 
 		$form = new Form(new Database(), $query, $fields);
 
+		
+		$return = $form->send();
 		if($form->is_valid())
 		{
-			$temp = $form->send();
-			$data = $temp->fetch();
+			$data = $return->fetch();
 
 			if ($data["RESULT"])
 			{
