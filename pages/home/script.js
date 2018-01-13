@@ -29,8 +29,8 @@ function zero(num)
 		return num;
 	}
 }
-/*
-var countDownDate = new Date("May 27, 2017 13:30:00").getTime();
+
+var countDownDate = new Date("January 29, 2018 00:00:00").getTime();
 
 var x = setInterval(function()
 {
@@ -49,7 +49,6 @@ var x = setInterval(function()
 	if (distance < 0)
 	{
 		clearInterval(x);
-		document.getElementById("demo").innerHTML = "EXPIRED";
+		document.getElementById("mainlink").innerHTML = "EXPIRED";
 	}
 }, 10);
-*/

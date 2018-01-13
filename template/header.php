@@ -94,7 +94,6 @@ else
 				<div class="partners left">
 					<a class="smplink" target="_blank" href="https://shadow.tech/"><img src="./style/img/partners/sml_shadow.png" alt="Shadow" /></a>
 					<a class="smplink" target="_blank" href="https://www.facebook.com/starxium/"><img src="./style/img/partners/sml_stx.png" alt="Starxium 20XX" /></a>
-					<a class="smplink" target="_blank" href="https://www.twitch.tv/"><img src="./style/img/partners/sml_twitch.png" alt="Twitch" /></a><br />
 				</div>
 				<div id="logo">
 					<a href="index.php">
@@ -102,8 +101,7 @@ else
 					</a>
 				</div>
 				<div class="partners right">
-					<a class="smplink" target="_blank" href="http://gamersorigin.com/"><img src="./style/img/partners/sml_go.png" alt="Gamers Origin" /></a>
+					<a class="smplink" target="_blank" href="https://www.twitch.tv/"><img src="./style/img/partners/sml_twitch.png" alt="Twitch" /></a>
 					<a class="smplink" target="_blank" href="http://www.fnatic.com/"><img src="./style/img/partners/sml_fnatic.png" alt="Fnatic" /></a>
-					<a class="smplink" target="_blank" href="https://www.meltdown.bar/"><img src="./style/img/partners/sml_md.png" alt="Meltdown" /></a>
 				</div>
 			</div>﻿

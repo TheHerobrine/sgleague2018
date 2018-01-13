@@ -23,6 +23,13 @@ class Template
 			unset($page_head);
 			unset($page_script);
 		}
+		else if (CLOSE && isset($need_open))
+		{
+			$this->page = "408";
+
+			unset($page_head);
+			unset($page_script);
+		}
 		else if (isset($min_access))
 		{
 			if ($_SESSION["sgl_type"] < $min_access)

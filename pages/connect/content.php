@@ -198,7 +198,7 @@ else
 			<form action="index.php?page=connect" method="post">
 				<table class="form_table">
 					<tr><td><h3>Pseudo :</h3></td><td><input type="text" name="login" /><br />
-					<div class="smallquote">C'est pas le mail, c'est le login, hein ! 'fin votre pseudo quoi...</div></td></tr>
+					<div class="smallquote">Ou votre mail, ça marche aussi ! Pour quand vous avez oublié votre pseudo...</div></td></tr>
 					<tr><td><h3>Password :</h3></td><td><input type="password" name="pass" /><br />
 					<div class="smallquote">J'espère que vous l'avez pas oublié celui-là. Si ? <a href="index.php?page=connect&amp;recover=1">Ne vous inquiétez pas, on va le retrouver.</a></div></td></tr>
 				</table>

@@ -10,4 +10,7 @@ define ("SERVER_REP", "/sgleague2018");
 
 define ("MAILGUN_KEY", "...");
 
+//define ("DEBUG", true);
+//define ("CLOSE", true);
+
 ?>
