@@ -46,8 +46,7 @@ $games_content = array(
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> Nouveau tournoi<br /><br />
 		<span style="padding: 10px;">Finales le <b style="font-weight:bold;">27 et 28 Mai</b> à l\'<b style="font-weight:bold;">école 42</b></span><br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a><br /><br />
-		Phases finales diffusées sur<br /><a href="http://overwatch.gamersorigin.com/"><img src="./style/img/partners/sml_go.png" alt="Gamers Origin" /></a></p><br />',
+		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a></p><br />',
 
 	'<p style="text-align:center;">
 		<b><i class="fa fa-user-circle" aria-hidden="true" style="padding-right: 5px;"></i></b> 5 joueurs par équipe
@@ -58,8 +57,7 @@ $games_content = array(
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 200 joueurs l\'année dernière<br /><br />
 		<span style="padding: 10px;">Finales le <b style="font-weight:bold;">27 et 28 Mai</b> à l\'<b style="font-weight:bold;">école 42</b></span><br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a><br /><br />
-		Equipe gagnante qualifiée aux University eSports Masters<br /><a href="http://www.uemasters.com/"><img src="./style/img/partners/uem.png" alt="Gamers Origin" /></a></p><br />',
+		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a></p><br />',
 
 	'<p style="text-align:center;">
 		<b><i class="fa fa-user-circle" aria-hidden="true" style="padding-right: 5px;"></i></b> 5 joueurs par équipe
@@ -81,12 +79,11 @@ $games_content = array(
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 114 joueurs l\'année dernière<br /><br />
 		<span style="padding: 10px;">Finales le <b style="font-weight:bold;">27 et 28 Mai</b> à l\'<b style="font-weight:bold;">école 42</b></span><br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a><br /><br />
-		Phases finales diffusées sur<br /><a href="http://hearthstone.gamersorigin.com/"><img src="./style/img/partners/sml_go.png" alt="Gamers Origin" /></a></p><br />');
+		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a></p><br />');
 
 $check_teamtag = 0;
 $error_teamtag = "";
-
+/*
 if (isset($_GET["game"]) AND $csrf_check AND isset($_SESSION["sgl_id"]))
 {
 	$form_game = intval($_GET["game"]);
@@ -157,7 +154,7 @@ if (isset($_SESSION["sgl_id"]))
 		$games_in[$data["game"]] = true;
 	}
 }
-
+*/
 ?>
 
 <div id="content">
@@ -202,7 +199,7 @@ else
 		<br />
 <?php
 
-
+/*
 switch($get_game)
 {
 	case 1:
@@ -218,7 +215,7 @@ switch($get_game)
 		echo '<iframe style="width:100%; height: 500px" src="https://widget.toornament.com/tournaments/58ed064b140ba04e228b457c/stages/1?_locale=fr_FR&theme=discipline" frameborder="0" allowfullscreen></iframe><br /><br />';
 		break;
 }
-
+*/
 if ($_SESSION["sgl_id"])
 {
 
@@ -547,6 +544,7 @@ for ($i=0; $i<count($games); $i++)
 	}
 	else
 	{
+		
 		if (isset($_SESSION["sgl_id"]))
 		{
 			if ($games_team[$i] > 1)
@@ -575,7 +573,7 @@ for ($i=0; $i<count($games); $i++)
 			<a href="index.php?page=register" class="button">S\'inscrire à la SGL</a></p>';*/
 		}
 
-		echo '<p style="text-align: center;"><a href="#" class="button">Le tournoi a déjà commencé...</a></p>';
+		//echo '<p style="text-align: center;"><a href="#" class="button">Le tournoi a déjà commencé...</a></p>';
 	}
 	
 	echo '<br /><br />';
