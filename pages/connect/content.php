@@ -29,17 +29,17 @@ else if (isset($_GET["recover"]))
 	if (isset($_POST["sent"]))
 	{
 		include_once("./generic/randomstr.php");
-		$reset_pass = random_str(20);
+		$resetsalt = random_str(20);
 
 		include_once("./class/Form.class.php");
 
 		$fields = array(
 			'login' => array('type' => 'string', 'length' => '128'),
-			'resetsalt' => array('type' => 'value', 'value' => $reset_pass)
+			'resetsalt' => array('type' => 'value', 'value' => $resetsalt)
 		);
 
 		//TODO_QUERY: doit fonctionner aussi avec le mail
-		$query = "UPDATE t_sgl_user SET SU_RESETPASS=:reset_pass WHERE LOWER(SU_LOGIN)=LOWER(:login) AND SU_ACTIVATION IS NULL";
+		$query = "UPDATE t_sgl_user SET SU_RESETPASS=:resetsalt WHERE LOWER(SU_LOGIN)=LOWER(:login) AND SU_ACTIVATION IS NULL";
 
 		$form = new Form(new Database(), $query, $fields);
 
@@ -135,7 +135,7 @@ else
 
 		$query = "CALL CONNECT_USER(:login, :pass, :salt)";
 
-		$form = new Form(new Database(), $query, $fields, true, true);
+		$form = new Form(new Database(), $query, $fields);
 		if($form->is_valid())
 		{
 			$return = $form->send();

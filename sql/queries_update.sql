@@ -79,7 +79,7 @@ END |
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- UPDATE_SGL_USER_RESET_PASS
 -- ---
-CREATE PROCEDURE UPDATE_SGL_RESET_PASS( IN login VARCHAR(128), IN new_salt VARCHAR(512), IN config_salt VARCHAR(512), IN reset_pass VARCHAR(128), IN new_pass VARCHAR(128))
+CREATE PROCEDURE UPDATE_SGL_USER_RESET_PASS( IN login VARCHAR(128), IN new_salt VARCHAR(512), IN config_salt VARCHAR(512), IN reset_pass VARCHAR(128), IN new_pass VARCHAR(128))
 BEGIN
   DECLARE id_user_confirmed INTEGER DEFAULT NULL;
 
@@ -87,7 +87,7 @@ BEGIN
 
   IF id_user_confirmed IS NOT NULL THEN
     UPDATE T_SGL_USER SET SU_PASS=SHA1(CONCAT(CONCAT(new_salt,new_pass),config_salt)), SU_SALT=new_salt, SU_RESETPASS=NULL WHERE SU_UID=id_user_confirmed;
-    SELECT TRUE as RESULT;
+    SELECT TRUE as RESULT, SU_MAIL FROM T_SGL_USER WHERE SU_UID=id_user_confirmed;
   ELSE
     SELECT FALSE as RESULT;
   END IF;

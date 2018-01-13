@@ -3,6 +3,10 @@
 include_once('File.class.php');
 include_once('Database.class.php');
 
+define ("METHOD_DEFAULT", 0);
+define ("METHOD_POST", 1);
+define ("METHOD_GET", 2);
+
 /**
  * Exmple d'utilisation
  * $fields = array(
@@ -70,15 +74,9 @@ class Form
 
 	/**
 	 * post method used
-	 * @var bool $post
+	 * @var bool $method
 	 */
-	protected $post = true;
-
-	/**
-	 * debug mode
-	 * @var bool $debug
-	 */
-	protected $debug = false;
+	protected $method = 0;
 
 	/**
 	 * Information about validation
@@ -92,7 +90,7 @@ class Form
 	 */
 	public $unvalidated_code;
 
-	public function __construct(Database &$bdd, $query, array $fields_array, bool $post = true, bool $debug = false) 
+	public function __construct(Database &$bdd, $query, array $fields_array, int $method = METHOD_POST) 
 	{
 		if(empty($fields_array) OR !is_array($fields_array))
 		{
@@ -102,7 +100,7 @@ class Form
 		$this->fields = &$fields_array;
 		$this->database = &$bdd;
 		$this->sql = $query;
-		$this->debug = $debug;
+		$this->method = $method;
 	}
 
 	/**
@@ -117,11 +115,11 @@ class Form
 
 		$this->valid = true;
 
-		if ($this->post)
+		if ($this->method == METHOD_POST)
 		{
 			$method = $_POST;
 		}
-		else
+		else if ($this->method == METHOD_GET)
 		{
 			$method = $_GET;
 		}
@@ -227,12 +225,7 @@ class Form
 			}*/
 		}
 
-		if ($this->debug)
-		{
-			echo '<div class="debug"><b>VALID('.$this->valid.')</b><br />';
-			print_r($this->values);
-			echo '</div>';
-		}
+		debug("SQL VALID(".$this->valid.")",$this->values);
 		
 		return $this->valid;
 	}
@@ -243,25 +236,16 @@ class Form
 	 */
 	public function send()
 	{
-		if ($this->debug)
-		{
-			echo '<div class="debug"><b>SEND()</b><br />'.$this->sql.'<br />';
-		}
+		
 
 		if($this->is_valid())
 		{
-			if ($this->debug)
-			{
-				echo 'Valid</div>';
-			}
+			debug("SQL SEND()",$this->sql."<br/>Valid");
 			return $this->database->req_post($this->sql, $this->values);
 		}
 		else
 		{
-			if ($this->debug)
-			{
-				echo 'Error '.($this->unvalidated_code).' : '.$this->unvalidated_message.'</div>';
-			}
+			debug("SQL SEND()",$this->sql.'<br/>Error '.($this->unvalidated_code).' : '.$this->unvalidated_message);
 			return false;
 		}
 	}

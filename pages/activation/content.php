@@ -57,9 +57,9 @@ else if ((isset($_GET["key"])) AND (isset($_GET["wvp"])))
 			'new_pass' => array('type' => 'value', 'value' => $new_pass)
 		);
 
-		$query = "CALL UPDATE_SGL_RESET_PASS(:wvp, :new_salt, :config_salt, :key, :new_pass)";
+		$query = "CALL UPDATE_SGL_USER_RESET_PASS(:wvp, :new_salt, :config_salt, :key, :new_pass)";
 
-		$form = new Form(new Database(), $query, $fields, false, true);
+		$form = new Form(new Database(), $query, $fields, METHOD_GET, DEBUG);
 		
 		if($form->is_valid())
 		{
@@ -69,11 +69,11 @@ else if ((isset($_GET["key"])) AND (isset($_GET["wvp"])))
 			if ($data["RESULT"])
 			{
 				$subject = "Votre nouveau mot de passe !";
-				$content = "Et le voici, tout beau, tout neuf : ".$rand_pass."\n
+				$content = "Et le voici, tout beau, tout neuf : ".$new_pass."\n
 	Ne le perdez pas celui là ! Vous pouvez vous connecter ici : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=connect>\n\nL'équipe de la Student Gaming League 2018";
 
 				include_once("./class/Mail.class.php");
-				new Mail($data["mail"], $subject, $content);
+				new Mail($data["SU_MAIL"], $subject, $content);
 			}
 			else
 			{
@@ -108,7 +108,7 @@ else
 			</span>
 		</div>
 		<?=($check_data<0)?'<div class="error" style="text-align:center;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'.$error_data.'</div>':
-		'<p style="text-align:center;">'.isset($_GET["wvp"])?'C\'est bon, vous êtes activés :D ! Vous pouvez vous connecter !':'Votre nouveau mot de passe a été envoyé par mail ;)'.'</p>'?>
+		'<p style="text-align:center;">'.isset($_GET["mvp"])?'C\'est bon, vous êtes activés :D ! Vous pouvez vous connecter !':'Votre nouveau mot de passe a été envoyé par mail ;)'.'</p>'?>
 		<br />
 		<p style="text-align: center;"><a href="index.php" class="button">Revenir à la page d'accueil</a></p>
 		<br />

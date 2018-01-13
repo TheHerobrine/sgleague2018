@@ -14,6 +14,7 @@ function microtime_float()
 $time_start = microtime_float();
 
 include_once("./config.php");
+include_once("./generic/debug.php");
 
 if ($_SERVER['HTTP_HOST'] != SERVER_ADDR)
 {

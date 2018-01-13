@@ -12,6 +12,8 @@ class Mail
 		'text'    => $content
 		);
 
+		debug("MAIL SEND()", $curl_post_data);
+
 		$service_url = 'https://api.mailgun.net/v3/mg.league.sgnw.fr/messages';
 		$curl = curl_init($service_url);
 		curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -28,10 +30,8 @@ class Mail
 		$response = json_decode($curl_response);
 		curl_close($curl);
 
-		if ($debug)
-		{
-			var_dump($response);
-		}
+
+		debug("MAIL RESPONSE()", $response);
 	}
 }
 ?>

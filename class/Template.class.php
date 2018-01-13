@@ -37,6 +37,10 @@ class Template
 		define("CURRENT_PAGE", $this->page);
 
 		include("./template/header.php");
+		if (DEBUG)
+		{
+			debug("Notice", "Debug active");
+		}
 		include("./pages/".$this->page."/content.php");
 		include("./template/footer.php");
 	}
