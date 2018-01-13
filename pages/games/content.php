@@ -40,45 +40,45 @@ $games_content = array(
 	'<p style="text-align:center;">
 		<b><i class="fa fa-user-circle" aria-hidden="true" style="padding-right: 5px;"></i></b> 6 joueurs par équipe
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-calendar" aria-hidden="true" style="padding-right: 5px;"></i></b> Les Jeudis (début le 9 Mars)
+		<b><i class="fa fa-calendar" aria-hidden="true" style="padding-right: 5px;"></i></b> Les Lundis (début le 26 Février)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> 1200€ de cashprize
+		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompense à venir ;)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> Nouveau tournoi<br /><br />
-		<span style="padding: 10px;">Finales le <b style="font-weight:bold;">27 et 28 Mai</b> à l\'<b style="font-weight:bold;">école 42</b></span><br /><br />
+		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 64 équipes l\'année dernière<br /><br />
+		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span><br /><br />
 		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a></p><br />',
 
 	'<p style="text-align:center;">
 		<b><i class="fa fa-user-circle" aria-hidden="true" style="padding-right: 5px;"></i></b> 5 joueurs par équipe
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-calendar" aria-hidden="true" style="padding-right: 5px;"></i></b> Les Lundis (début le 6 Mars)
+		<b><i class="fa fa-calendar" aria-hidden="true" style="padding-right: 5px;"></i></b> Les Mardis (début le 27 Février)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Voyage à Berlin aux LCS (en attente de validation par Riot)
+		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompense à venir ;)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 200 joueurs l\'année dernière<br /><br />
-		<span style="padding: 10px;">Finales le <b style="font-weight:bold;">27 et 28 Mai</b> à l\'<b style="font-weight:bold;">école 42</b></span><br /><br />
+		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 102 équipes l\'année dernière<br /><br />
+		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span><br /><br />
 		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a></p><br />',
 
 	'<p style="text-align:center;">
 		<b><i class="fa fa-user-circle" aria-hidden="true" style="padding-right: 5px;"></i></b> 5 joueurs par équipe
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-calendar" aria-hidden="true" style="padding-right: 5px;"></i></b> Les Mercredis (début le 8 Mars)
+		<b><i class="fa fa-calendar" aria-hidden="true" style="padding-right: 5px;"></i></b> Les Mercredis (début le 28 Février)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> 1000€ de cashprize
+		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompense à venir ;)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 120 joueurs l\'année dernière<br /><br />
-		<span style="padding: 10px;">Finales le <b style="font-weight:bold;">27 et 28 Mai</b> à l\'<b style="font-weight:bold;">école 42</b></span><br /><br />
+		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 62 équipes l\'année dernière<br /><br />
+		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span><br /><br />
 		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a></p><br />',
 
 	'<p style="text-align:center;">
 		<b><i class="fa fa-user-circle" aria-hidden="true" style="padding-right: 5px;"></i></b> Tournoi solo
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-calendar" aria-hidden="true" style="padding-right: 5px;"></i></b> Les Mardis (début le 7 Mars)
+		<b><i class="fa fa-calendar" aria-hidden="true" style="padding-right: 5px;"></i></b> Les Dimanches (début le 25 Février)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> 500€ de cashprize
+		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompense à venir ;)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 114 joueurs l\'année dernière<br /><br />
-		<span style="padding: 10px;">Finales le <b style="font-weight:bold;">27 et 28 Mai</b> à l\'<b style="font-weight:bold;">école 42</b></span><br /><br />
+		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 384 joueurs l\'année dernière<br /><br />
+		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span><br /><br />
 		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a></p><br />');
 
 $check_teamtag = 0;
