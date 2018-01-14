@@ -12,8 +12,8 @@
 		<meta property="og:url" content="https://league.sgnw.fr/" />
 		<meta property="og:type" content="website" />
 		<meta property="og:description" content="Prêt à rejoindre la première league esport étudiante ? Venez défendre les couleurs de votre école jusqu'au podium !" />
-		<meta property="og:image" content="http://league.sgnw.fr/style/img/social.png" />
-		<meta property="og:image:secure_url" content="https://league.sgnw.fr/style/img/social.png" />
+		<meta property="og:image" content="http://league.sgnw.fr/style/img/social.png?v=2018" />
+		<meta property="og:image:secure_url" content="https://league.sgnw.fr/style/img/social.png?v=2018" />
 		<meta property="og:image:type" content="image/png" />
 
 		<?=isset($page_head)?$page_head:'';?>
@@ -24,7 +24,7 @@
 			<div class="page">
 				<div class="left">
 					<div id="social">
-						<span class="media"><a target="_blank" href="https://www.facebook.com/pages/Student-Gaming-Network-SGN/1485021598479124"><i class="fa fa-facebook-square"></i></a></span>
+						<span class="media"><a target="_blank" href="https://www.facebook.com/StudentGamingNetwork/"><i class="fa fa-facebook-square"></i></a></span>
 						<span class="media"><a target="_blank" href="https://twitter.com/Student_GN"><i class="fa fa-twitter-square"></i></a></span>
 						<span class="media"><a target="_blank" href="https://discord.gg/SGL17"><img src="./style/img/icon/discord.png" alt="discord"></a></span>
 						<span class="media"><a target="_blank" href="https://steamcommunity.com/groups/sgnw"><i class="fa fa-steam-square"></i></a></li></span>
