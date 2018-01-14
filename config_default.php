@@ -1,5 +1,10 @@
 <?php
 
+define('DTB_HOST', 'localhost');
+define('DTB_NAME', 'sgl-old');
+define('DTB_LOGIN', 'root');
+define('DTB_PASS', 'root');
+
 define ("RECAPTCHA_PUBLIC", "...");
 define ("RECAPTCHA_PRIVATE", "...");
 

@@ -5,10 +5,10 @@ class Database
 
 	public function __construct()
 	{
-		$hote = "localhost";
-		$db = "sgleague2018";
-		$login = "sgleague2018";
-		$pass = ""; // Z'avez cru quoi ?
+		$hote = DTB_HOST;
+		$db = DTB_NAME;
+		$login = DTB_LOGIN;
+		$pass = DTB_PASS; // Z'avez cru quoi ?
 
 		try
 		{
