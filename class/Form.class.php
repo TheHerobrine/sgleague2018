@@ -101,13 +101,13 @@ class Form
 		$this->database = &$bdd;
 		$this->sql = $query;
 
-		if ($this->method == METHOD_POST)
+		if ($method == METHOD_POST)
 		{
-			$this->method = $_POST;
+			$this->method = &$_POST;
 		}
-		else if ($this->method == METHOD_GET)
+		else if ($method == METHOD_GET)
 		{
-			$this->method = $_GET;
+			$this->method = &$_GET;
 		}
 	}
 
@@ -126,7 +126,7 @@ class Form
 		foreach ($this->fields as $key => $field)
 		{
 
-			if(isset($method[$key]) || ($field['type'] == "value"))
+			if(isset($this->method[$key]) || ($field['type'] == "value"))
 			{
 
 				switch ($field['type'])
