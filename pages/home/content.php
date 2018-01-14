@@ -62,10 +62,10 @@
 		<span style="font-weight:bold;">Début des inscriptions</span> :<br />Lundi 29 Janvier<br /><br />
 		<span style="font-weight:bold;">Fin des inscriptions</span> :<br />Dimanche 18 Février<br /><br />
 		<span style="font-weight:bold;">Début de la compétition</span> :<br />Dimanche 25 Février<br /><br />
-		<b style="display:inline-block;width: 70px">Lundi</b> <i class="fa fa-angle-right" aria-hidden="true" style="padding-right: 5px;"></i> League of Legends<br />
-		<b style="display:inline-block;width: 70px">Mardi</b> <i class="fa fa-angle-right" aria-hidden="true" style="padding-right: 5px;"></i> Hearthstone<br />
-		<b style="display:inline-block;width: 70px">Mercredi</b> <i class="fa fa-angle-right" aria-hidden="true" style="padding-right: 5px;"></i> Counter Strike<br />
-		<b style="display:inline-block;width: 70px">Jeudi</b> <i class="fa fa-angle-right" aria-hidden="true" style="padding-right: 5px;"></i> Overwatch<br /><br />
+		<b style="display:inline-block;width: 70px">Dimanche</b> <i class="fa fa-angle-right" aria-hidden="true" style="padding-right: 5px;"></i> Hearthstone<br />
+		<b style="display:inline-block;width: 70px">Lundi</b> <i class="fa fa-angle-right" aria-hidden="true" style="padding-right: 5px;"></i> Overwatch<br />
+		<b style="display:inline-block;width: 70px">Mardi</b> <i class="fa fa-angle-right" aria-hidden="true" style="padding-right: 5px;"></i> League of Legends<br />
+		<b style="display:inline-block;width: 70px">Mercredi</b> <i class="fa fa-angle-right" aria-hidden="true" style="padding-right: 5px;"></i> Counter Strike<br /><br />
 		<span style="font-weight:bold;">Finale LoL / HS</span> :<br />Samedi 5 Mai<br /><br />
 		<span style="font-weight:bold;">Finale OW / CS:GO</span> :<br />Samedi 12 Mai<br /><br />
 	</div>

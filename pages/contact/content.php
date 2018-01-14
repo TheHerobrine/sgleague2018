@@ -14,11 +14,6 @@
 			<br />
 			<br />
 			<br />
-			<a href="javascript:void(0)" class="contact" data-mail="sgl17">
-				<span class="cname"><i class="fa fa-user-circle" aria-hidden="true"></i> Pierre-Loïc Pichon</span><br />
-				<span class="crank">Responsable tournoi - Admin serveurs de jeux</span><br />
-				<span class="cmail">Chargement...</span>
-			</a><br />
 			<a href="javascript:void(0)" class="contact" data-mail="vcbachelet">
 				<span class="cname"><i class="fa fa-user-circle" aria-hidden="true"></i> Vincent Bachelet</span><br />
 				<span class="crank">Président - Coordinateur général</span><br />
