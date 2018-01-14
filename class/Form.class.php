@@ -90,7 +90,7 @@ class Form
 	 */
 	public $unvalidated_code;
 
-	public function __construct(Database &$bdd, $query, array $fields_array, int $method = METHOD_POST) 
+	public function __construct(Database &$bdd, $query, array $fields_array, $method = METHOD_POST)
 	{
 		if(empty($fields_array) OR !is_array($fields_array))
 		{
@@ -100,7 +100,15 @@ class Form
 		$this->fields = &$fields_array;
 		$this->database = &$bdd;
 		$this->sql = $query;
-		$this->method = $method;
+
+		if ($this->method == METHOD_POST)
+		{
+			$this->method = $_POST;
+		}
+		else if ($this->method == METHOD_GET)
+		{
+			$this->method = $_GET;
+		}
 	}
 
 	/**
@@ -115,15 +123,6 @@ class Form
 
 		$this->valid = true;
 
-		if ($this->method == METHOD_POST)
-		{
-			$method = $_POST;
-		}
-		else if ($this->method == METHOD_GET)
-		{
-			$method = $_GET;
-		}
-
 		foreach ($this->fields as $key => $field)
 		{
 
@@ -134,70 +133,70 @@ class Form
 				{
 
 					case 'integer':
-						$this->values[$key]=(int)$method[$key];
+						$this->values[$key]=(int)$this->method[$key];
 						break;
 
 					case 'float':
-						$this->values[$key]=(float)$method[$key];
+						$this->values[$key]=(float)$this->method[$key];
 						break;
 
 					case 'string':
-						if(isset($field['Fregex']) AND preg_match($field['Fregex'],$method[$key]))
+						if(isset($field['Fregex']) AND preg_match($field['Fregex'],$this->method[$key]))
 						{
-							$this->unvalidated_message = $key . ' : Regex : "' . $field['Fregex'] . '" matched : "' . $method[$key] . '"';
+							$this->unvalidated_message = $key . ' : Regex : "' . $field['Fregex'] . '" matched : "' . $this->method[$key] . '"';
 							$this->unvalidated_code = 11;
 							$this->valid = false;
 						}
-						if(isset($field['Tregex']) AND !preg_match($field['Tregex'],$method[$key]))
+						if(isset($field['Tregex']) AND !preg_match($field['Tregex'],$this->method[$key]))
 						{
-							$this->unvalidated_message = $key . ' : Regex : "' . $field['Tregex'] . '" didn\'t match : "' . $method[$key] . '"';
+							$this->unvalidated_message = $key . ' : Regex : "' . $field['Tregex'] . '" didn\'t match : "' . $this->method[$key] . '"';
 							$this->unvalidated_code = 12;
 							$this->valid = false;
 						}
-						if(isset($field['length']) AND strlen($method[$key]) > $field['length'])
+						if(isset($field['length']) AND strlen($this->method[$key]) > $field['length'])
 						{
-							$this->unvalidated_message = $key . ' : String is too long : ' . $method[$key];
+							$this->unvalidated_message = $key . ' : String is too long : ' . $this->method[$key];
 							$this->unvalidated_code = 10;
 							$this->valid = false;
 						}
-						$this->values[$key] = $method[$key];
+						$this->values[$key] = $this->method[$key];
 						break;
 
 					case 'date':
-						if(!preg_match("/^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$/",htmlspecialchars($method[$key])))
+						if(!preg_match("/^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$/",htmlspecialchars($this->method[$key])))
 						{
-							$this->unvalidated_message = $key . ' : Date is not valid : ' . $method[$key];
+							$this->unvalidated_message = $key . ' : Date is not valid : ' . $this->method[$key];
 							$this->unvalidated_code = 20;
 							$this->valid = false;
 						}
 						else
 						{
-							$this->values[$key]=$method[$key];
+							$this->values[$key]=$this->method[$key];
 						}
 						break;
 
 					case 'datetime':
-						if(!preg_match("/^[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$/",htmlspecialchars($method[$key])))
+						if(!preg_match("/^[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$/",htmlspecialchars($this->method[$key])))
 						{
-							$this->unvalidated_message = $key . ' : Datetime is not valid : ' . $method[$key];
+							$this->unvalidated_message = $key . ' : Datetime is not valid : ' . $this->method[$key];
 							$this->unvalidated_code = 21;
 							$this->valid = false;
 						}
 						else
 						{
-							$this->values[$key]=$method[$key];
+							$this->values[$key]=$this->method[$key];
 						}
 						break;
 
 					case 'mail':
-						if(!filter_var($method[$key], FILTER_VALIDATE_EMAIL)){
-							$this->unvalidated_message = $key . ' : Mail is not valid : ' . $method[$key];
+						if(!filter_var($this->method[$key], FILTER_VALIDATE_EMAIL)){
+							$this->unvalidated_message = $key . ' : Mail is not valid : ' . $this->method[$key];
 							$this->unvalidated_code = 30;
 							$this->valid = false;
 						}
 						else
 						{
-							$this->values[$key]=$method[$key];
+							$this->values[$key]=$this->method[$key];
 						}
 						break;
 
