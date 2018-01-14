@@ -40,7 +40,7 @@ DROP PROCEDURE IF EXISTS INSERT_TEAM_REQUEST|
 -- ---
 
 CREATE PROCEDURE INSERT_SGL_USER( IN id_su_parent INTEGER, IN id_file_card INTEGER, IN id_school INTEGER,
-                                  IN login VARCHAR(32), IN pass VARCHAR(512), IN salt VARCHAR(512), IN mail VARCHAR(256), IN activation VARCHAR(256),
+                                  IN login VARCHAR(32), IN pass VARCHAR(512), IN salt VARCHAR(512), IN config_salt VARCHAR(512), IN mail VARCHAR(256), IN activation VARCHAR(256),
                                   IN type INTEGER(2), IN gender INTEGER(2), IN birth_date DATE,
                                   IN first_name VARCHAR(128), IN last_name VARCHAR(128), IN knowledge INTEGER(4))
 query:BEGIN
@@ -59,7 +59,7 @@ query:BEGIN
   END IF;
 
   INSERT INTO `T_SGL_USER` (`SU_ID_PARENT_SU`,`SU_ID_CARD_F`,`SU_ID_S`,`SU_LOGIN`,`SU_PASS`,`SU_SALT`,`SU_MAIL`,`SU_ACTIVATION`,`SU_TYPE`,`SU_GENDER`,`SU_BIRTH_DATE`,`SU_REGISTER_DATE`,`SU_FIRST_NAME`,`SU_LAST_NAME`, `SU_KNOWLEDGE_ORIGIN`) VALUES
-  (id_su_parent,id_file_card,id_school,login,pass,salt,mail,activation,type,gender,birth_date,NOW(),first_name,last_name,knowledge);
+  (id_su_parent,id_file_card,id_school,login,SHA1(CONCAT(CONCAT(salt,pass),config_salt)),salt,mail,activation,type,gender,birth_date,NOW(),first_name,last_name,knowledge);
   SELECT SU_UID,SU_ID_PARENT_SU,SU_ID_CARD_F,SU_ID_S,SU_LOGIN,SU_MAIL,SU_TYPE,SU_GENDER,SU_BIRTH_DATE,SU_FIRST_NAME,SU_LAST_NAME FROM T_SGL_USER WHERE SU_UID=LAST_INSERT_ID();
 END |
 
