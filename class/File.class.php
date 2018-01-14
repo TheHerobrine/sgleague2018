@@ -1,6 +1,7 @@
 <?php
 
 include_once('Database.class.php');
+include_once('../generic/randomstr.php');
 
 class File
 {
@@ -34,6 +35,11 @@ class File
 	 * @var string
 	 */
 	protected $path;
+
+	/**
+	 * @var string
+	 */
+	protected $tmp_path;
 
 	/**
 	 * @var string
@@ -116,9 +122,10 @@ class File
 		return false;
 	}
 
-	public function init_for_post($key, $path)
+	public function init_for_post($key, $folder)
 	{
-		if($this->init_get) {
+		if($this->init_get)
+		{
 			return false;
 		}
 
@@ -129,10 +136,24 @@ class File
 
 		else
 		{
-			//TODO: content
-			return false;
-		}
+			if(!isset($_FILES[$key]))
+			{
+				return false;
+			}
 
+			do
+			{
+				$this->path = $folder.'/'.random_str(10);
+			}
+			while(file_exists($this->path));
+
+			$this->name = '"'.addslashes($_FILES[$this->key]['name']).'"';
+			$this->tmp_path = $_FILES[$this->key]['tmp_name'];
+			$this->type = '"'.addslashes($_FILES[$this->key]['type']).'"';
+			$this->size = (int)$_FILES[$this->key]['size'];
+			$this->md5 = md5_file($_FILES[$this->key]['tmp_name']);
+			return true;
+		}
 	}
 
 	public function get_url()
@@ -181,15 +202,45 @@ class File
 
 	public function post()
 	{
+		if(!$this->init_post)
+		{
+			return false;
+		}
+
+		$cursor = $this->database->req_post('CALL INSERT_FILE(:name, :path, :size, :type, :md5);',
+			array(
+				'name' => $this->name,
+				'path' => $this->path,
+				'size' => $this->size,
+				'type' => $this->type,
+				'md5' => $this->md5
+			)
+		);
+
+		if($data = $cursor->fetch())
+		{
+			if(!move_uploaded_file($this->tmp_path,$this->path))
+			{
+				$this->database->req_post('CALL DELETE_FILE(:id);',
+					array(
+						'id' => $this->name
+					)
+				);
+				return false;
+			}
+
+			$this->reset_file();
+			$this->init_for_get($data['F_UID']);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 
 	}
 
 	public function update()
-	{
-
-	}
-
-	public function file_exist()
 	{
 
 	}
