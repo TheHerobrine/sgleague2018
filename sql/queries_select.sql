@@ -24,7 +24,10 @@ DELIMITER |
 -- Insert procedure
 
 -- Other
+DROP PROCEDURE IF EXISTS SELECT_FILE|
 DROP PROCEDURE IF EXISTS CONNECT_USER|
+DROP PROCEDURE IF EXISTS SELECT_SGL_USER_INFORMATION|
+DROP PROCEDURE IF EXISTS SELECT_SONS_SGL_USER_INFORMATION|
 
 -- ************************************************************************************************ --
 -- ----------------------------- Create Queries --------------------------------------------------- --
