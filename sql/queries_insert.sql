@@ -22,6 +22,7 @@ DELIMITER |
 -- ************************************************************************************************ --
 
 -- Insert procedure
+DROP PROCEDURE IF EXISTS INSERT_FILE|
 DROP PROCEDURE IF EXISTS INSERT_SGL_USER|
 DROP PROCEDURE IF EXISTS INSERT_PLATFORM_USER|
 DROP PROCEDURE IF EXISTS INSERT_GAME_USER|
@@ -32,6 +33,18 @@ DROP PROCEDURE IF EXISTS INSERT_TEAM_REQUEST|
 -- ************************************************************************************************ --
 -- ----------------------------- Create Queries --------------------------------------------------- --
 -- ************************************************************************************************ --
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------- --
+-- INSERT_FILE
+-- ---
+
+CREATE PROCEDURE INSERT_FILE(IN name VARCHAR(256), IN path VARCHAR(512), IN size INTEGER, IN type VARCHAR(64), IN md5 VARCHAR(65))
+BEGIN
+  INSERT INTO `T_FILE` (`F_NAME`,`F_PATH`,`F_SIZE`,`F_TYPE`,`F_MD5`) VALUES
+  (name,path,size,type,md5);
+
+  SELECT F_UID, F_NAME, F_PATH, F_SIZE, F_TYPE, F_MD5 FROM T_FILE WHERE F_UID=LAST_INSERT_ID();
+END |
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- INSERT_SGL_USER
