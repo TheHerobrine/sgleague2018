@@ -5,6 +5,9 @@ define('DTB_NAME', 'sgl-old');
 define('DTB_LOGIN', 'root');
 define('DTB_PASS', 'root');
 
+define('ABSOLUTE_FILES_DIRECTORY', $_SERVER['DOCUMENT_ROOT'].'/files');
+define('RELATIVE_FILES_DIRECTORY', '/files');
+
 define ("RECAPTCHA_PUBLIC", "...");
 define ("RECAPTCHA_PRIVATE", "...");
 
