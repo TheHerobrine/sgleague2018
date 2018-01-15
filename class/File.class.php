@@ -86,7 +86,9 @@ class File
 	 */
 	public function reset_file()
 	{
-		$this->init = false;
+		$this->init_get = false;
+		$this->init_post = false;
+		return true;
 	}
 
 	public function init_for_get($id)
@@ -111,7 +113,7 @@ class File
 			$this->id = $data['F_UID'];
 			$this->name = $data['F_NAME'];
 			$this->path = $data['F_PATH'];
-			$this->url = $data['F_PATH'];
+			$this->url = RELATIVE_FILES_DIRECTORY.$data['F_PATH'];
 			$this->size = $data['F_SIZE'];
 			$this->type = $data['F_TYPE'];
 			$this->init_get = true;
@@ -122,7 +124,7 @@ class File
 		return false;
 	}
 
-	public function init_for_post($key, $folder)
+	public function init_for_post($key, $folder = '')
 	{
 		if($this->init_get)
 		{
@@ -145,7 +147,7 @@ class File
 			{
 				$this->path = $folder.'/'.random_str(10);
 			}
-			while(file_exists($this->path));
+			while(file_exists(ABSOLUTE_FILES_DIRECTORY.$this->path));
 
 			$this->name = '"'.addslashes($_FILES[$this->key]['name']).'"';
 			$this->tmp_path = $_FILES[$this->key]['tmp_name'];
@@ -168,7 +170,7 @@ class File
 		}
 	}
 
-	public function get_info()
+	public function get()
 	{
 		if($this->init_get)
 		{
@@ -223,40 +225,62 @@ class File
 			{
 				$this->database->req_post('CALL DELETE_FILE(:id);',
 					array(
-						'id' => $this->name
+						'id' => $data['F_UID']
 					)
 				);
 				return false;
-			}
 
-			$this->reset_file();
-			$this->init_for_get($data['F_UID']);
-			return true;
+			}
+			else
+			{
+				$this->reset_file();
+				$this->id = $data['F_UID'];
+				$this->name = $data['F_NAME'];
+				$this->path = $data['F_PATH'];
+				$this->url = RELATIVE_FILES_DIRECTORY.$data['F_PATH'];
+				$this->size = $data['F_SIZE'];
+				$this->type = $data['F_TYPE'];
+				$this->init_get = true;
+				return true;
+			}
 		}
 		else
 		{
 			return false;
 		}
-
 	}
 
-	public function update()
+	public function update($key, $folder)
 	{
+		if(!$this->init_get)
+		{
+			return false;
+		}
 
-	}
+		if($this->delete())
+			if($this->reset_file())
+				if($this->init_for_post($key, $folder))
+					if($this->post())
+						return true;
 
-	public function delete_file()
-	{
-
-	}
-
-	public function upload_file()
-	{
-
+		return false;
 	}
 
 	public function delete()
 	{
+		if(!$this->init_get)
+		{
+			return false;
+		}
 
+		$this->database->req_post('CALL DELETE_FILE(:id);',
+			array(
+				'id' => $this->id
+			)
+		);
+		unlink(ABSOLUTE_FILES_DIRECTORY.$this->path);
+
+		$this->reset_file();
+		return true;
 	}
 }
