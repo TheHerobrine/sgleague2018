@@ -124,7 +124,7 @@ class File
 		return false;
 	}
 
-	public function init_for_post($key, $folder = '')
+	public function init_for_post($key, $folder, $types, $size = 5000000, $maxW = 800, $maxH = 800)
 	{
 		if($this->init_get)
 		{
@@ -142,18 +142,74 @@ class File
 			{
 				return false;
 			}
+			if($_FILES[$key]["size"] > $size)
+			{
+				return false;
+			}
+			if (!is_uploaded_file($_FILES[$key]['tmp_name']))
+			{
+				return false;
+			}
+
+
+			$this->key = $key;
 
 			do
 			{
-				$this->path = $folder.'/'.random_str(10);
+				$this->path = $folder.random_str(10,"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 			}
 			while(file_exists(ABSOLUTE_FILES_DIRECTORY.$this->path));
+
+			//File controls
+			if(!array_search($_FILES[$this->key]['type'], $types))
+			{
+				return false;
+			}
+			if($_FILES[$key]["size"] > $size)
+			{
+				return false;
+			}
+
+			$imagetypes = array(
+				image_type_to_mime_type(IMAGETYPE_JPEG),
+				image_type_to_mime_type(IMAGETYPE_JPEG2000),
+				image_type_to_mime_type(IMAGETYPE_PNG)
+			);
+
+			if(array_search($_FILES[$key]['type'], $imagetypes))
+			{
+				list($width, $height) = getimagesize($_FILES[$key]["tmp_name"]);
+				$thumb = imagecreatetruecolor(min($maxW, $width), min($maxH,$height));
+
+				switch ($_FILES[$this->key]['type'])
+				{
+					case image_type_to_mime_type(IMAGETYPE_JPEG):
+						$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
+						imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
+						imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
+						break;
+
+					case image_type_to_mime_type(IMAGETYPE_JPEG2000):
+						$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
+						imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
+						imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
+						break;
+
+					case image_type_to_mime_type(IMAGETYPE_PNG):
+						$source = imagecreatefrompng($_FILES[$this->key]['tmp_name']);
+						imagecopyresized($thumb, $source, 0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
+						imagepng($thumb, $_FILES[$this->key]['tmp_name']);
+						break;
+				}
+			}
 
 			$this->name = '"'.addslashes($_FILES[$this->key]['name']).'"';
 			$this->tmp_path = $_FILES[$this->key]['tmp_name'];
 			$this->type = '"'.addslashes($_FILES[$this->key]['type']).'"';
-			$this->size = (int)$_FILES[$this->key]['size'];
+			$this->size = (int)filesize($_FILES[$key]['tmp_name']);
 			$this->md5 = md5_file($_FILES[$this->key]['tmp_name']);
+			$this->init_post = true;
+
 			return true;
 		}
 	}
@@ -221,7 +277,7 @@ class File
 
 		if($data = $cursor->fetch())
 		{
-			if(!move_uploaded_file($this->tmp_path,$this->path))
+			if(!move_uploaded_file($this->tmp_path,ABSOLUTE_FILES_DIRECTORY.$this->path))
 			{
 				$this->database->req_post('CALL DELETE_FILE(:id);',
 					array(
