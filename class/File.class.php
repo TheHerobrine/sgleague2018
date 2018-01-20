@@ -187,20 +187,25 @@ class File
 						$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
 						imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
 						imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
+						imagedestroy($source);
 						break;
 
 					case image_type_to_mime_type(IMAGETYPE_JPEG2000):
 						$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
 						imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
 						imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
+						imagedestroy($source);
 						break;
 
 					case image_type_to_mime_type(IMAGETYPE_PNG):
 						$source = imagecreatefrompng($_FILES[$this->key]['tmp_name']);
 						imagecopyresized($thumb, $source, 0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
 						imagepng($thumb, $_FILES[$this->key]['tmp_name']);
+						imagedestroy($source);
 						break;
 				}
+
+				imagedestroy($thumb);
 			}
 
 			$this->name = '"'.addslashes($_FILES[$this->key]['name']).'"';
