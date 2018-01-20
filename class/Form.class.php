@@ -246,7 +246,7 @@ class Form
 							$maxS = (isset($field['max_size']))? $field['max_size']: 5000000;
 							$maxW = (isset($field['max_width']))? $field['max_width']: 800;
 							$maxH = (isset($field['max_height']))? $field['max_height']: 800;
-							if(!$file->init_for_post($key, RELATIVE_FILES_DIRECTORY, $field['types'], $maxS, $maxW, $maxH))
+							if(!$file->init_for_post($key, $field['destination'], $field['types'], $maxS, $maxW, $maxH))
 							{
 								$this->unvalidated_message = $key . ' : Error during file initialization';
 								$this->unvalidated_code = 51;
