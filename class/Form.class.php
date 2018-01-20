@@ -9,11 +9,13 @@ define ("METHOD_GET", 2);
 
 /**
  * Exmple d'utilisation
+ * $types_for_file = array(image_type_to_mime_type(IMAGETYPE_JPEG), image_type_to_mime_type(IMAGETYPE_PNG));
  * $fields = array(
  * 	'field1' => array('type' => 'integer'),
  * 	'field2' => array('type' => 'string', 'length' => '15', 'Tregex' => 'doiefjzoiefj'),
  * 	'field3' => array('type' => 'mail'),
- *  'field4' => array('type' => 'value', 'value' => 'patate')
+ *  'field4' => array('type' => 'value', 'value' => 'patate'),
+ *  'field5' => array('type' => 'file', 'types' =>  $types_for_file, 'destination' => '\\', 'max_size' => 5000000, 'max_width' => 800, 'max_height' => 800)
  *
  * );
  * $query = "CALL MA_QUERY(:field1, :field2, :field3, :field4)";
@@ -79,6 +81,12 @@ class Form
 	protected $method = 0;
 
 	/**
+	 * to delete files if abort
+	 * @var array $file_control
+	 */
+	protected $file_control = array();
+
+	/**
 	 * Information about validation
 	 * @var string $unvalidated_message
 	 */
@@ -126,7 +134,7 @@ class Form
 		foreach ($this->fields as $key => $field)
 		{
 
-			if(isset($this->method[$key]) || ($field['type'] == "value"))
+			if(isset($this->method[$key]) || ($field['type'] == "value") || ($field['type'] == "file"))
 			{
 
 				switch ($field['type'])
@@ -203,11 +211,63 @@ class Form
 					case 'value':
 						if(!$field['value'])
 						{
-							$this->unvalidated_message = $key . ' : Value is not set : ';
+							$this->unvalidated_message = $key . ' : Value is not set';
 							$this->unvalidated_code = 42;
 							$this->valid = false;
 						}
-						$this->values[$key] = $field['value'];
+						else
+						{
+							$this->values[$key] = $field['value'];
+						}
+						break;
+
+					case 'file':
+						if(!isset($_FILES[$key]))
+						{
+							$this->unvalidated_message = $key . ' : File doesn\'t exist';
+							$this->unvalidated_code = 54;
+							$this->valid = false;
+						}
+						else if(!isset($field['destination']))
+						{
+							$this->unvalidated_message = $key . ' : Destination not set';
+							$this->unvalidated_code = 55;
+							$this->valid = false;
+						}
+						else if(!isset($field['types']))
+						{
+							$this->unvalidated_message = $key . ' : Authorized types not set';
+							$this->unvalidated_code = 53;
+							$this->valid = false;
+						}
+						else
+						{
+							$file = new File($this->database);
+							$maxS = (isset($field['max_size']))? $field['max_size']: 5000000;
+							$maxW = (isset($field['max_width']))? $field['max_width']: 800;
+							$maxH = (isset($field['max_height']))? $field['max_height']: 800;
+							if(!$file->init_for_post($key, RELATIVE_FILES_DIRECTORY, $field['types'], $maxS, $maxW, $maxH))
+							{
+								$this->unvalidated_message = $key . ' : Error during file initialization';
+								$this->unvalidated_code = 51;
+								$this->valid = false;
+							}
+							else
+							{
+								if(!$file->post())
+								{
+									$this->unvalidated_message = $key . ' : Error during file uploading';
+									$this->unvalidated_code = 52;
+									$this->valid = false;
+								}
+								else
+								{
+									$file_info = $file->get();
+									$this->values[$key] = $file_info['ID'];
+									$this->file_control[$key] = $file;
+								}
+							}
+						}
 						break;
 
 					default:
@@ -240,7 +300,20 @@ class Form
 		if($this->is_valid())
 		{
 			debug("SQL SEND()",$this->sql."<br/>Valid");
-			return $this->database->req_post($this->sql, $this->values);
+			try
+			{
+				return $this->database->req_post($this->sql, $this->values);
+			}
+			catch (Exception $e)
+			{
+				foreach($this->file_control as $key => $file)
+				{
+					$file->delete();
+				}
+				$this->unvalidated_message = 'Error to execute request';
+				$this->unvalidated_code = 60;
+				return false;
+			}
 		}
 		else
 		{
