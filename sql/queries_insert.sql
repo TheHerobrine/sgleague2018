@@ -86,6 +86,7 @@ END |
 CREATE PROCEDURE INSERT_SGL_USER(IN login VARCHAR(32), IN pass VARCHAR(512), IN salt VARCHAR(512), IN config_salt VARCHAR(512), IN mail VARCHAR(256), IN activation VARCHAR(256), IN school VARCHAR(256))
 query:BEGIN
   DECLARE is_user_existing INTEGER DEFAULT NULL;
+  DECLARE school_id INTEGER DEFAULT NULL;
 
   SELECT SU_UID INTO is_user_existing FROM T_SGL_USER WHERE SU_LOGIN=login;
   IF is_user_existing IS NOT NULL THEN
@@ -99,7 +100,6 @@ query:BEGIN
     LEAVE query;
   END IF;
 
-  DECLARE school_id INTEGER DEFAULT NULL;
 
   CALL INSERT_SCHOOL(school, school_id);
 
