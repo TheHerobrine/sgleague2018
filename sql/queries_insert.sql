@@ -99,14 +99,16 @@ query:BEGIN
     LEAVE query;
   END IF;
 
-  CALL INSERT_SCHOOL(school);
+  DECLARE school_id INTEGER DEFAULT NULL;
+
+  CALL INSERT_SCHOOL(school, school_id);
 
   SELECT SU_UID INTO is_user_existing FROM T_SGL_USER WHERE SU_MAIL=mail AND SU_PASS IS NULL;
   IF is_user_existing IS NOT NULL THEN
-    UPDATE `T_SGL_USER` SET SU_LOGIN=login, SU_PASS=SHA1(CONCAT(CONCAT(salt,pass),config_salt)), SU_SALT=salt, SU_ACTIVATION=activation, SU_ID_S=S_UID WHERE SU_MAIL=mail;
+    UPDATE `T_SGL_USER` SET SU_LOGIN=login, SU_PASS=SHA1(CONCAT(CONCAT(salt,pass),config_salt)), SU_SALT=salt, SU_ACTIVATION=activation, SU_ID_S=school_id WHERE SU_MAIL=mail;
   ELSE
     INSERT INTO `T_SGL_USER` (`SU_LOGIN`,`SU_PASS`,`SU_SALT`,`SU_MAIL`,`SU_ACTIVATION`,`SU_ID_S`) VALUES
-  (login,SHA1(CONCAT(CONCAT(salt,pass),config_salt)),salt,mail,activation,S_UID);
+  (login,SHA1(CONCAT(CONCAT(salt,pass),config_salt)),salt,mail,activation,school_id);
   END IF;
 
   
