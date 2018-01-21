@@ -193,6 +193,8 @@ if ($register_flag)
 	
 		$data = $return->fetch();
 
+		debug("Data", $data);
+
 		if ($data["RESULT"])
 		{
 			/*
