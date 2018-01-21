@@ -1,6 +1,5 @@
 <?php
 
-include_once('File.class.php');
 include_once('Database.class.php');
 
 define ("METHOD_DEFAULT", 0);
@@ -242,6 +241,8 @@ class Form
 						}
 						else
 						{
+							include_once('File.class.php');
+							
 							$file = new File($this->database);
 							$maxS = (isset($field['max_size']))? $field['max_size']: 5000000;
 							$maxW = (isset($field['max_width']))? $field['max_width']: 800;

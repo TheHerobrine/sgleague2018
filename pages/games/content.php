@@ -44,7 +44,7 @@ $games_content = array(
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompenses à venir ;)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 64 équipes l\'année dernière<br /><br />
+		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 34 équipes l\'année dernière<br /><br />
 		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span><!--<br /><br />
 		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p><br />',
 

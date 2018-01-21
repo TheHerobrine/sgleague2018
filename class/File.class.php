@@ -1,7 +1,7 @@
 <?php
 
-include_once('Database.class.php');
-include_once('../generic/randomstr.php');
+include_once('./Database.class.php');
+include_once('./generic/randomstr.php');
 
 class File
 {

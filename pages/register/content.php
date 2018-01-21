@@ -40,7 +40,7 @@ if (isset($_POST["sent"]))
 		{
 			if (!(preg_match("/[^A-Za-z0-9\!\?\.\-\#_]/", $form_login)))
 			{
-				$temp = $database->req('SELECT COUNT(*) as exist FROM sgl_users WHERE login="'.addslashes($form_login).'"');
+				$temp = $database->req_get('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE SU_LOGIN="'.addslashes($form_login).'"');
 				$data = $temp->fetch();
 
 				if ($data["exist"] != 0)
@@ -107,7 +107,7 @@ if (isset($_POST["sent"]))
 	{
 		if (filter_var($form_mail, FILTER_VALIDATE_EMAIL) == true)
 		{
-			$temp = $database->req('SELECT COUNT(*) as exist FROM sgl_users WHERE mail="'.addslashes($form_mail).'" AND activation=""');
+			$temp = $database->req_get('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE SU_MAIL="'.addslashes($form_mail).'" AND SU_PASS IS NOT NULL');
 			$data = $temp->fetch();
 
 			if ($data["exist"] != 0)
@@ -172,34 +172,40 @@ if ($register_flag)
 	$salt = random_str(100);
 	$activation = random_str(20);
 
-	$hash = sha1($salt.$form_pass.CONFIG_SALT);
+	include_once("./class/Form.class.php");
 
-	$temp = $database->req('SELECT COUNT(*) as existuser FROM sgl_users WHERE mail="'.addslashes($form_mail).'"');
-	$data = $temp->fetch();
+	$fields = array(
+		'login' => array('type' => 'string', 'length' => '128'),
+		'pass' => array('type' => 'string', 'length' => '128'),
+		'mail' => array('type' => 'string', 'length' => '128'),
+		'school' => array('type' => 'string', 'length' => '128'),
+		'configsalt' => array('type' => 'value', 'value' => CONFIG_SALT),
+		'salt' => array('type' => 'value', 'value' => $salt),
+		'activation' => array('type' => 'value', 'value' => $activation)
+	);
 
-	if ($data["existuser"] > 0)
+	$query = "CALL INSERT_SGL_USER(:login, :pass, :salt, :configsalt, :mail, :activation, :school)";
+
+	$form = new Form(new Database(), $query, $fields);
+	if($form->is_valid())
 	{
-		$temp = $database->req('SELECT id FROM sgl_users WHERE mail="'.addslashes($form_mail).'"');
-		$data = $temp->fetch();
-
-		$database->req('UPDATE sgl_users SET login = "'.addslashes($form_login).'", pass = "'.$hash.'", salt = "'.$salt.'", mail = "'.addslashes($form_mail).'",
-			activation = "'.$activation.'", school = "'.addslashes($form_school).'", register = '.time().' WHERE id = '.$data["id"]);
-	}
-	else
-	{
-		$database->req('INSERT INTO sgl_users (login, pass, salt, mail, activation, school, register)
-			VALUES("'.addslashes($form_login).'", "'.$hash.'", "'.$salt.'", "'.addslashes($form_mail).'", "'.$activation.'", "'.addslashes($form_school).'", '.time().')');
-	}
-
+		$return = $form->send();
 	
+		$data = $return->fetch();
 
-	$subject = "Confirmation d'inscription à la Student Gaming League";
-	$content = "Bienvenue à la Student Gaming League !\n\n
+		if ($data["RESULT"])
+		{
+			/*
+			$subject = "Confirmation d'inscription à la Student Gaming League";
+			$content = "Bienvenue à la Student Gaming League !\n\n
 Pour confirmer votre inscription, cliquez sur le lien suivant : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=activation&mvp=".strtolower($form_login)."&key=".$activation.">\n
 Vous pourrez ensuite créer ou rejoindre une équipe pour vos jeux préférés.\n\nL'équipe de la Student Gaming League 2017";
 
-	include_once("./class/Mail.class.php");
-	new Mail($form_mail, $subject, $content);
+			include_once("./class/Mail.class.php");
+			new Mail($form_mail, $subject, $content);
+			*/
+		}
+	}
 ?>
 
 <div id="content">

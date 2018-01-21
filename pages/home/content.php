@@ -33,7 +33,7 @@
 		<h1><i class="fa fa-angle-right" aria-hidden="true"></i> Rétrospectives</h1><br />
 		<div style="text-align: center">
 
-<h2 style="font-size: 16px">La <b>Student Gaming League</b> 2017, c'est :</h2>
+<h2 style="font-size: 16px">La <b>Student Gaming League</b> 2017, c'était :</h2>
 
 <br />
 <canvas class="dataline glslCanvas" data-fragment-url="./style/frag/data_01.frag"></canvas>

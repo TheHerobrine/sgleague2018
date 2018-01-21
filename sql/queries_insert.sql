@@ -23,6 +23,7 @@ DELIMITER |
 
 -- Insert procedure
 DROP PROCEDURE IF EXISTS INSERT_FILE|
+DROP PROCEDURE IF EXISTS INSERT_SGL_USER_FROM_PARENT|
 DROP PROCEDURE IF EXISTS INSERT_SGL_USER|
 DROP PROCEDURE IF EXISTS INSERT_PLATFORM_USER|
 DROP PROCEDURE IF EXISTS INSERT_GAME_USER|
@@ -47,12 +48,12 @@ BEGIN
 END |
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
--- INSERT_SGL_USER
+-- INSERT_SGL_USER_FROM_PARENT
 -- Error:1 <= Login already used
 -- Error:2 <= Mail already used
 -- ---
 
-CREATE PROCEDURE INSERT_SGL_USER( IN id_su_parent INTEGER, IN id_file_card INTEGER, IN id_school INTEGER,
+CREATE PROCEDURE INSERT_SGL_USER_FROM_PARENT( IN id_su_parent INTEGER, IN id_file_card INTEGER, IN id_school INTEGER,
                                   IN login VARCHAR(32), IN pass VARCHAR(512), IN salt VARCHAR(512), IN config_salt VARCHAR(512), IN mail VARCHAR(256), IN activation VARCHAR(256),
                                   IN type INTEGER(2), IN gender INTEGER(2), IN birth_date DATE,
                                   IN first_name VARCHAR(128), IN last_name VARCHAR(128), IN knowledge INTEGER(4))
@@ -74,6 +75,42 @@ query:BEGIN
   INSERT INTO `T_SGL_USER` (`SU_ID_PARENT_SU`,`SU_ID_CARD_F`,`SU_ID_S`,`SU_LOGIN`,`SU_PASS`,`SU_SALT`,`SU_MAIL`,`SU_ACTIVATION`,`SU_TYPE`,`SU_GENDER`,`SU_BIRTH_DATE`,`SU_REGISTER_DATE`,`SU_FIRST_NAME`,`SU_LAST_NAME`, `SU_KNOWLEDGE_ORIGIN`) VALUES
   (id_su_parent,id_file_card,id_school,login,SHA1(CONCAT(CONCAT(salt,pass),config_salt)),salt,mail,activation,type,gender,birth_date,NOW(),first_name,last_name,knowledge);
   SELECT SU_UID,SU_ID_PARENT_SU,SU_ID_CARD_F,SU_ID_S,SU_LOGIN,SU_MAIL,SU_TYPE,SU_GENDER,SU_BIRTH_DATE,SU_FIRST_NAME,SU_LAST_NAME FROM T_SGL_USER WHERE SU_UID=LAST_INSERT_ID();
+END |
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------- --
+-- INSERT_SGL_USER
+-- Error:1 <= Login already used
+-- Error:2 <= Mail already used
+-- ---
+
+CREATE PROCEDURE INSERT_SGL_USER(IN login VARCHAR(32), IN pass VARCHAR(512), IN salt VARCHAR(512), IN config_salt VARCHAR(512), IN mail VARCHAR(256), IN activation VARCHAR(256), IN school VARCHAR(256))
+query:BEGIN
+  DECLARE is_user_existing INTEGER DEFAULT NULL;
+
+  SELECT SU_UID INTO is_user_existing FROM T_SGL_USER WHERE SU_LOGIN=login;
+  IF is_user_existing IS NOT NULL THEN
+    SELECT FALSE as RESULT, 1 as ERROR;
+    LEAVE query;
+  END IF;
+
+  SELECT SU_UID INTO is_user_existing FROM T_SGL_USER WHERE SU_MAIL=mail AND SU_PASS IS NOT NULL;
+  IF is_user_existing IS NOT NULL THEN
+    SELECT FALSE as RESULT, 2 as ERROR;
+    LEAVE query;
+  END IF;
+
+  CALL INSERT_SCHOOL(school);
+
+  SELECT SU_UID INTO is_user_existing FROM T_SGL_USER WHERE SU_MAIL=mail AND SU_PASS IS NULL;
+  IF is_user_existing IS NOT NULL THEN
+    UPDATE `T_SGL_USER` SET SU_LOGIN=login, SU_PASS=SHA1(CONCAT(CONCAT(salt,pass),config_salt)), SU_SALT=salt, SU_ACTIVATION=activation, SU_ID_S=S_UID WHERE SU_MAIL=mail;
+  ELSE
+    INSERT INTO `T_SGL_USER` (`SU_LOGIN`,`SU_PASS`,`SU_SALT`,`SU_MAIL`,`SU_ACTIVATION`,`SU_ID_S`) VALUES
+  (login,SHA1(CONCAT(CONCAT(salt,pass),config_salt)),salt,mail,activation,S_UID);
+  END IF;
+
+  
+  SELECT TRUE as RESULT;
 END |
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
@@ -110,11 +147,16 @@ END |
 -- INSERT_SCHOOL
 -- ---
 
-CREATE PROCEDURE INSERT_SCHOOL( IN id_file_logo INTEGER, IN name_school VARCHAR(1024), IN city VARCHAR(256), IN country VARCHAR(128), IN website VARCHAR(1024))
+CREATE PROCEDURE INSERT_SCHOOL(IN name_school VARCHAR(1024), OUT school_id INTEGER)
 BEGIN
-  INSERT INTO `T_SCHOOL` (`S_ID_LOGO_F`,`S_NAME`,`S_CITY`,`S_COUNTRY`,`S_WEBSITE`) VALUES
-  (id_file_logo,name_school,city,country,website);
-  SELECT S_UID, S_ID_LOGO_F, S_NAME, S_CITY, S_COUNTRY, S_WEBSITE FROM T_SCHOOL WHERE S_UID=LAST_INSERT_ID();
+
+  SELECT S_UID INTO school_id FROM T_SCHOOL WHERE LOWER(TRIM(S_NAME))=LOWER(TRIM(name_school));
+  IF school_id IS NULL THEN
+    INSERT INTO `T_SCHOOL` (`S_NAME`) VALUES (name_school);
+    SELECT S_UID INTO school_id FROM T_SCHOOL WHERE S_UID=LAST_INSERT_ID();
+  END IF;
+
+  SELECT school_id as S_UID;
 END|
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
