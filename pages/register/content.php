@@ -40,7 +40,7 @@ if (isset($_POST["sent"]))
 		{
 			if (!(preg_match("/[^A-Za-z0-9\!\?\.\-\#_]/", $form_login)))
 			{
-				$temp = $database->req_get('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE SU_LOGIN="'.addslashes($form_login).'"');
+				$temp = $database->req_post('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE SU_LOGIN=:login', array('login' => '"'.addslashes($form_login).'"'));
 				$data = $temp->fetch();
 
 				if ($data["exist"] != 0)
@@ -107,7 +107,7 @@ if (isset($_POST["sent"]))
 	{
 		if (filter_var($form_mail, FILTER_VALIDATE_EMAIL) == true)
 		{
-			$temp = $database->req_get('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE SU_MAIL="'.addslashes($form_mail).'" AND SU_PASS IS NOT NULL');
+			$temp = $database->req_post('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE SU_MAIL=:mail AND SU_PASS IS NOT NULL', array('mail' => '"'.addslashes($form_mail).'"'));
 			$data = $temp->fetch();
 
 			if ($data["exist"] != 0)
@@ -186,7 +186,8 @@ if ($register_flag)
 
 	$query = "CALL INSERT_SGL_USER(:login, :pass, :salt, :configsalt, :mail, :activation, :school)";
 
-	$form = new Form(new Database(), $query, $fields);
+	$database = new Database();
+	$form = new Form($database, $query, $fields);
 	if($form->is_valid())
 	{
 		$return = $form->send();
