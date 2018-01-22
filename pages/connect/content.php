@@ -136,7 +136,8 @@ else
 
 		$query = "CALL CONNECT_USER(:login, :pass, :salt)";
 
-		$form = new Form(new Database(), $query, $fields);
+		$database = new Database();
+		$form = new Form($database, $query, $fields);
 		if($form->is_valid())
 		{
 			$return = $form->send();
