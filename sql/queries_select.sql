@@ -28,6 +28,8 @@ DROP PROCEDURE IF EXISTS SELECT_FILE|
 DROP PROCEDURE IF EXISTS CONNECT_USER|
 DROP PROCEDURE IF EXISTS SELECT_SGL_USER_INFORMATION|
 DROP PROCEDURE IF EXISTS SELECT_SONS_SGL_USER_INFORMATION|
+DROP PROCEDURE IF EXISTS SELECT_GAMES_WITH_PLATFORM|
+DROP PROCEDURE IF EXISTS SELECT_GAME_USER_BY_SU|
 
 -- ************************************************************************************************ --
 -- ----------------------------- Create Queries --------------------------------------------------- --
@@ -86,4 +88,35 @@ END|
 CREATE PROCEDURE SELECT_SONS_SGL_USER_INFORMATION( IN id_user INTEGER )
 BEGIN
   SELECT SU_UID, SU_ID_CARD_F, SU_ID_S, SU_MAIL, SU_GENDER, SU_BIRTH_DATE, SU_FIRST_NAME, SU_LAST_NAME FROM T_SGL_USER WHERE SU_ID_PARENT_SU=id_user;
+END|
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------- --
+-- SELECT_GAMES_WITH_PLATFORM
+-- ---
+
+CREATE PROCEDURE SELECT_GAMES_WITH_PLATFORM()
+BEGIN
+  SELECT G_UID, G_ID_LOGO_F, G_NAME, G_DESCRIPTION, G_RANK_DESCRIPTION, G_USE_PLATEFORM_PSEUDO, P_UID, P_ID_LOGO_F, P_NAME, P_PSEUDO_NAME, P_COMPANY, P_WEBSITE
+  FROM T_GAME LEFT JOIN T_PLATFORM ON G_ID_P=P_UID
+  ORDER BY P_UID;
+END |
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------- --
+-- SELECT_PLATFORM_USER
+-- ---
+
+CREATE PROCEDURE SELECT_GAME_USER_BY_SU( IN id_user INTEGER, IN id_user_check INTEGER)
+BEGIN
+  DECLARE id_user_confirmed INTEGER DEFAULT NULL;
+
+  SELECT SU_UID INTO id_user_confirmed FROM T_SGL_USER WHERE SU_UID=id_user AND (SU_UID=id_user_check OR SU_ID_PARENT_SU=id_user_check);
+
+  IF id_user_confirmed IS NOT NULL THEN
+    SELECT TRUE as RESULT, PU_UID, PU_ID_P, PU_PSEUDO, GU_UID, GU_ID_G, GU_PSEUDO, GU_RANK FROM T_PLATFORM_USER
+    LEFT JOIN T_GAME_USER ON PU_UID=GU_ID_PU
+    WHERE PU_ID_SU=id_user_confirmed
+    ORDER BY PU_ID_P;
+  ELSE
+    SELECT FALSE as RESULT;
+  END IF;
 END|
