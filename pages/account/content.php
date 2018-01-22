@@ -149,8 +149,8 @@ if (isset($_POST["sent"]))
 	}
 }
 
-$temp = $database->req('SELECT login, mail, steamid, battletag, summoner, school, first, name, gender, birth, discord, rankcs, ranklol, rankow FROM sgl_users WHERE id='.$_SESSION["sgl_id"]);
-$data = $temp->fetch();
+//$temp = $database->req('SELECT login, mail, steamid, battletag, summoner, school, first, name, gender, birth, discord, rankcs, ranklol, rankow FROM sgl_users WHERE id='.$_SESSION["sgl_id"]);
+//$data = $temp->fetch();
 
 $birth_day = intval(date('d', $data["birth"]));
 $birth_month = intval(date('m', $data["birth"]));

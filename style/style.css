@@ -810,7 +810,7 @@ input:focus, input:hover, textarea:focus, textarea:hover
 	color: #0c0c0c;
 }
 
-.playercard .playerschool
+.dropdown .subdrop
 {
 	opacity: 0.5;
 	float: right;

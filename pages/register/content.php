@@ -257,7 +257,7 @@ else
 					<tr><td><h3>Mail <b>*</b> :</h3></td><td><input type="mail" name="mail" <?=isset($form_mail)?'value="'.$form_mail.'"':''?>/><br />
 					<?=$error_mail?>
 					<div class="smallquote">Essayez de mettre votre mail étudiant, comme ça vous n'aurez pas à scanner votre carte étudiante.</div></td></tr>
-					<tr><td><h3>Ecole <b>*</b> :</h3></td><td><input type="text" name="school" <?=isset($form_school)?'value="'.$form_school.'"':''?>/><br />
+					<tr><td><h3>Ecole <b>*</b> :</h3></td><td><input type="text" name="school" id="school_form" <?=isset($form_school)?'value="'.$form_school.'"':''?>/><br />
 					<?=$error_school?>
 					<div class="smallquote">Pour ceux qui n'écoutent rien : on doit être étudiant pour participer à la SGL !</div></td></tr>
 				</table>
