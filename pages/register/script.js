@@ -134,6 +134,19 @@ function fillAutocompletion(getTextContent, parentNode, textInput) {
 	}
 }
 
+function destroyAutocompletion(getTextContent, parentNode, textInput) {
+	return function ()
+	{
+		if (GLOBALS.currentDropdownSuggestionNode != null)
+		{
+			setTimeout(() => {
+				textInput.parentNode.removeChild(GLOBALS.currentDropdownSuggestionNode);
+				GLOBALS.currentDropdownSuggestionNode = null;
+			});
+		}
+	}
+}
+
 window.onload = function()
 {
 	textInput = d3.select("#school_form").node();
@@ -141,7 +154,9 @@ window.onload = function()
 	getText = () => textInput.value;
 
 	autocomplete = debounce(fillAutocompletion(getText, textInput.parentNode, textInput), 300);
+	lostfocus = debounce(destroyAutocompletion(getText, textInput.parentNode, textInput), 300);
 
 	textInput.addEventListener('keydown', autocomplete);
 	textInput.addEventListener('focus', autocomplete);
+	textInput.addEventListener('blur', lostfocus);
 }
