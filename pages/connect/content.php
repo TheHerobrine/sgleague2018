@@ -55,7 +55,8 @@ else if (isset($_GET["recover"]))
 		//TODO_QUERY: doit fonctionner aussi avec le mail
 		$query = "SELECT SU_MAIL, SU_LOGIN FROM t_sgl_user WHERE LOWER(SU_LOGIN)=LOWER(:login) AND SU_ACTIVATION IS NULL";
 
-		$form = new Form(new Database(), $query, $fields);
+		$database = new Database();
+		$form = new Form($database, $query, $fields);
 
 		if($form->is_valid())
 		{
