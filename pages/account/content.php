@@ -19,7 +19,7 @@ foreach($tmp_games as $game)
 }
 unset($tmp_games);
 
-$cursor = $database->req_post("CALL SELECT_GAME_USER_BY_SU(:id_user, :id_check", array(
+$cursor = $database->req_post("CALL SELECT_GAME_USER_BY_SU(:id_user, :id_check)", array(
 		"id_user" => $_SESSION['sgl_id'],
 		"id_check" => $_SESSION["sgl_id"]
 ));
