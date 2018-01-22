@@ -32,7 +32,6 @@ class Database
 		$resp->execute($params);
 
 		debug("Query Error", $resp->errorInfo());
-		debug("Query Response", $resp);
 
 		return $resp;
 	}
