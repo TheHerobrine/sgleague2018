@@ -3,13 +3,48 @@
 session_start();
 
 include_once("./config.php");
+function debug($a, $b){}
 
-if (isset($_SESSION["sgl_id"]))
+$get_type = isset($_GET['type']) ? $_GET['type'] : '';
+
+if (isset($_SESSION["sgl_id"]) || $get_type=="search_school")
 {
-	$get_type = isset($_GET['type']) ? $_GET['type'] : '';
 
 	switch($get_type)
 	{
+		case "search_school":
+
+			header('Content-Type: application/json');
+			
+			include_once("./class/Form.class.php");
+
+			$fields = array(
+				'school' => array('type' => 'value', 'value' => '%'.$_GET["school"].'%')
+			);
+
+			$query = "CALL SEARCH_SCHOOL(:school)";
+
+			$form = new Form(new Database(), $query, $fields);
+			if($form->is_valid())
+			{
+				$return = $form->send();
+			
+				while ($data = $return->fetch(PDO::FETCH_ASSOC))
+				{
+					$result[] = $data;
+				}
+			}
+
+			if (isset($result))
+			{
+				echo json_encode($result);
+			}
+			else
+			{
+				echo "[]";
+			}
+			break;
+
 		case "search":
 
 			header('Content-Type: application/json');

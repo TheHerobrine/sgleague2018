@@ -151,6 +151,7 @@ else
 				$_SESSION["sgl_id"] = $data["SU_UID"];
 				$_SESSION["sgl_login"] = $data["SU_LOGIN"];
 				$_SESSION["sgl_type"] = $data["SU_TYPE"];
+				$_SESSION["sgl_mail"] = $data["SU_MAIL"];
 			}
 		}
 	}
