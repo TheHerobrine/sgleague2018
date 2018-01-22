@@ -28,7 +28,14 @@ $cursor->closeCursor();
 
 foreach($tmp_game_users as $game_user)
 {
-	$games_full_profile[$game_user['PU_ID_P']][$game_user['GU_ID_G']]["user"] = $game_user;
+	if($game_user['GU_ID_G'] != NULL)
+	{
+		$games_full_profile[$game_user['PU_ID_P']][$game_user['GU_ID_G']]["user"] = $game_user;
+	}
+	else
+	{
+		$games_full_profile[$game_user['PU_ID_P']][0]["user"] = $game_user;
+	}
 }
 unset($tmp_game_users);
 
@@ -276,22 +283,24 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 				<table class="form_table">
 					<tr>
 						<td><h3><?=isset(reset($platform)['P_PSEUDO_NAME'])?reset($platform)['P_PSEUDO_NAME']:''?></h3></td>
-						<td><input style="width: 100% !important;" type="text" name="p_name_<?=reset($platform)['P_UID']?>" value="<?=(isset(reset($platform)['PU_PSEUDO']))?reset($platform)['PU_PSEUDO']:"";?>" /><?=isset(reset($platform)['error'])?reset($platform)['error']:''?><?=isset(reset($platform)['comment'])?reset($platform)['comment']:''?></td>
+						<td><input style="width: 100% !important;" type="text" name="p_name_<?=reset($platform)['P_UID']?>" value="<?=(isset(reset($platform)['user']['PU_PSEUDO']))?reset($platform)['user']['PU_PSEUDO']:"";?>" /><?=isset(reset($platform)['error'])?reset($platform)['error']:''?><?=isset(reset($platform)['comment'])?reset($platform)['comment']:''?></td>
 						<td></td><td></td>
 					</tr>
-					<?php foreach ($platform as $game) { ?>
-					<tr>
-						<td><h3><?=$game['G_NAME']?></h3></td>
-						<td><input type="text" style="width: 100% !important;" name="g_name_<?=$game['G_UID']?>" value="<?=($game['G_USE_PLATEFORM_PSEUDO']==1)?isset($game['PU_PSEUDO'])?$game['PU_PSEUDO']:'':isset($game['GU_PSEUDO'])?$game['GU_PSEUDO']:''?>" disabled="<?php echo ($game['G_USE_PLATEFORM_PSEUDO']==1)?'disabled':''?>"/></td>
-						<td><h3>Rang</h3></td>
-						<td>
-							<select name="g_rang_<?=$game['G_UID']?>" style="width: 100% !important;">
-								<?php foreach ($game['rank'] as $key => $rank) { ?>
-									<option value="<?=$key?>" <?=(isset($game['GU_RANK'])?$game['GU_RANK']:'')==$key?'selected':''?>><?=$rank?></option>
-								<?php } ?>
-							</select>
-						</td>
-					</tr>
+					<?php foreach ($platform as $g_key => $game) { ?>
+						<?php if($g_key != 0) { ?>
+						<tr>
+							<td><h3><?=$game['G_NAME']?></h3></td>
+							<td><input type="text" style="width: 100% !important;" name="g_name_<?=$game['G_UID']?>" value="<?=($game['G_USE_PLATEFORM_PSEUDO']==1)?isset($game['user']['PU_PSEUDO'])?$game['user']['PU_PSEUDO']:'':isset($game['user']['GU_PSEUDO'])?$game['user']['GU_PSEUDO']:''?>" disabled="<?php echo ($game['G_USE_PLATEFORM_PSEUDO']==1)?'disabled':''?>"/></td>
+							<td><h3>Rang</h3></td>
+							<td>
+								<select name="g_rang_<?=$game['G_UID']?>" style="width: 100% !important;">
+									<?php foreach ($game['rank'] as $key => $rank) { ?>
+										<option value="<?=$key?>" <?=(isset($game['user']['GU_RANK'])?$game['user']['GU_RANK']:'')==$key?'selected':''?>><?=$rank?></option>
+									<?php } ?>
+								</select>
+							</td>
+						</tr>
+						<?php } ?>
 					<?php } ?>
 				</table>
 				<?php } ?>
