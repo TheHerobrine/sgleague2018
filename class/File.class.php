@@ -180,27 +180,38 @@ class File
 		if(array_search($_FILES[$key]['type'], $imagetypes) !== false)
 		{
 			list($width, $height) = getimagesize($_FILES[$key]["tmp_name"]);
-			$thumb = imagecreatetruecolor(min($maxW, $width), min($maxH,$height));
+			$resizer = min($maxH/$height, $maxW/$width);
+			if($height > $maxH || $width > $maxW)
+			{
+				$new_width = round($width*$resizer);
+				$new_height = round($height*$resizer);
+			}
+			else
+			{
+				$new_width = $width;
+				$new_height = $height;
+			}
+			$thumb = imagecreatetruecolor($new_width, $new_height);
 
 			switch ($_FILES[$this->key]['type'])
 			{
 				case image_type_to_mime_type(IMAGETYPE_JPEG):
 					$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
-					imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
+					imagecopyresized($thumb, $source,0, 0, 0, 0, $new_width, $new_height, $width, $height);
 					imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
 					imagedestroy($source);
 					break;
 
 				case image_type_to_mime_type(IMAGETYPE_JPEG2000):
 					$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
-					imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
+					imagecopyresized($thumb, $source,0, 0, 0, 0, $new_width, $new_height, $width, $height);
 					imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
 					imagedestroy($source);
 					break;
 
 				case image_type_to_mime_type(IMAGETYPE_PNG):
 					$source = imagecreatefrompng($_FILES[$this->key]['tmp_name']);
-					imagecopyresized($thumb, $source, 0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
+					imagecopyresized($thumb, $source, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 					imagepng($thumb, $_FILES[$this->key]['tmp_name']);
 					imagedestroy($source);
 					break;
