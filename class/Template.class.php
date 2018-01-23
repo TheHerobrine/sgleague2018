@@ -25,7 +25,7 @@ class Template
 		}
 		else if (CLOSE && isset($need_open))
 		{
-			$this->page = "408";
+			$this->page = "418";
 
 			unset($page_head);
 			unset($page_script);

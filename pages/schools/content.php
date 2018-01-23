@@ -12,7 +12,7 @@
 	{
 		if ($data["number"] > 0)
 		{
-			echo ''.$data["number"].';'.htmlspecialchars($data["school"]).'<br />';
+			echo $data["number"].';'.htmlspecialchars($data["school"]).'<br />';
 		}
 	}
 

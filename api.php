@@ -3,7 +3,7 @@
 session_start();
 
 include_once("./config.php");
-function debug($a, $b){}
+function debug($a, $b){/*print_r($b);*/}
 
 $get_type = isset($_GET['type']) ? $_GET['type'] : '';
 
@@ -15,7 +15,6 @@ if (isset($_SESSION["sgl_id"]) || $get_type=="search_school")
 		case "search_school":
 
 			header('Content-Type: application/json');
-			
 			include_once("./class/Form.class.php");
 
 			$fields = array(
@@ -45,22 +44,27 @@ if (isset($_SESSION["sgl_id"]) || $get_type=="search_school")
 			}
 			break;
 
-		case "search":
+		case "search_mail":
 
 			header('Content-Type: application/json');
-			include_once("./class/Database.class.php");
+			include_once("./class/Form.class.php");
 
-			$database = new Database();
+			$fields = array(
+				'mail' => array('type' => 'string', 'length' => '128'),
+				'game' => array('type' => 'integer')
+			);
 
-			$get_data = isset($_GET['data']) ? $_GET['data'] : '';
-			$get_game = isset($_GET['game']) ? intval($_GET['game']) : '';
+			$query = "CALL SEARCH_MAIL(:mail,:game)";
 
-			$temp = $database->req('SELECT id, login, school FROM sgl_users WHERE (login LIKE "%'.addslashes($get_data).'%" OR mail LIKE "%'.addslashes($get_data).'%")
-			AND NOT EXISTS (SELECT user FROM sgl_teams WHERE user = sgl_users.id AND game = "'.$get_game.'" AND (register > 0 OR lead="'.$_SESSION["sgl_id"].'")) AND sgl_users.activation="" LIMIT 0,10');
-
-			while ($data = $temp->fetch(PDO::FETCH_ASSOC))
+			$form = new Form(new Database(), $query, $fields, METHOD_GET);
+			if($form->is_valid())
 			{
-				$result[] = $data;
+				$return = $form->send();
+			
+				while ($data = $return->fetch(PDO::FETCH_ASSOC))
+				{
+					$result[] = $data;
+				}
 			}
 
 			if (isset($result))
@@ -71,6 +75,7 @@ if (isset($_SESSION["sgl_id"]) || $get_type=="search_school")
 			{
 				echo "[]";
 			}
+			break;
 
 		break;
 

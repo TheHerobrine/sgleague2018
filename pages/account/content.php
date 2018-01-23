@@ -233,12 +233,11 @@ if (isset($_POST["sent"]))
 			}
 		}
 	}
-
 }
 
 $cursor = $database->req_post('CALL SELECT_SGL_USER_INFORMATION(:id_user, :id_parent)', array(
-		"id_user" => $_SESSION['sgl_id'],
-		"id_parent" =>$_SESSION['sgl_id']
+	"id_user" => $_SESSION['sgl_id'],
+	"id_parent" =>$_SESSION['sgl_id']
 ));
 
 $user_data = $cursor->fetch();
