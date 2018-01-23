@@ -1,6 +1,6 @@
 <div id="content">
 	<div class="container">
-		<h1><i class="fa fa-angle-right" aria-hidden="true"></i> Erreur 408</h1>
+		<h1><i class="fa fa-angle-right" aria-hidden="true"></i> Erreur 418</h1>
 		<div class="quote">
 			<span class="qcontent">
 				<i>&ldquo;</i>Keep calm and blame it on the lag<i>&rdquo;</i>

@@ -93,9 +93,11 @@ BEGIN
   SELECT SU_UID INTO id_user_confirmed FROM T_SGL_USER WHERE SU_UID=id_user AND (SU_UID=id_user_check OR SU_ID_PARENT_SU=id_user_check);
 
   IF id_user_confirmed IS NOT NULL THEN
-  	UPDATE T_GAME_USER SET GU_RANK=rank WHERE GU_ID_SU=id_user AND GU_ID_G=id_game
-	IF @@ROWCOUNT=0
-	  INSERT INTO T_GAME_USER (GU_ID_SU, GU_ID_G, GU_RANK) VALUES (id_user, id_game, rank)
+  	IF EXISTS (SELECT * FROM T_GAME_USER WHERE GU_ID_SU=id_user AND GU_ID_G=id_game) THEN
+  	  UPDATE T_GAME_USER SET GU_RANK=rank WHERE GU_ID_SU=id_user AND GU_ID_G=id_game;
+	ELSE
+	  INSERT INTO T_GAME_USER (GU_ID_SU, GU_ID_G, GU_RANK) VALUES (id_user, id_game, rank);
+    END IF;
     SELECT TRUE as RESULT;
   ELSE
     SELECT FALSE as RESULT;
@@ -112,9 +114,11 @@ BEGIN
   SELECT SU_UID INTO id_user_confirmed FROM T_SGL_USER WHERE SU_UID=id_user AND (SU_UID=id_user_check OR SU_ID_PARENT_SU=id_user_check);
 
   IF id_user_confirmed IS NOT NULL THEN
-    UPDATE T_PLATFORM_USER SET PU_PSEUDO=pseudo WHERE PU_ID_SU=id_user AND PU_ID_P=id_platform
-	IF @@ROWCOUNT=0
-	  INSERT INTO T_PLATFORM_USER (PU_ID_SU, PU_ID_P, PU_PSEUDO) VALUES (id_user, id_platform, pseudo)
+    IF EXISTS (SELECT * FROM T_PLATFORM_USER WHERE PU_ID_SU=id_user AND PU_ID_P=id_platform) THEN
+      UPDATE T_PLATFORM_USER SET PU_PSEUDO=pseudo WHERE PU_ID_SU=id_user AND PU_ID_P=id_platform;
+	ELSE
+	  INSERT INTO T_PLATFORM_USER (PU_ID_SU, PU_ID_P, PU_PSEUDO) VALUES (id_user, id_platform, pseudo);
+    END IF;
     SELECT TRUE as RESULT;
   ELSE
     SELECT FALSE as RESULT;
