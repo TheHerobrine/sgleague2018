@@ -227,8 +227,15 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 		<div class="form">
 			<form action="index.php?page=account" method="post" autocomplete="off">
 				<table class="form_table">
-					<tr><td><h3>Pseudo :</h3></td><td><input type="text" name="login" value="<?=htmlspecialchars($user_data["SU_LOGIN"])?>" disabled="disabled" /><br />
-					<div class="smallquote">Non, c'est même pas la peine d'essayer de le changer.</div></td></tr>
+					<tr><td><h3>Pseudo :</h3></td><td><input type="text" name="login" value="<?=htmlspecialchars($user_data["SU_LOGIN"])?>" disabled="disabled" style="width:464px"/>
+					<br />
+					<div class="smallquote">Non, c'est même pas la peine d'essayer de le changer.</div></td><td>
+						<?php
+						$hash = md5(strtolower(trim($_SESSION["sgl_mail"])));
+						echo '<a href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=33" /></a>';
+						?>
+					</td></tr>
+					
 				</table>
 
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Modification du mot de passe</td><td><hr class="line" /></td></tr></table></p>
