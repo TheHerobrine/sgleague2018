@@ -134,7 +134,6 @@ if (isset($_POST["sent"]) && $csrf_check)
 
 	if($form->is_valid())
 	{
-		debug("Form validé", $_FILES["f_card"]);
 		$return = $form->send();
 		if($data = $return->fetch())
 		{
@@ -152,10 +151,6 @@ if (isset($_POST["sent"]) && $csrf_check)
 		{
 			$return->closeCursor();
 		}
-	}
-	else
-	{
-		debug("Form non validé", "");
 	}
 
 

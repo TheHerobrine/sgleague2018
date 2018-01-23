@@ -165,14 +165,10 @@ class File
 		//File controls
 		if(array_search($_FILES[$this->key]['type'], $types) === false)
 		{
-			debug('cond', array_search($_FILES[$this->key]['type'], $types));
-			debug('in', $types);
-			debug('not found type', $_FILES[$this->key]['type']);
 			return false;
 		}
 		if($_FILES[$key]["size"] > $size)
 		{
-			debug('size to big',"");
 			return false;
 		}
 
