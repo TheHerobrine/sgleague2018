@@ -177,7 +177,7 @@ class File
 			image_type_to_mime_type(IMAGETYPE_JPEG2000),
 			image_type_to_mime_type(IMAGETYPE_PNG)
 		);
-		if(array_search($_FILES[$key]['type'], $imagetypes))
+		if(array_search($_FILES[$key]['type'], $imagetypes) !== false)
 		{
 			list($width, $height) = getimagesize($_FILES[$key]["tmp_name"]);
 			$thumb = imagecreatetruecolor(min($maxW, $width), min($maxH,$height));
