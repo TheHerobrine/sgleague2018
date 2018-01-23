@@ -169,19 +169,32 @@ END|
 -- INSERT_SGL_TEAM
 -- ---
 
-CREATE PROCEDURE INSERT_SGL_TEAM( IN id_file_picture INTEGER, IN id_game INTEGER, IN id_lead_user INTEGER,
-                                  IN tag VARCHAR(4), IN name_team VARCHAR(64))
+CREATE PROCEDURE INSERT_SGL_TEAM(IN id_user INTEGER, IN id_game INTEGER)
 BEGIN
-  INSERT INTO `T_SGL_TEAM` (`ST_ID_PICTURE_F`,`ST_ID_G`,`ST_ID_LEAD_SU`,`ST_TAG`,`ST_NAME`,`ST_STATUS`,`ST_REGISTER_DATE`) VALUES
-  (id_file_picture,id_game,id_lead_user,tag,name_team,0,NOW());
-  SELECT ST_UID, ST_ID_PICTURE_F, ST_ID_G, ST_ID_LEAD_SU, ST_TAG, ST_NAME, ST_STATUS, ST_REGISTER_DATE FROM T_SGL_TEAM WHERE ST_UID=LAST_INSERT_ID();
+  DECLARE team_id INTEGER DEFAULT NULL;
+
+  SELECT GU_ID_ST INTO team_id FROM T_GAME_USER WHERE GU_ID_SU=id_user AND GU_ID_G = id_game;
+
+  IF team_id IS NULL THEN
+  	INSERT INTO `T_SGL_TEAM` (`ST_ID_G`,`ST_ID_LEAD_SU`,`ST_REGISTER_DATE`) VALUES (id_game,id_user,NOW());
+  	SELECT ST_UID INTO team_id FROM T_SGL_TEAM WHERE ST_UID=LAST_INSERT_ID();
+
+  	IF EXISTS (SELECT * FROM T_GAME_USER WHERE GU_ID_SU=id_user AND GU_ID_G=id_game) THEN
+  	  UPDATE T_GAME_USER SET GU_ID_ST=team_id WHERE GU_UID=id_user AND GU_ID_G=id_game;
+	ELSE
+	  INSERT INTO T_GAME_USER (GU_ID_SU, GU_ID_G, GU_ID_ST) VALUES (id_user, id_game, team_id);
+    END IF;
+    SELECT TRUE as RESULT;
+  ELSE
+    SELECT FALSE as RESULT;
+  END IF;
 END|
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- INSERT_TEAM_REQUEST
 -- ---
 
-CREATE PROCEDURE INSERT_TEAM_REQUEST( IN id_sgl_team INTEGER, IN id_game_user INTEGER, IN type INTEGER)
+CREATE PROCEDURE INSERT_TEAM_REQUEST(IN id_sgl_team INTEGER, IN id_game_user INTEGER, IN type INTEGER)
 BEGIN
   INSERT INTO `T_TEAM_REQUEST` (`TR_ID_ST`,`TR_ID_GU`,`TR_TYPE`,`TR_SEND_DATE`) VALUES
   (id_sgl_team,id_game_user,type, NOW());

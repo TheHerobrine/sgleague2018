@@ -3,7 +3,7 @@
 		<h1><i class="fa fa-angle-right" aria-hidden="true"></i> Erreur 408</h1>
 		<div class="quote">
 			<span class="qcontent">
-				<i>&ldquo;</i>Les patients sont priés d'être patients<i>&rdquo;</i>
+				<i>&ldquo;</i>Keep calm and blame it on the lag<i>&rdquo;</i>
 			</span>
 			<span class="qauthor">
 				- Un joueur de la SGL 2017

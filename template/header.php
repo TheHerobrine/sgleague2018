@@ -26,7 +26,7 @@
 					<div id="social">
 						<span class="media"><a target="_blank" href="https://www.facebook.com/StudentGamingNetwork/"><i class="fa fa-facebook-square"></i></a></span>
 						<span class="media"><a target="_blank" href="https://twitter.com/Student_GN"><i class="fa fa-twitter-square"></i></a></span>
-						<span class="media"><a target="_blank" href="https://discord.gg/SGL17"><img src="./style/img/icon/discord.png" alt="discord"></a></span>
+						<span class="media"><a target="_blank" href="https://discord.gg/sgnw"><img src="./style/img/icon/discord.png" alt="discord"></a></span>
 						<span class="media"><a target="_blank" href="https://steamcommunity.com/groups/sgnw"><i class="fa fa-steam-square"></i></a></li></span>
 					</div>
 					<div id="meta">
