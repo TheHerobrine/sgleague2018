@@ -255,7 +255,7 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 				<table class="form_table">
 					<tr>
 						<td><h3><?=$game_users[$igame]['P_PSEUDO_NAME']?> :</h3></td>
-						<td><input type="text" name="p_name_<?=$game_users[$igame]['P_UID']?>" value="<?=$game_users[$igame]['PU_PSEUDO']?>" />
+						<td><input type="text" name="p_name_<?=$game_users[$igame]['P_UID']?>" value="<?=htmlspecialchars($game_users[$igame]['PU_PSEUDO'])?>" />
 							<?=$platform_profile[$game_users[$igame]["P_UID"]]['comment']?></td>
 					</tr>
 					<?php if($game_users[$igame]['G_UID'])
