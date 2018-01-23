@@ -153,6 +153,8 @@ CREATE PROCEDURE UPDATE_SGL_USER_CARD( IN id_user INTEGER, IN id_card INTEGER)
 
     SELECT SU_ID_CARD_F INTO id_old_card FROM T_SGL_USER WHERE SU_UID=id_user;
 
+    UPDATE T_SGL_USER SET SU_ID_CARD_F=id_card WHERE SU_UID=id_user;
+
     IF id_old_card > 0 THEN
       SELECT TRUE as RESULT, TRUE as TO_DELETE, id_old_card as FILE;
     ELSE
