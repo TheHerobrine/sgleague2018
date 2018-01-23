@@ -8,44 +8,20 @@ function getvar(&$var){
 
 $database = new Database();
 
-$cursor = $database->req_get("CALL SELECT_GAMES_WITH_PLATFORM()");
-$tmp_games = $cursor->fetchAll();
-$cursor->closeCursor();
-
-$games_full_profile = array();
-foreach($tmp_games as $game)
-{
-	$games_full_profile[$game['P_UID']][$game['G_UID']] = $game;
-}
-unset($tmp_games);
-
-$cursor = $database->req_post("CALL SELECT_GAME_USER_BY_SU(:id_user, :id_check)", array(
-		"id_user" => $_SESSION['sgl_id'],
-		"id_check" => $_SESSION["sgl_id"]
+$cursor = $database->req_post("CALL SELECT_GAME_USER_BY_SU(:id_user)", array(
+		"id_user" => $_SESSION['sgl_id']
 ));
-$tmp_game_users = $cursor->fetchAll();
-$cursor->closeCursor();
 
-foreach($tmp_game_users as $game_user)
-{
-	if($game_user['GU_ID_G'] != NULL)
-	{
-		$games_full_profile[$game_user['PU_ID_P']][$game_user['GU_ID_G']]["user"] = $game_user;
-	}
-	else
-	{
-		$games_full_profile[$game_user['PU_ID_P']][0]["user"] = $game_user;
-	}
-}
-unset($tmp_game_users);
+$game_users = $cursor->fetchAll();
+$cursor->closeCursor();
 
 //  ----- [ Config CS ] --------------------------------------------------
 
-$games_full_profile[2][3]['reggex'] = "/^STEAM_[0-5]:[0-1]:[0-9]+$/";
-$games_full_profile[2][3]['error'] = "<div>Attention, ça doit être un truc du style STEAM_0:1:11539914.</div>";
-$games_full_profile[2][3]['comment'] = "<div class=\"smallquote\">Votre Steam ID pour Counter Strike (ex : STEAM_0:1:11539914). Pour vous aider : <a target=\"_blank\" href=\"http://steamidfinder.com/\">SteamIDFinder.com</a></div>";
-$games_full_profile[2][3]['comment-rank'] = "<div class=\"smallquote\">Votre rang Counter Strike : Global Offensive</div>";
-$games_full_profile[2][3]['rank'] = array(
+$platform_profile[2]['reggex'] = "/^STEAM_[0-5]:[0-1]:[0-9]+$/";
+$platform_profile[2]['error'] = "<div>Attention, ça doit être un truc du style STEAM_0:1:11539914.</div>";
+$platform_profile[2]['comment'] = "<div class=\"smallquote\">Votre Steam ID pour Counter Strike (ex : STEAM_0:1:11539914). Pour vous aider : <a target=\"_blank\" href=\"http://steamidfinder.com/\">SteamIDFinder.com</a></div>";
+$games_profile[3]['comment-rank'] = "<div class=\"smallquote\">Votre rang Counter Strike : Global Offensive</div>";
+$games_profile[3]['rank'] = array(
 	"Non Classé",
 	"Silver 2",
 	"Silver 1",
@@ -69,11 +45,11 @@ $games_full_profile[2][3]['rank'] = array(
 
 //  ----- [ Config OW / HS ] --------------------------------------------------
 
-$games_full_profile[1][1]['reggex'] = "/#[0-9]{4,5}$/";
-$games_full_profile[1][1]['error'] = "<div>Attention, vous avez pas oubliez la partie après le '#' par hasard ?</div>";
-$games_full_profile[1][1]['comment'] = "<div class=\"smallquote\">Votre BattleTag pour Hearthstone et Overwatch. On oublie pas la partie après le \"#\" !</div>";
-$games_full_profile[1][1]['comment-rank'] = "<div class=\"smallquote\">Votre nombre de points Overwatch</div>";
-$games_full_profile[1][1]['rank'] = array(
+$platform_profile[1]['reggex'] = "/#[0-9]{4,5}$/";
+$platform_profile[1]['error'] = "<div>Attention, vous avez pas oubliez la partie après le '#' par hasard ?</div>";
+$platform_profile[1]['comment'] = "<div class=\"smallquote\">Votre BattleTag pour Hearthstone et Overwatch. On oublie pas la partie après le \"#\" !</div>";
+$games_profile[1]['comment-rank'] = "<div class=\"smallquote\">Votre nombre de points Overwatch</div>";
+$games_profile[1]['rank'] = array(
 	"Non Classé",
 	"1850 et moins",
 	"1851-2200",
@@ -83,8 +59,8 @@ $games_full_profile[1][1]['rank'] = array(
 	"3001-3500",
 	"3501 et plus",
 );
-$games_full_profile[1][4]['comment-rank'] = "<div class=\"smallquote\">Votre rang HearthStone</div>";
-$games_full_profile[1][4]['rank'] = array(
+$games_profile[4]['comment-rank'] = "<div class=\"smallquote\">Votre rang HearthStone</div>";
+$games_profile[4]['rank'] = array(
 	"Non Classé",
 	"25",
 	"24",
@@ -116,9 +92,9 @@ $games_full_profile[1][4]['rank'] = array(
 
 //  ----- [ Config LOL ] --------------------------------------------------
 
-$games_full_profile[4][2]['comment'] = "<div class=\"smallquote\">Votre nom d'invocateur pour League of Legends.</div>";
-$games_full_profile[4][2]['comment-rank'] = "<div class=\"smallquote\">Votre rang League of Legends</div>";
-$games_full_profile[4][2]['rank'] = array(
+$platform_profile[4]['comment'] = "<div class=\"smallquote\">Votre nom d'invocateur pour League of Legends.</div>";
+$games_profile[2]['comment-rank'] = "<div class=\"smallquote\">Votre rang League of Legends</div>";
+$games_profile[2]['rank'] = array(
 	"Non Classé",
 	"Bronze",
 	"Argent",
@@ -277,30 +253,37 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 					<div class="smallquote">On va dire au moins 8 caractères chiffres + lettres. 100% incraquable par la NSA.</div></td></tr>
 				</table>
 
-				<?php foreach ($games_full_profile as $platform) { ?>
-				<p><table class="line_table"><tr><td><hr class="line" /></td><td><?=reset($platform)['P_NAME']?></td><td><hr class="line" /></td></tr></table></p>
+				<?php
+				for ($igame=0; $igame<count($game_users); $igame++)
+				{
+					?>
+				<p><table class="line_table"><tr><td><hr class="line" /></td><td><?=$game_users[$igame]['P_NAME']?></td><td><hr class="line" /></td></tr></table></p>
 				<table class="form_table">
 					<tr>
-						<td><h3><?=isset(reset($platform)['P_PSEUDO_NAME'])?reset($platform)['P_PSEUDO_NAME']:''?></h3></td>
-						<td><input style="width: 100% !important;" type="text" name="p_name_<?=reset($platform)['P_UID']?>" value="<?=(isset(reset($platform)['user']['PU_PSEUDO']))?reset($platform)['user']['PU_PSEUDO']:"";?>" /><?=isset(reset($platform)['error'])?reset($platform)['error']:''?><?=isset(reset($platform)['comment'])?reset($platform)['comment']:''?></td>
-						<td></td><td></td>
+						<td><h3><?=$game_users[$igame]['P_PSEUDO_NAME']?> :</h3></td>
+						<td><input type="text" name="p_name_<?=$game_users[$igame]['P_UID']?>" value="<?=$game_users[$igame]['PU_PSEUDO']?>" />
+							<?=$platform_profile[$game_users[$igame]["P_UID"]]['comment']?></td>
 					</tr>
-					<?php foreach ($platform as $g_key => $game) { ?>
-						<?php if($g_key != 0) { ?>
+					<?php if($game_users[$igame]['G_UID'])
+					{
+						do
+						{
+							?>
 						<tr>
-							<td><h3><?=$game['G_NAME']?></h3></td>
-							<td><input type="text" style="width: 100% !important;" name="g_name_<?=$game['G_UID']?>" value="<?=($game['G_USE_PLATEFORM_PSEUDO']==1)?isset($game['user']['PU_PSEUDO'])?$game['user']['PU_PSEUDO']:'':isset($game['user']['GU_PSEUDO'])?$game['user']['GU_PSEUDO']:''?>" disabled="<?php echo ($game['G_USE_PLATEFORM_PSEUDO']==1)?'disabled':''?>"/></td>
-							<td><h3>Rang</h3></td>
+							<td><h3><?=$game_users[$igame]['G_NAME']?> :</h3></td>
 							<td>
-								<select name="g_rang_<?=$game['G_UID']?>" style="width: 100% !important;">
-									<?php foreach ($game['rank'] as $key => $rank) { ?>
+								<select name="g_rang_<?=$game['G_UID']?>">
+									<?php
+									foreach ($games_profile[$game_users[$igame]["G_UID"]]['rank'] as $key => $rank)
+									{ ?>
 										<option value="<?=$key?>" <?=(isset($game['user']['GU_RANK'])?$game['user']['GU_RANK']:'')==$key?'selected':''?>><?=$rank?></option>
 									<?php } ?>
 								</select>
 							</td>
 						</tr>
-						<?php } ?>
-					<?php } ?>
+					<?php
+						}while($game_users[$igame+1]["P_UID"] == $game_users[$igame]["P_UID"] && ($igame++ || true));
+					} ?>
 				</table>
 				<?php } ?>
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Informations personnelles</td><td><hr class="line" /></td></tr></table></p>

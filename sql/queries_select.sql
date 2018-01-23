@@ -110,20 +110,9 @@ END |
 -- SELECT_PLATFORM_USER
 -- ---
 
-CREATE PROCEDURE SELECT_GAME_USER_BY_SU( IN id_user INTEGER, IN id_user_check INTEGER)
+CREATE PROCEDURE SELECT_GAME_USER_BY_SU( IN id_user INTEGER)
 BEGIN
-  DECLARE id_user_confirmed INTEGER DEFAULT NULL;
-
-  SELECT SU_UID INTO id_user_confirmed FROM T_SGL_USER WHERE SU_UID=id_user AND (SU_UID=id_user_check OR SU_ID_PARENT_SU=id_user_check);
-
-  IF id_user_confirmed IS NOT NULL THEN
-    SELECT TRUE as RESULT, PU_UID, PU_ID_P, PU_PSEUDO, GU_UID, GU_ID_G, GU_PSEUDO, GU_RANK FROM T_PLATFORM_USER
-    LEFT JOIN T_GAME_USER ON PU_UID=GU_ID_PU
-    WHERE PU_ID_SU=id_user_confirmed
-    ORDER BY PU_ID_P;
-  ELSE
-    SELECT FALSE as RESULT;
-  END IF;
+  SELECT PU_PSEUDO, P_UID, P_NAME, P_PSEUDO_NAME, P_COMPANY, G_NAME, G_RANK_DESCRIPTION FROM T_PLATFORM LEFT JOIN T_PLATFORM_USER ON PU_ID_P=P_UID AND PU_ID_SU=id_user LEFT JOIN T_GAME ON G_ID_P=P_UID ORDER BY P_UID;
 END|
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
