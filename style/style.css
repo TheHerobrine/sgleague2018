@@ -698,6 +698,11 @@ input:focus, input:hover, textarea:focus, textarea:hover
 	border: 1px solid #ff6600;
 }
 
+input:disabled
+{
+	color:#662200;
+}
+
 .form button, #content a.button
 {
 	border: 1px solid #ffc68f;

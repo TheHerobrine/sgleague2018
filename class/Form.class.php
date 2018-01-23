@@ -285,7 +285,7 @@ class Form
 			}*/
 		}
 
-		debug("SQL VALID(".$this->valid.")",$this->values);
+		debug("SQL VALID(".($this->valid?"VALID":"ERROR").")",$this->values);
 		
 		return $this->valid;
 	}
@@ -296,8 +296,6 @@ class Form
 	 */
 	public function send()
 	{
-		
-
 		if($this->is_valid())
 		{
 			debug("SQL SEND()",$this->sql."<br/>Valid");

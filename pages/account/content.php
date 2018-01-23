@@ -1,19 +1,8 @@
 <?php
 
+global $csrf_check;
+
 include_once("./class/Form.class.php");
-
-function getvar(&$var){
-	return (isset($var))?$var:null;
-}
-
-$database = new Database();
-
-$cursor = $database->req_post("CALL SELECT_GAME_USER_BY_SU(:id_user)", array(
-		"id_user" => $_SESSION['sgl_id']
-));
-
-$game_users = $cursor->fetchAll();
-$cursor->closeCursor();
 
 //  ----- [ Config CS ] --------------------------------------------------
 
@@ -23,8 +12,8 @@ $platform_profile[2]['comment'] = "<div class=\"smallquote\">Votre Steam ID pour
 $games_profile[3]['comment-rank'] = "<div class=\"smallquote\">Votre rang Counter Strike : Global Offensive</div>";
 $games_profile[3]['rank'] = array(
 	"Non Classé",
-	"Silver 2",
 	"Silver 1",
+	"Silver 2",
 	"Silver 3",
 	"Silver 4",
 	"Silver Elite",
@@ -51,43 +40,22 @@ $platform_profile[1]['comment'] = "<div class=\"smallquote\">Votre BattleTag pou
 $games_profile[1]['comment-rank'] = "<div class=\"smallquote\">Votre nombre de points Overwatch</div>";
 $games_profile[1]['rank'] = array(
 	"Non Classé",
-	"1850 et moins",
-	"1851-2200",
-	"2201-2450",
-	"2451-2700",
-	"2701-3000",
-	"3001-3500",
-	"3501 et plus",
+	"Bronze (1-1499)",
+	"Silver (1500-1999)",
+	"Gold (2000-2499)",
+	"Platinum (2500-2999)",
+	"Diamond (3000-3499)",
+	"Master (3500-3999)",
+	"Grand Master (4000-5000)"
 );
 $games_profile[4]['comment-rank'] = "<div class=\"smallquote\">Votre rang HearthStone</div>";
 $games_profile[4]['rank'] = array(
 	"Non Classé",
-	"25",
-	"24",
-	"23",
-	"22",
-	"21",
-	"20",
-	"19",
-	"18",
-	"17",
-	"16",
-	"15",
-	"14",
-	"13",
-	"12",
-	"11",
-	"10",
-	"9",
-	"8",
-	"7",
-	"6",
-	"5",
-	"4",
-	"3",
-	"2",
-	"1",
-	"Légende"
+	"Division 5 (25-21)",
+	"Division 4 (20-16)",
+	"Division 3 (15-11)",
+	"Division 2 (10-6)",
+	"Division 1 (5-1)"
 );
 
 //  ----- [ Config LOL ] --------------------------------------------------
@@ -102,58 +70,69 @@ $games_profile[2]['rank'] = array(
 	"Platine",
 	"Diamant",
 	"Maitre",
-	"Challenge"
+	"Challenger"
 );
 
 //  ----- [ Config Discord ] --------------------------------------------------
 
-$reggex_discord = "/#[0-9]{4,5}$/";
-$error_discord = "Attention, vous avez pas oubliez la partie après le '#' par hasard ?";
+$platform_profile[3]['reggex'] = "/#[0-9]{4,5}$/";
+$platform_profile[3]['error'] = "Attention, vous n'avez pas oublié la partie après le '#' par hasard ?";
 
 //  ----- [ Global Update ] --------------------------------------------------
 
 $newpass_bool = false;
 
-if (isset($_POST["sent"]))
+debug("POST", $_POST);
+if (isset($_POST["sent"]) && $csrf_check)
 {
-
-	$form_check = true;
-
-	$birth = '';
-	if(isset($_POST['byear']) && isset($_POST['bmonth']) && isset($_POST['bday']))
-	{
-		$birth = date('Y-m-d',mktime(0,0,0, (int)$_POST['bmonth'], (int)$_POST['bday'], (int)$_POST['byear']));
-	}
-	else
-	{
-		$form_check = false;
-	}
-
+	$birth = date('Y-m-d',mktime(0,0,0, (int)$_POST['bmonth'], (int)$_POST['bday'], (int)$_POST['byear']));
+	
 	$gender = (int)$_POST['gender'];
 	$gender = in_array($gender, array(0,1,2,3))?$gender:0;
 
 	//TODO: Verification for game pseudo
 
-	if($form_check)
+	$fields = array(
+		'userid' => array('type' => 'value', 'value' => $_SESSION["sgl_id"]),
+		'mail' => array('type' => 'mail'),
+		'school' => array('type' => 'string', 'length' => '256'),
+		'first' => array('type' => 'string', 'length' => '128'),
+		'name' => array('type' => 'string', 'length' => '128'),
+		'gender' => array('type' => 'value', 'value' => $gender),
+		'birth' => array('type' => 'value', 'value' => $birth),
+	);
+
+	$query = "CALL UPDATE_SGL_USER_INFORMATION(:userid, :userid, :school, :gender, :birth, :first, :name)";
+
+	$database = new Database();
+	$form = new Form($database, $query, $fields);
+
+	if($form->is_valid())
 	{
-		$fields = array(
-			'mail' => array('type' => 'mail'),
-			'school' => array('type' => 'string', 'length' => '256'),
-			'first' => array('type' => 'string', 'length' => '128'),
-			'name' => array('type' => 'string', 'length' => '128'),
-			'gender' => array('type' => 'value', 'value' => $gender),
-			'birth' => array('type' => 'value', 'value' => $birth),
-		);
+		$return = $form->send();
+		$return->closeCursor();
+	}
 
-		$query = "CALL UPDATE_SGL_USER_INFORMATION(:login, :pass, :salt, :configsalt, :mail, :activation, :school)";
+//  ----- [ Platform Update ] --------------------------------------------------
 
-		$database = new Database();
-		$form = new Form($database, $query, $fields);
-		if($form->is_valid())
-		{
-			$return = $form->send();
-			$return->closeCursor();
-		}
+	for ($p_uid=1;$p_uid<=4;$p_uid++)
+	{
+		$database->req_post('CALL UPDATE_SGL_USER_PLATFORM(:id_user, :id_user, :id_platform, :pseudo)', array(
+			"id_user" => $_SESSION['sgl_id'],
+			"id_platform" => $p_uid,
+			"pseudo" => $_POST['p_name_'.$p_uid]
+		));
+	}
+
+//  ----- [ Game Update ] --------------------------------------------------
+
+	for ($g_uid=1;$g_uid<=4;$g_uid++)
+	{
+		$database->req_post('CALL UPDATE_SGL_USER_GAME(:id_user, :id_user, :id_game, :rank)', array(
+			"id_user" => $_SESSION['sgl_id'],
+			"id_game" => $g_uid,
+			"rank" => $_POST['g_rank_'.$g_uid]
+		));
 	}
 
 //  ----- [ Pass Update ] --------------------------------------------------
@@ -162,7 +141,6 @@ if (isset($_POST["sent"]))
 	$new_pass =	isset($_POST['newpass']) ?	$_POST['newpass'] : '';
 	if ($old_pass != '')
 	{
-
 		$check_pass = 0;
 		if (strlen($new_pass) == 0)
 		{
@@ -211,6 +189,15 @@ if (isset($_POST["sent"]))
 	}
 }
 
+$database = new Database();
+
+$cursor = $database->req_post("CALL SELECT_GAME_USER_BY_SU(:id_user)", array(
+	"id_user" => $_SESSION['sgl_id']
+));
+
+$game_users = $cursor->fetchAll();
+$cursor->closeCursor();
+
 $cursor = $database->req_post('CALL SELECT_SGL_USER_INFORMATION(:id_user, :id_parent)', array(
 	"id_user" => $_SESSION['sgl_id'],
 	"id_parent" =>$_SESSION['sgl_id']
@@ -247,7 +234,7 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Modification du mot de passe</td><td><hr class="line" /></td></tr></table></p>
 				<table class="form_table">
 					<tr><td><h3>Ancien :</h3></td><td><input type="password" name="oldpass" /><br />
-					<div class="smallquote">Juste pour être sûr que c'est bien vous et pas votre mère qui essaie de vous empecher de venir jouer.</div></td></tr>
+					<div class="smallquote">Juste pour être sûr que c'est bien vous et pas votre mère qui essaie de vous empêcher de venir jouer.</div></td></tr>
 					<tr><td><h3>Nouveau :</h3></td><td><input type="password" name="newpass" /><br />
 					<?=$newpass_bool?$error_pass:''?>
 					<div class="smallquote">On va dire au moins 8 caractères chiffres + lettres. 100% incraquable par la NSA.</div></td></tr>
@@ -268,15 +255,17 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 					{
 						do
 						{
+							if ($game_users[$igame]['G_UID'] == 2) {$game_users[$igame]['G_NAME'] = "LoL";}
+							if ($game_users[$igame]['G_UID'] == 3) {$game_users[$igame]['G_NAME'] = "CSGO";}
 							?>
 						<tr>
 							<td><h3><?=$game_users[$igame]['G_NAME']?> :</h3></td>
 							<td>
-								<select name="g_rang_<?=$game['G_UID']?>">
+								<select name="g_rank_<?=$game_users[$igame]['G_UID']?>">
 									<?php
 									foreach ($games_profile[$game_users[$igame]["G_UID"]]['rank'] as $key => $rank)
 									{ ?>
-										<option value="<?=$key?>" <?=(isset($game['user']['GU_RANK'])?$game['user']['GU_RANK']:'')==$key?'selected':''?>><?=$rank?></option>
+										<option value="<?=$key?>" <?=$game_users[$igame]['GU_RANK']==$key?'selected':''?>><?=$rank?></option>
 									<?php } ?>
 								</select>
 							</td>
@@ -288,7 +277,7 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 				<?php } ?>
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Informations personnelles</td><td><hr class="line" /></td></tr></table></p>
 				<table class="form_table">
-					<tr><td><h3>Mail :</h3></td><td><input type="mail" name="mail" value="<?=htmlspecialchars($user_data["SU_MAIL"])?>"/><br />
+					<tr><td><h3>Mail :</h3></td><td><input type="mail" name="mail" value="<?=htmlspecialchars($user_data["SU_MAIL"])?>" disabled="disabled"/><br />
 					<div class="smallquote">Essayez de mettre votre mail étudiant, comme ça vous n'aurez pas à scanner votre carte étudiante.</div></td></tr>
 					<tr><td><h3>Ecole :</h3></td><td><input type="text" name="school" value="<?=htmlspecialchars($user_data["S_NAME"])?>"/><br />
 					<div class="smallquote">Pour ceux qui n'écoutent rien : on doit être étudiant pour participer à la SGL !</div></td></tr>
