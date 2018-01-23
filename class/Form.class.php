@@ -1,6 +1,7 @@
 <?php
 
 include_once('Database.class.php');
+include_once('File.class.php');
 
 define ("METHOD_DEFAULT", 0);
 define ("METHOD_POST", 1);
@@ -242,7 +243,7 @@ class Form
 						else
 						{
 							include_once('File.class.php');
-							
+
 							$file = new File($this->database);
 							$maxS = (isset($field['max_size']))? $field['max_size']: 5000000;
 							$maxW = (isset($field['max_width']))? $field['max_width']: 800;
@@ -298,7 +299,6 @@ class Form
 	{
 		if($this->is_valid())
 		{
-			debug("SQL SEND()",$this->sql."<br/>Valid");
 			try
 			{
 				return $this->database->req_post($this->sql, $this->values);

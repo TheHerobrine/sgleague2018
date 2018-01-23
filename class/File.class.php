@@ -1,6 +1,6 @@
 <?php
 
-include_once('./Database.class.php');
+include_once('Database.class.php');
 include_once('./generic/randomstr.php');
 
 class File
@@ -99,6 +99,11 @@ class File
 			return false;
 		}
 
+		if($id < 1)
+		{
+			return false;
+		}
+
 		if($this->init_get)
 		{
 			return true;
@@ -136,87 +141,87 @@ class File
 			return true;
 		}
 
-		else
+		if(!isset($_FILES[$key]))
 		{
-			if(!isset($_FILES[$key]))
-			{
-				return false;
-			}
-			if($_FILES[$key]["size"] > $size)
-			{
-				return false;
-			}
-			if (!is_uploaded_file($_FILES[$key]['tmp_name']))
-			{
-				return false;
-			}
-
-
-			$this->key = $key;
-
-			do
-			{
-				$this->path = $folder.random_str(10,"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-			}
-			while(file_exists(ABSOLUTE_FILES_DIRECTORY.$this->path));
-
-			//File controls
-			if(!array_search($_FILES[$this->key]['type'], $types))
-			{
-				return false;
-			}
-			if($_FILES[$key]["size"] > $size)
-			{
-				return false;
-			}
-
-			$imagetypes = array(
-				image_type_to_mime_type(IMAGETYPE_JPEG),
-				image_type_to_mime_type(IMAGETYPE_JPEG2000),
-				image_type_to_mime_type(IMAGETYPE_PNG)
-			);
-
-			if(array_search($_FILES[$key]['type'], $imagetypes))
-			{
-				list($width, $height) = getimagesize($_FILES[$key]["tmp_name"]);
-				$thumb = imagecreatetruecolor(min($maxW, $width), min($maxH,$height));
-
-				switch ($_FILES[$this->key]['type'])
-				{
-					case image_type_to_mime_type(IMAGETYPE_JPEG):
-						$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
-						imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
-						imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
-						imagedestroy($source);
-						break;
-
-					case image_type_to_mime_type(IMAGETYPE_JPEG2000):
-						$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
-						imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
-						imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
-						imagedestroy($source);
-						break;
-
-					case image_type_to_mime_type(IMAGETYPE_PNG):
-						$source = imagecreatefrompng($_FILES[$this->key]['tmp_name']);
-						imagecopyresized($thumb, $source, 0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
-						imagepng($thumb, $_FILES[$this->key]['tmp_name']);
-						imagedestroy($source);
-						break;
-				}
-
-				imagedestroy($thumb);
-			}
-
-			$this->name = '"'.addslashes($_FILES[$this->key]['name']).'"';
-			$this->tmp_path = $_FILES[$this->key]['tmp_name'];
-			$this->type = '"'.addslashes($_FILES[$this->key]['type']).'"';
-			$this->size = (int)filesize($_FILES[$key]['tmp_name']);
-			$this->md5 = md5_file($_FILES[$this->key]['tmp_name']);
-			$this->init_post = true;
-
-			return true;
+			return false;
 		}
+		if($_FILES[$key]["size"] > $size)
+		{
+			return false;
+		}
+		if (!is_uploaded_file($_FILES[$key]['tmp_name']))
+		{
+			return false;
+		}
+
+		$this->key = $key;
+
+		do
+		{
+			$this->path = $folder.random_str(10,"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		}
+		while(file_exists(ABSOLUTE_FILES_DIRECTORY.$this->path));
+
+		//File controls
+		if(array_search($_FILES[$this->key]['type'], $types) === false)
+		{
+			debug('cond', array_search($_FILES[$this->key]['type'], $types));
+			debug('in', $types);
+			debug('not found type', $_FILES[$this->key]['type']);
+			return false;
+		}
+		if($_FILES[$key]["size"] > $size)
+		{
+			debug('size to big',"");
+			return false;
+		}
+
+		$imagetypes = array(
+			image_type_to_mime_type(IMAGETYPE_JPEG),
+			image_type_to_mime_type(IMAGETYPE_JPEG2000),
+			image_type_to_mime_type(IMAGETYPE_PNG)
+		);
+		if(array_search($_FILES[$key]['type'], $imagetypes))
+		{
+			list($width, $height) = getimagesize($_FILES[$key]["tmp_name"]);
+			$thumb = imagecreatetruecolor(min($maxW, $width), min($maxH,$height));
+
+			switch ($_FILES[$this->key]['type'])
+			{
+				case image_type_to_mime_type(IMAGETYPE_JPEG):
+					$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
+					imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
+					imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
+					imagedestroy($source);
+					break;
+
+				case image_type_to_mime_type(IMAGETYPE_JPEG2000):
+					$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
+					imagecopyresized($thumb, $source,0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
+					imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
+					imagedestroy($source);
+					break;
+
+				case image_type_to_mime_type(IMAGETYPE_PNG):
+					$source = imagecreatefrompng($_FILES[$this->key]['tmp_name']);
+					imagecopyresized($thumb, $source, 0, 0, 0, 0, min($maxW, $width), min($maxH,$height), $width, $height);
+					imagepng($thumb, $_FILES[$this->key]['tmp_name']);
+					imagedestroy($source);
+					break;
+			}
+
+			imagedestroy($thumb);
+		}
+
+		$this->name = '"'.addslashes($_FILES[$this->key]['name']).'"';
+		$this->tmp_path = $_FILES[$this->key]['tmp_name'];
+		$this->type = '"'.addslashes($_FILES[$this->key]['type']).'"';
+		$this->size = (int)filesize($_FILES[$key]['tmp_name']);
+		$this->md5 = md5_file($_FILES[$this->key]['tmp_name']);
+		$this->init_post = true;
+
+		return true;
+
 	}
 
 	public function get_url()
@@ -282,6 +287,7 @@ class File
 
 		if($data = $cursor->fetch())
 		{
+			$cursor->closeCursor();
 			if(!move_uploaded_file($this->tmp_path,ABSOLUTE_FILES_DIRECTORY.$this->path))
 			{
 				$this->database->req_post('CALL DELETE_FILE(:id);',
@@ -307,11 +313,12 @@ class File
 		}
 		else
 		{
+			$cursor->closeCursor();
 			return false;
 		}
 	}
 
-	public function update($key, $folder)
+	public function update($key, $folder, $types)
 	{
 		if(!$this->init_get)
 		{
@@ -320,7 +327,7 @@ class File
 
 		if($this->delete())
 			if($this->reset_file())
-				if($this->init_for_post($key, $folder))
+				if($this->init_for_post($key, $folder, $types))
 					if($this->post())
 						return true;
 
@@ -334,12 +341,13 @@ class File
 			return false;
 		}
 
-		$this->database->req_post('CALL DELETE_FILE(:id);',
+		$result = $this->database->req_post('DELETE FROM T_FILE WHERE F_UID=:id;',
 			array(
 				'id' => $this->id
 			)
 		);
 		unlink(ABSOLUTE_FILES_DIRECTORY.$this->path);
+		$result->closeCursor();
 
 		$this->reset_file();
 		return true;

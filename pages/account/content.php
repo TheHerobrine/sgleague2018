@@ -55,7 +55,8 @@ $games_profile[4]['rank'] = array(
 	"Division 4 (20-16)",
 	"Division 3 (15-11)",
 	"Division 2 (10-6)",
-	"Division 1 (5-1)"
+	"Division 1 (5-1)",
+	"Légende"
 );
 
 //  ----- [ Config LOL ] --------------------------------------------------
@@ -75,8 +76,10 @@ $games_profile[2]['rank'] = array(
 
 //  ----- [ Config Discord ] --------------------------------------------------
 
+
 $platform_profile[3]['reggex'] = "/#[0-9]{4,5}$/";
 $platform_profile[3]['error'] = "Attention, vous n'avez pas oublié la partie après le '#' par hasard ?";
+$platform_profile[3]['comment'] = "<div class=\"smallquote\">Afin d'entendre votre svelte et suave voix</div>";
 
 //  ----- [ Global Update ] --------------------------------------------------
 
@@ -112,6 +115,49 @@ if (isset($_POST["sent"]) && $csrf_check)
 		$return = $form->send();
 		$return->closeCursor();
 	}
+//  ----- [ Card Update ] --------------------------------------------------
+
+	$types = array(
+		image_type_to_mime_type(IMAGETYPE_JPEG),
+		image_type_to_mime_type(IMAGETYPE_JPEG2000),
+		image_type_to_mime_type(IMAGETYPE_PNG)
+	);
+	$fields = array(
+		'user_id' => array('type' => 'value', 'value' => $_SESSION["sgl_id"]),
+		'f_card' => array('type' => 'file', 'types' =>  $types, 'max_size' => 8000000, 'destination' => '\\', 'max_width' => 800, 'max_height' => 400)
+	);
+
+	$query = "CALL UPDATE_SGL_USER_CARD(:user_id, :f_card)";
+
+	$database = new Database();
+	$form = new Form($database, $query, $fields);
+
+	if($form->is_valid())
+	{
+		debug("Form validé", $_FILES["f_card"]);
+		$return = $form->send();
+		if($data = $return->fetch())
+		{
+			$return->closeCursor();
+			if($data['TO_DELETE'])
+			{
+				$file = new File($database);
+				if($file->init_for_get($data['FILE']))
+				{
+					$file->delete();
+				}
+			}
+		}
+		else
+		{
+			$return->closeCursor();
+		}
+	}
+	else
+	{
+		debug("Form non validé", "");
+	}
+
 
 //  ----- [ Platform Update ] --------------------------------------------------
 
@@ -210,6 +256,8 @@ $birth_day = intval(date('d', strtotime($user_data["SU_BIRTH_DATE"])));
 $birth_month = intval(date('m', strtotime($user_data["SU_BIRTH_DATE"])));
 $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 
+$card_file = new File($database);
+
 ?>
 
 <div id="content">
@@ -225,7 +273,7 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 		</div>
 		<br />
 		<div class="form">
-			<form action="index.php?page=account" method="post" autocomplete="off">
+			<form action="index.php?page=account" method="post" autocomplete="off" enctype="multipart/form-data">
 				<table class="form_table">
 					<tr><td><h3>Pseudo :</h3></td><td><input type="text" name="login" value="<?=htmlspecialchars($user_data["SU_LOGIN"])?>" disabled="disabled" style="width:464px"/>
 					<br />
@@ -235,7 +283,15 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 						echo '<a href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=33" /></a>';
 						?>
 					</td></tr>
-					
+					<tr><td style="width: 125px"><h3>Carte Étudiante :</h3></td><td><input type="file" name="f_card" accept="image/png, image/jpeg" size="10000000"/>
+						<br/>
+						<div class="smallquote">Afin que l'on confirme que vous êtes bien un étudiant et pas un espion reptilien</div>
+					</td></tr>
+					<?php if($card_file->init_for_get($user_data['SU_ID_CARD_F'])) { ?>
+					<tr><td></td><td>
+							<a href="<?=$card_file->get_url()?>" target="_blank"><img style="max-width: 400px;max-height: 200px;" src="<?=$card_file->get_url()?>" alt="carte étudiante"/></a>
+					</td></tr>
+					<?php } ?>
 				</table>
 
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Modification du mot de passe</td><td><hr class="line" /></td></tr></table></p>
@@ -278,7 +334,7 @@ $birth_year = intval(date('Y', strtotime($user_data["SU_BIRTH_DATE"])));
 							</td>
 						</tr>
 					<?php
-						}while($game_users[$igame+1]["P_UID"] == $game_users[$igame]["P_UID"] && ($igame++ || true));
+						}while(isset($game_users[$igame+1]["P_UID"]) && $game_users[$igame+1]["P_UID"] == $game_users[$igame]["P_UID"] && ($igame++ || true));
 					} ?>
 				</table>
 				<?php } ?>
