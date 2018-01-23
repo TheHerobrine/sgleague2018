@@ -31,7 +31,12 @@ class Database
 		$resp = $this->database->prepare($req);
 		$resp->execute($params);
 
-		debug("Query Error", $resp->errorInfo());
+		$errorInfo = $resp->errorInfo();
+
+		if($errorInfo[0] > 0)
+		{
+			debug("Query Error", $errorInfo);
+		}
 
 		return $resp;
 	}

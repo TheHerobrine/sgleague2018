@@ -32,6 +32,60 @@ $games_quote = array(
 	"You face Jaraxxus,<br />eredar lord of the burning legion !");
 
 
+$games_profile[1]['rank'] = array(
+	"Non Classé",
+	"Bronze (1-1499)",
+	"Silver (1500-1999)",
+	"Gold (2000-2499)",
+	"Platinum (2500-2999)",
+	"Diamond (3000-3499)",
+	"Master (3500-3999)",
+	"Grand Master (4000-5000)"
+);
+
+$games_profile[2]['rank'] = array(
+	"Non Classé",
+	"Bronze",
+	"Argent",
+	"Or",
+	"Platine",
+	"Diamant",
+	"Maitre",
+	"Challenger"
+);
+
+$games_profile[3]['rank'] = array(
+	"Non Classé",
+	"Silver 1",
+	"Silver 2",
+	"Silver 3",
+	"Silver 4",
+	"Silver Elite",
+	"Silver Elite Master",
+	"Gold Nova 1",
+	"Gold Nova 2",
+	"Gold Nova 3",
+	"Gold Nova Master",
+	"Master Guardian 1",
+	"Master Guardian 2",
+	"Master Guardian Elite",
+	"Distinguished Master Guardian",
+	"Legendary Eagle",
+	"Legendary Eagle Master",
+	"Supreme Master First Class",
+	"The Global Elite"
+);
+
+$games_profile[4]['rank'] = array(
+	"Non Classé",
+	"Division 5 (25-21)",
+	"Division 4 (20-16)",
+	"Division 3 (15-11)",
+	"Division 2 (10-6)",
+	"Division 1 (5-1)"
+);
+
+
 ?>
 <div id="content">
 
@@ -77,7 +131,7 @@ if (isset($_SESSION["sgl_id"]))
 		));
 	}
 
-	$temp = $database->req_post('SELECT G_NAME, G_RANK_DESCRIPTION, G_NUM_PLAYERS, G_NUM_SUBSTITUTES, G_ID_P FROM T_GAME WHERE G_UID = :game',
+	$temp = $database->req_post('SELECT G_NAME, G_RANK_DESCRIPTION, G_NUM_PLAYERS, G_NUM_SUBSTITUTES, G_ID_P, P_PSEUDO_NAME FROM T_GAME, T_PLATFORM WHERE P_UID=G_ID_P AND G_UID = :game',
 		array(
 			"game" => $get_game
 		));
@@ -92,7 +146,8 @@ if (isset($_SESSION["sgl_id"]))
 		));
 	$data = $temp->fetch();
 
-	$is_team = (int)$data["GU_ID_ST"] > 0;
+	$is_team = $data["GU_ID_ST"] > 0;
+	$team_id = $data["GU_ID_ST"];
 	$url_game = "&amp;gpage=".$get_game;
 
 
@@ -112,7 +167,7 @@ if (isset($_SESSION["sgl_id"]))
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompenses à venir ;)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 34 équipes l\'année dernière<br /><br />
+		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 34 équipes l'année dernière<br /><br />
 		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span><!--<br /><br />
 		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p><br />
 		<?php
@@ -126,7 +181,7 @@ if (isset($_SESSION["sgl_id"]))
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompenses à venir ;)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 102 équipes l\'année dernière<br /><br />
+		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 102 équipes l'année dernière<br /><br />
 		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span><!--<br /><br />
 		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p><br />
 		<?php
@@ -140,7 +195,7 @@ if (isset($_SESSION["sgl_id"]))
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompenses à venir ;)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 62 équipes l\'année dernière<br /><br />
+		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 62 équipes l'année dernière<br /><br />
 		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span><!--<br /><br />
 		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p><br />
 		<?php
@@ -154,7 +209,7 @@ if (isset($_SESSION["sgl_id"]))
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompenses à venir ;)
 		<span style="padding: 0px 10px;">|</span>
-		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 384 joueurs l\'année dernière<br /><br />
+		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 384 joueurs l'année dernière<br /><br />
 		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span><!--<br /><br />
 		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p><br />
 		<?php
@@ -167,117 +222,142 @@ if (isset($_SESSION["sgl_id"]))
 		echo '<p style="text-align: center;" class="smallquote">Plus qu\'à hard train jusqu\'à fin Février. [ <a href="index.php?page=games'.$url_game.'&amp;game='.$games[$i].'&amp;action=del">Se désinscrire du tournoi</a> ]</p><br />';
 		//echo '<p style="text-align: center;" class="smallquote">Le tournoi a commencé... Bon courage !</p><br />';
 
+		$temp = $database->req_post('SELECT ST_TAG, ST_NAME, ST_STATUS, ST_RANK, ST_ID_LEAD_SU FROM T_SGL_TEAM WHERE ST_UID=:team_id',
+			array(
+				"team_id" => $team_id
+			));
+		$data = $temp->fetch();
 
+		echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Equipe</td><td><hr class="line" /></td></tr></table></p>';
 
-		$temp = $database->req('SELECT sgl_users.login, sgl_users.mail, sgl_users.'.$gameidType.', sgl_teams.type, sgl_teams.register, sgl_teams.user, sgl_teams.name, sgl_teams.tag
-			FROM sgl_users, sgl_teams LEFT JOIN sgl_teams AS my_team ON sgl_teams.lead = my_team.lead AND sgl_teams.game = my_team.game
-			WHERE my_team.user="'.$_SESSION["sgl_id"].'" AND my_team.game="'.$games[$i].'" AND sgl_teams.user = sgl_users.id ORDER BY type ASC');
+		$is_lead = ($data["ST_ID_LEAD_SU"] == $_SESSION["sgl_id"]);
 
-		$type = array("Aucun", "Capitaine", "Joueur", "Remplaçant");
+		if($is_lead)
+		{
+			echo '<div class="form"><form action="index.php?page=games'.$url_game.'&amp;game='.$get_game.'" method="post">
+				<table class="form_table">
+					<tr><td><h3>Nom d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_NAME"]).'" name="teamname" type="text"><br />
+					<div class="smallquote">Le nom de votre équipe, genre "Télécom Bretagne Gaming"</div></td></tr>
+					<tr><td><h3>TAG d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_TAG"]).'" name="teamtag" type="text"><br />
+					'.$error_teamtag.'
+					<div class="smallquote">Votre tag en 3 ou 4 caractères, genre "TBG" ou "TBG2" (que des lettres et des chiffres par contre !)</div></td></tr>
+				</table><br /><br />
+				<input type="hidden" name="sent" value="sent">
+				<button type="submit" value="Submit">Mettre à jour</button>
+				</form></div><br /><br /><br />';
+		}
+		else
+		{
+			echo '
+				<table class="form_table">
+					<tr><td><h3>Nom d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_NAME"]).'" disabled="disabled" name="teamname" type="text"><br />
+					<div class="smallquote">Le nom de votre équipe, genre "Télécom Bretagne Gaming"</div></td></tr>
+					<tr><td><h3>TAG d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_TAG"]).'" disabled="disabled" name="teamtag" type="text"><br />
+					<div class="smallquote">Votre tag en 3 ou 4 caractères, genre "TBG" ou "TBG2" (que des lettres et des chiffres par contre !)</div></td></tr>
+				</table>
+				</div><br /><br /><br />';
+		}
+
+		echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Joueurs</td><td><hr class="line" /></td></tr></table></p>';
+
+		$temp = $database->req_post('SELECT SU_LOGIN, SU_UID, SU_MAIL, PU_PSEUDO, GU_RANK, S_NAME, SU_FIRST_NAME, SU_LAST_NAME, GU_TYPE FROM T_SGL_USER
+			JOIN T_GAME_USER ON SU_UID=GU_ID_SU JOIN T_GAME ON GU_ID_G=G_UID LEFT JOIN T_PLATFORM_USER ON PU_ID_SU=SU_UID AND PU_ID_P=G_ID_P LEFT JOIN T_SCHOOL ON SU_ID_S=S_UID WHERE GU_ID_ST=:team_id',
+			array(
+				"team_id" => $team_id
+			));
+
+		$player_type = array("Aucun", "Capitaine", "Joueur", "Remplaçant");
 
 		$nplayer = 0;
 		$nreps = 0;
 
 		echo '<div style="text-align: center">';
 
-		$lasttype = 1;
-		$lead = false;
+		$data = $temp->fetchAll();
 
-		while($data = $temp->fetch())
+
+		$current_player = 0;
+
+		$hash = md5(strtolower(trim($data[$current_player]["SU_MAIL"])));
+		echo '<span class="playercard">
+		<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
+		<span class="playername">'.htmlspecialchars($data[$current_player]["SU_LOGIN"]).'</span>
+		('.htmlspecialchars($data[$current_player]["SU_FIRST_NAME"]).' '.htmlspecialchars($data[$current_player]["SU_LAST_NAME"]).', '.htmlspecialchars($data[$current_player]["S_NAME"]).')
+		<span class="playertype">'.$player_type[1].'</span><br />
+		<span class="playerplatform">'.$game_data["P_PSEUDO_NAME"].' : '.htmlspecialchars($data[$current_player]["PU_PSEUDO"]).'</span>
+		<span class="playerrank">'.$games_profile[$get_game]['rank'][$data[$current_player]["GU_RANK"]].'</span>
+		</span><br />';
+
+		$current_player++;
+
+		$randhash= time();
+
+		for ($iplayer=1;$iplayer<$game_data["G_NUM_PLAYERS"];$iplayer++)
 		{
-			if ($data["type"] == 1)
+			if (isset($data[$current_player]))
 			{
-				if ($_SESSION["sgl_id"] == $data["user"])
+				if($data[$current_player]["GU_TYPE"] == 2)
 				{
-					$lead = true;
+					$hash = md5(strtolower(trim($data[$current_player]["SU_MAIL"])));
+					echo '<span class="playercard">
+					<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
+					<span class="playername">'.htmlspecialchars($data[$current_player]["SU_LOGIN"]).'</span>
+					('.htmlspecialchars($data[$current_player]["SU_FIRST_NAME"]).' '.htmlspecialchars($data[$current_player]["SU_LAST_NAME"]).', '.htmlspecialchars($data[$current_player]["S_NAME"]).')
+					<span class="playertype">'.$player_type[2].'</span><br />
+					<span class="playerplatform">'.$game_data["P_PSEUDO_NAME"].' : '.htmlspecialchars($data[$current_player]["PU_PSEUDO"]).'</span>
+					<span class="playerrank">'.$games_profile[$get_game]['rank'][$data[$current_player]["GU_RANK"]].'</span>
+					</span><br />';
 
-					if ($games_team[$i] > 1)
-					{
-						echo '<div class="form"><form action="index.php?page=games'.$url_game.'&amp;game='.$games[$i].'" method="post">
-						<table class="form_table">
-							<tr><td><h3>Nom d\'équipe :</h3></td><td><input disabled="disabled" value="'.htmlspecialchars($data["name"]).'" name="teamname" type="text"><br />
-							<div class="smallquote">Le nom de votre équipe, genre "Télécom Bretagne Gaming"</div></td></tr>
-							<tr><td><h3>TAG d\'équipe :</h3></td><td><input disabled="disabled" value="'.htmlspecialchars($data["tag"]).'" name="teamtag" type="text"><br />
-							'.$error_teamtag.'
-							<div class="smallquote">Votre tag en 3 ou 4 caractères, genre "TBG" ou "TBG2" (que des lettres et des chiffres par contre !)</div></td></tr>
-						</table><br /><br />
-						<input type="hidden" name="sent" value="sent">
-						'./*<button type="submit" value="Submit">Mettre à jour</button>*/'
-						</form></div><br /><br /><br />';
+					$current_player++;
 
-						echo '<p id="'.$games_short[$i].'"><table class="line_table"><tr><td><hr class="line" /></td><td>Votre équipe</td><td><hr class="line" /></td></tr></table></p><br />';
-					}
-				}
-				else
-				{
-					echo "<h1>".htmlspecialchars($data["name"])." [".htmlspecialchars($data["tag"])."]</h1><br />";
+					continue;
 				}
 			}
-
-			if ($data["type"] != $lasttype)
-			{
-				if ($lasttype == 2)
-				{
-					for ($j=0; $j<($games_team[$i]-$nplayer); $j++)
-					{
-						if ($lead)
-						{
-							echo '<span class="buttoncard" onclick="morphIntoTextField(this, '.$games[$i].')()" data-type="2" data-game="'.$games[$i].'">Ajouter un joueur</span><br />';
-						}
-						else
-						{
-							echo '<span class="playercard"></span><br />';
-						}
-					}
-					echo "<br /><br/>";
-				}
-			}
-
-			if ($data["type"] < 3)
-			{
-				$nplayer++;
-			}
-			else if ($data["type"] == 3)
-			{
-				$nreps++;
-			}
-
-			if ($lead && ($_SESSION["sgl_id"] != $data["user"]))
-			{
-				$dlstr = '';
-				//$dlstr = '<span class="cardoption"><a href="index.php?page=games'.$url_game.'&amp;game='.$games[$i].'&remove='.$data["user"].'"><i class="fa fa-times" aria-hidden="true"></i></a></span>';
-			}
-			else
-			{
-				$dlstr = '';
-			}
-
-			if ($data["register"] == 0)
-			{
-				echo '<span class="playercard" style="opacity:0.5;"><span class="playername">'.htmlspecialchars(($data["login"] == "")?$data["mail"]:$data["login"]).' <span class="mintext">(Invitation envoyée)</span></span><span class="playertype">('.$type[$data["type"]].')</span>'.$dlstr.'</span><br />';
-			}
-			else
-			{
-				if($data[$gameidType] != "")
-				{
-					$gameTag = ' <span class="mintext">('.$data[$gameidType].')</span>';
-				}
-				else
-				{
-					$gameTag = ' <span class="mintext" style="color:#ff0000;text-decoration:underline">(Gametag manquant)</span>';
-				}
-
-				echo '<span class="playercard"><span class="playername">'.htmlspecialchars($data["login"]).$gameTag.'</span><span class="playertype">('.$type[$data["type"]].')</span>'.$dlstr.'</span><br />';
-			}
-
-			$lasttype = $data["type"];
+			
+			$hash = md5("player".$iplayer.$randhash);
+			echo '<span class="playercard">
+			<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
+			<span class="playerbutton"><a href="#">Ajouter</a></span>
+			<span class="playertype">'.$player_type[2].'</span><br />
+			</span><br />';
 		}
+
+		for ($iplayer=0;$iplayer<$game_data["G_NUM_SUBSTITUTES"];$iplayer++)
+		{
+			if (isset($data[$current_player]))
+			{
+				if($data[$current_player]["GU_TYPE"] == 3)
+				{
+					$hash = md5(strtolower(trim($data[$current_player]["SU_MAIL"])));
+					echo '<span class="playercard">
+					<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
+					<span class="playername">'.htmlspecialchars($data[$current_player]["SU_LOGIN"]).'</span>
+					('.htmlspecialchars($data[$current_player]["SU_FIRST_NAME"]).' '.htmlspecialchars($data[$current_player]["SU_LAST_NAME"]).', '.htmlspecialchars($data[$current_player]["S_NAME"]).')
+					<span class="playertype">'.$player_type[3].'</span><br />
+					<span class="playerplatform">'.$game_data["P_PSEUDO_NAME"].' : '.htmlspecialchars($data[$current_player]["PU_PSEUDO"]).'</span>
+					<span class="playerrank">'.$games_profile[$get_game]['rank'][$data[$current_player]["GU_RANK"]].'</span>
+					</span><br />';
+
+					$current_player++;
+
+					continue;
+				}
+			}
+			
+			$hash = md5("substitute".$iplayer.$randhash);
+			echo '<span class="playercard">
+			<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
+			<span class="playerbutton"><a href="#">Ajouter</a></span>
+			<span class="playertype">'.$player_type[3].'</span><br />
+			</span><br />';
+		}
+		
 
 		if ($lasttype <= 2)
 		{
 			for ($j=0; $j<($games_team[$i]-$nplayer); $j++)
 			{
-				if ($lead)
+				if ($is_lead)
 				{
 					//echo '<span class="buttoncard" onclick="morphIntoTextField(this, '.$games[$i].')()" data-type="2" data-game="'.$games[$i].'">Ajouter un joueur</span><br />';
 					echo '<span class="playercard"></span><br />';
@@ -293,7 +373,7 @@ if (isset($_SESSION["sgl_id"]))
 
 		for ($j=0; $j<($games_reps[$i]-$nreps); $j++)
 		{
-			if ($lead)
+			if ($is_lead)
 			{
 				//echo '<span class="buttoncard" onclick="morphIntoTextField(this, '.$games[$i].')()" data-type="3" data-game="'.$games[$i].'">Ajouter un remplaçant</span><br />';
 				echo '<span class="playercard"></span><br />';

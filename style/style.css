@@ -725,8 +725,8 @@ input:disabled
 .playercard, .buttoncard
 {
 	display: inline-block;
-	width: 500px;
-	height: 60px;
+	width: 670px;
+	height: 74px;
 	box-sizing: border-box;
 	border: 1px solid #ffc68f;
 	margin: 5px;
@@ -758,7 +758,7 @@ input:disabled
 	display: inline-block;
 	font-weight: bold;
 	color: #ff6600;
-	margin: 15px;
+	margin: 10px 15px;
 }
 
 .playercard .mintext
@@ -772,8 +772,47 @@ input:disabled
 {
 	display: inline-block;
 	float: right;
+	color: #ff6600;
+	margin: 10px 15px;
+}
+
+.playercard .playerplatform
+{
+	display: inline-block;
+	margin: 0px 15px;
+}
+
+.playercard .playerrank
+{
+	display: inline-block;
+	float: right;
 	opacity: 0.5;
-	margin: 15px;
+	margin: 0px 15px;
+}
+
+.playercard .playerbutton
+{
+	display: inline-block;
+	text-align: center;
+	font-size: 18px;
+	font-weight: bold;
+	margin: 15px 135px;
+	margin-right: 0px;
+}
+
+
+#content .playercard .playerbutton a
+{
+	padding: 15px 100px;
+	color: #ffc68f;
+	opacity: 0.5;
+	transition: all .2s ease-in-out;
+}
+
+#content .playercard .playerbutton a:hover
+{
+	opacity: 1;
+	text-decoration: none;
 }
 
 .playercard input
