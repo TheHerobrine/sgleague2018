@@ -89,6 +89,7 @@ function display_card($data, $player_type, $game_data, $get_game, $game_profile,
 {
 	$valid = true;
 	$editable = (($data["SU_ID_PARENT_SU"] == $_SESSION["sgl_id"]) || ($data["SU_UID"] == $_SESSION["sgl_id"]));
+	$deletable = (($is_lead) && ($data["SU_UID"] != $_SESSION["sgl_id"]));
 
 	$edit_button = '';
 	if ($editable)
@@ -96,10 +97,16 @@ function display_card($data, $player_type, $game_data, $get_game, $game_profile,
 		$edit_button = "<span style=\"padding-left:10px;color:#ffc68f;\">[ <a href=\"index.php?page=account&amp;uid=".$data["SU_UID"]."\">Editer</a> ]</span>";
 	}
 
+	$delete_button = '';
+	if ($deletable)
+	{
+		$delete_button = "<span style=\"padding-left:10px;color:#ffc68f;\">[ <a href=\"index.php?page=games&amp;gpage=".$get_game."&amp;action=del&amp;player=".$data["SU_UID"]."\">X</a> ]</span>";
+	}
+
 	$error_login = '';
 	if ($data["SU_LOGIN"] == '')
 	{
-		$error_login = "<span class=\"error\">Pseudo</span>";
+		$error_login = "<span class=\"error\">MissingNo</span>";
 		$valid = false;
 	}
 
@@ -152,7 +159,7 @@ function display_card($data, $player_type, $game_data, $get_game, $game_profile,
 	<span style="opacity:0.5;">[</span><span style="text-transform:uppercase;font-size:10px">'.htmlspecialchars($data["SU_FIRST_NAME"]).$error_first_name.'
 	'.htmlspecialchars($data["SU_LAST_NAME"]).$error_last_name.'
 	<span style="opacity:0.5;">-</span> '.htmlspecialchars($data["S_NAME"]).$error_school.'</span><span style="opacity:0.5;">]</span>'.$error_card.'
-	<span class="playertype">'.$player_type.$edit_button.'</span><br />
+	<span class="playertype">'.$player_type.$edit_button.$delete_button.'</span><br />
 	<span class="playerplatform"><span style="opacity:0.5;">'.$game_data["P_PSEUDO_NAME"].' :</span> '.htmlspecialchars($data["PU_PSEUDO"]).$error_pseudo.'
 	<span style="opacity:0.5;margin:0px 5px;">|</span> '.$data["SU_MAIL"].'</span>
 	<span class="playerrank">'.$game_profile[$data["GU_RANK"]].'</span>
@@ -333,14 +340,10 @@ if (isset($_SESSION["sgl_id"]))
 	$team_id = $data["GU_ID_ST"];
 	$url_game = "&amp;gpage=".$get_game;
 
-
-
-
-
 	if ($is_team)
 	{
 		echo '<p style="text-align:center; font-weight: bold">Yay ! <b>Vous êtes inscrit</b> à ce tournoi ! Un premier pas vers la victoire...</p>';
-		echo '<p style="text-align: center;" class="smallquote">Plus qu\'à hard train jusqu\'à fin Février. [ <a href="index.php?page=games'.$url_game.'&amp;game='.$games[$i].'&amp;action=del">Se désinscrire du tournoi</a> ]</p><br />';
+		echo '<p style="text-align: center;" class="smallquote">Plus qu\'à hard train jusqu\'à fin Février. [ <a href="index.php?page=games'.$url_game.'&amp;game='.$games[$i].'&amp;action=leave">Se désinscrire du tournoi</a> ]</p><br />';
 		//echo '<p style="text-align: center;" class="smallquote">Le tournoi a commencé... Bon courage !</p><br />';
 
 		$temp = $database->req_post('SELECT ST_TAG, ST_NAME, ST_STATUS, ST_RANK, ST_ID_LEAD_SU FROM T_SGL_TEAM WHERE ST_UID=:team_id',
@@ -348,35 +351,37 @@ if (isset($_SESSION["sgl_id"]))
 				"team_id" => $team_id
 			));
 		$data = $temp->fetch();
-
-		echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Equipe</td><td><hr class="line" /></td></tr></table></p>';
-
 		$is_lead = ($data["ST_ID_LEAD_SU"] == $_SESSION["sgl_id"]);
 
-		if($is_lead)
+		if ($game_data["G_NUM_PLAYERS"] > 1)
 		{
-			echo '<div class="form"><form action="index.php?page=games'.$url_game.'&amp;game='.$get_game.'" method="post">
-				<table class="form_table">
-					<tr><td><h3>Nom d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_NAME"]).'" name="teamname" type="text"><br />
-					<div class="smallquote">Le nom de votre équipe, genre "Télécom Bretagne Gaming"</div></td></tr>
-					<tr><td><h3>TAG d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_TAG"]).'" name="teamtag" type="text"><br />
-					'.$error_teamtag.'
-					<div class="smallquote">Votre tag en 3 ou 4 caractères, genre "TBG" ou "TBG2" (que des lettres et des chiffres par contre !)</div></td></tr>
-				</table><br /><br />
-				<input type="hidden" name="sent" value="sent">
-				<button type="submit" value="Submit">Mettre à jour</button>
-				</form></div><br />';
-		}
-		else
-		{
-			echo '
-				<table class="form_table">
-					<tr><td><h3>Nom d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_NAME"]).'" disabled="disabled" name="teamname" type="text"><br />
-					<div class="smallquote">Le nom de votre équipe, genre "Télécom Bretagne Gaming"</div></td></tr>
-					<tr><td><h3>TAG d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_TAG"]).'" disabled="disabled" name="teamtag" type="text"><br />
-					<div class="smallquote">Votre tag en 3 ou 4 caractères, genre "TBG" ou "TBG2" (que des lettres et des chiffres par contre !)</div></td></tr>
-				</table>
-				</div><br /><br /><br />';
+			echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Equipe</td><td><hr class="line" /></td></tr></table></p>';
+
+
+			if($is_lead)
+			{
+				echo '<div class="form"><form action="index.php?page=games'.$url_game.'&amp;game='.$get_game.'" method="post">
+					<table class="form_table">
+						<tr><td><h3>Nom d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_NAME"]).'" name="teamname" type="text"><br />
+						<div class="smallquote">Le nom de votre équipe, genre "Télécom Bretagne Gaming"</div></td></tr>
+						<tr><td><h3>TAG d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_TAG"]).'" name="teamtag" type="text"><br />
+						'.$error_teamtag.'
+						<div class="smallquote">Votre tag en 3 ou 4 caractères, genre "TBG" ou "TBG2" (que des lettres et des chiffres par contre !)</div></td></tr>
+					</table><br /><br />
+					<input type="hidden" name="sent" value="sent">
+					<button type="submit" value="Submit">Mettre à jour</button>
+					</form></div><br />';
+			}
+			else
+			{
+				echo '<div class="form">
+					<table class="form_table">
+						<tr><td><h3>Nom d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_NAME"]).'" disabled="disabled" name="teamname" type="text"><br />
+						<div class="smallquote">Le nom de votre équipe, genre "Télécom Bretagne Gaming"</div></td></tr>
+						<tr><td><h3>TAG d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_TAG"]).'" disabled="disabled" name="teamtag" type="text"><br />
+						<div class="smallquote">Votre tag en 3 ou 4 caractères, genre "TBG" ou "TBG2" (que des lettres et des chiffres par contre !)</div></td></tr>
+					</table></div>';
+			}
 		}
 
 		echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Joueurs</td><td><hr class="line" /></td></tr></table></p>';
@@ -388,24 +393,54 @@ if (isset($_SESSION["sgl_id"]))
 		{
 			if(filter_var($_GET["mail"], FILTER_VALIDATE_EMAIL))
 			{
-				$temp = $database->req_post('CALL INSERT_TEAM_MAIL(:id_team, :id_lead, :mail, :type, :id_game)',
+				$temp = $database->req_post('SELECT COUNT(*) AS total FROM T_GAME_USER WHERE GU_ID_ST=:id_team AND GU_TYPE=:type',
 					array(
 						"id_team" => $team_id,
-						"id_lead" => $_SESSION["id"],
-						"mail" => $_GET["mail"],
 						"type" => $_GET["type"],
-						"id_game" => $get_game
 					));
 
 				$data = $temp->fetch();
 
-				if(!$data["RESULT"])
+				if(($data["total"] < 1) && ($_GET["type"] == 4)
+					|| ($data["total"] < $game_data["G_NUM_SUBSTITUTES"]) && ($_GET["type"] == 3)
+					|| ($data["total"] < $game_data["G_NUM_PLAYERS"]) && ($_GET["type"] == 2))
+				{
+					$temp = $database->req_post('CALL INSERT_TEAM_MAIL(:id_team, :id_lead, :mail, :type, :id_game)',
+						array(
+							"id_team" => $team_id,
+							"id_lead" => $_SESSION["id"],
+							"mail" => $_GET["mail"],
+							"type" => $_GET["type"],
+							"id_game" => $get_game
+						));
+
+					$data = $temp->fetch();
+
+					if(!$data["RESULT"])
+					{
+						echo "<div style=\"text-align:center\" class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>
+						Le joueur ".htmlspecialchars($_GET["mail"])." est déjà dans une équipe.</div>";
+					}
+				}
+				else
 				{
 					echo "<div style=\"text-align:center\" class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>
-					Le joueur ".htmlspecialchars($_GET["mail"])." est déjà dans une équipe.</div>";
+						Vous ne pouvez pas ajouter ce joueur.</div>";
 				}
 			}
 		}
+
+	if (($_GET["action"]=="del") && ($is_lead))
+	{
+		if($_GET["player"] != $_SESSION["sgl_id"])
+		{
+			$temp = $database->req_post('UPDATE T_GAME_USER SET GU_ID_ST=NULL WHERE GU_ID_SU=:id_user AND GU_ID_ST=:id_team',
+				array(
+					"id_user" => $_GET["player"],
+					"id_team" => $team_id
+				));
+		}
+	}
 
 		$temp = $database->req_post('SELECT SU_ID_PARENT_SU, SU_ID_CARD_F, SU_LOGIN, SU_UID, SU_MAIL, PU_PSEUDO, GU_RANK, S_NAME, SU_FIRST_NAME, SU_LAST_NAME, GU_TYPE FROM T_SGL_USER
 			JOIN T_GAME_USER ON SU_UID=GU_ID_SU JOIN T_GAME ON GU_ID_G=G_UID LEFT JOIN T_PLATFORM_USER ON PU_ID_SU=SU_UID AND PU_ID_P=G_ID_P LEFT JOIN T_SCHOOL ON SU_ID_S=S_UID WHERE GU_ID_ST=:team_id
@@ -446,7 +481,7 @@ if (isset($_SESSION["sgl_id"]))
 			$hash = md5("player".$iplayer.$randhash);
 			echo '<span class="playercard">
 			<span style="float:left"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></span>
-			<span class="playerbutton" onclick="addPlayer(this, 2)">Ajouter</span>
+			'.($is_lead?'<span class="playerbutton" onclick="addPlayer(this, 2)">Ajouter</span>':'').'
 			<span class="playertype">'.$player_type[2].'</span>
 			</span><br />';
 		}
@@ -468,7 +503,7 @@ if (isset($_SESSION["sgl_id"]))
 			$hash = md5("substitute".$iplayer.$randhash);
 			echo '<span class="playercard">
 			<span style="float:left"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></span>
-			<span class="playerbutton" onclick="addPlayer(this, 3)">Ajouter</span>
+			'.($is_lead?'<span class="playerbutton" onclick="addPlayer(this, 3)">Ajouter</span>':'').'
 			<span class="playertype">'.$player_type[3].'</span>
 			</span><br />';
 		}
@@ -490,7 +525,7 @@ if (isset($_SESSION["sgl_id"]))
 			$hash = md5("coach".$iplayer.$randhash);
 			echo '<span class="playercard">
 			<span style="float:left"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></span>
-			<span class="playerbutton" onclick="addPlayer(this, 4)">Ajouter</span>
+			'.($is_lead?'<span class="playerbutton" onclick="addPlayer(this, 4)">Ajouter</span>':'').'
 			<span class="playertype">'.$player_type[4].'</span>
 			</span><br />';
 		}
