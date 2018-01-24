@@ -213,7 +213,7 @@ if (isset($_POST["sent"]) && $csrf_check)
 				'id_user' => array('type' => 'value', 'value' => $_SESSION['sgl_id']),
 				'old_pass' => array('type' => 'value', 'value' => $old_pass),
 				'new_pass' => array('type' => 'value', 'value' => $new_pass),
-				'new_salt' => array('type' => 'string', 'length' => $salt),
+				'new_salt' => array('type' => 'value', 'value' => $salt),
 				'config_salt' => array('type' => 'value', 'value' => CONFIG_SALT)
 			);
 
