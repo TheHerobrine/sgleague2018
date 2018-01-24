@@ -796,23 +796,37 @@ input:disabled
 	text-align: center;
 	font-size: 18px;
 	font-weight: bold;
-	margin: 15px 135px;
+	margin: 3px 135px;
 	margin-right: 0px;
-}
-
-
-#content .playercard .playerbutton a
-{
 	padding: 15px 100px;
 	color: #ffc68f;
 	opacity: 0.5;
 	transition: all .2s ease-in-out;
+	cursor: pointer;
 }
 
-#content .playercard .playerbutton a:hover
+.playercard .playerbutton:hover
 {
 	opacity: 1;
 	text-decoration: none;
+}
+
+.playercard .addplayer
+{
+	width: 400px;
+	margin: 13px 20px;
+}
+
+.playercard .addbutton
+{
+	font-size: 18px;
+	transition: all .2s ease-in-out;
+	cursor: pointer;
+}
+
+.playercard .addbutton:hover
+{
+	color: #ff6600;
 }
 
 .playercard input

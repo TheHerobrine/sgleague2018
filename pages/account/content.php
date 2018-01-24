@@ -278,15 +278,17 @@ $card_file = new File($database);
 						echo '<a href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=33" /></a>';
 						?>
 					</td></tr>
-					<tr><td style="width: 125px"><h3>Carte Étudiante :</h3></td><td><input type="file" name="f_card" accept="image/png, image/jpeg" size="10000000"/>
+					<tr><td><h3>Carte Étudiante :</h3></td><td><input style="padding: 5px 10px;width: 464px;" type="file" name="f_card" accept="image/png, image/jpeg" size="10000000"/>
 						<br/>
-						<div class="smallquote">Afin que l'on confirme que vous êtes bien un étudiant et pas un espion reptilien</div>
-					</td></tr>
+						<div class="smallquote">Afin que l'on confirme que vous êtes bien un étudiant et pas un espion reptilien.</div>
+					</td>
+
 					<?php if($card_file->init_for_get($user_data['SU_ID_CARD_F'])) { ?>
-					<tr><td></td><td>
-							<a href="<?=$card_file->get_url()?>" target="_blank"><img style="max-width: 400px;max-height: 200px;" src="<?=$card_file->get_url()?>" alt="carte étudiante"/></a>
-					</td></tr>
+						<td>
+							<a href="<?=$card_file->get_url()?>" target="_blank"><img style="width: 33px;height: 33px;border: 1px solid #ffc68f;" src="<?=$card_file->get_url()?>" alt="carte étudiante"/></a>
+						</td>
 					<?php } ?>
+					</tr>
 				</table>
 
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Modification du mot de passe</td><td><hr class="line" /></td></tr></table></p>
