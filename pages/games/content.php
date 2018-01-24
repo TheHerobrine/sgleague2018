@@ -85,6 +85,80 @@ $games_profile[4]['rank'] = array(
 	"Division 1 (5-1)"
 );
 
+function display_card($data, $player_type, $game_data, $get_game, $game_profile, $is_lead = false)
+{
+	$valid = true;
+	$editable = (($data["SU_ID_PARENT_SU"] == $_SESSION["sgl_id"]) || ($data["SU_UID"] == $_SESSION["sgl_id"]));
+
+	$edit_button = '';
+	if ($editable)
+	{
+		$edit_button = "<span style=\"padding-left:10px;color:#ffc68f;\">[ <a href=\"index.php?page=account&amp;uid=".$data["SU_UID"]."\">Editer</a> ]</span>";
+	}
+
+	$error_login = '';
+	if ($data["SU_LOGIN"] == '')
+	{
+		$error_login = "<span class=\"error\">Pseudo</span>";
+		$valid = false;
+	}
+
+	$error_pseudo = '';
+	if ($data["PU_PSEUDO"] == '')
+	{
+		$error_pseudo = "<span class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Manquant</span>";
+		$valid = false;
+	}
+
+	$error_card = '';
+	if (!$data["SU_ID_CARD_F"])
+	{
+		$error_card = " <span class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Carte étudiante</span>";
+		$valid = false;
+	}
+
+	$error_school = '';
+	if ($data["S_NAME"] == '')
+	{
+		$error_school = "<span class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Ecole</span>";
+		$valid = false;
+	}
+
+	$error_first_name = '';
+	if ($data["SU_FIRST_NAME"] == '')
+	{
+		$error_first_name = "<span class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Prénom</span>";
+		$valid = false;
+	}
+
+	$error_last_name = '';
+	if ($data["SU_LAST_NAME"] == '')
+	{
+		$error_last_name = "<span class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Nom</span>";
+		$valid = false;
+	}
+
+	$info_valid = " <i class=\"fa fa-check\" aria-hidden=\"true\"></i>";
+
+	if (!$valid)
+	{
+		$info_valid = " <span class=\"error\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></span>";
+	}
+
+	$hash = md5(strtolower(trim($data["SU_MAIL"])));
+	echo '<span class="playercard">
+	<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
+	<span class="playername">'.htmlspecialchars($data["SU_LOGIN"]).$error_login.$info_valid.'</span>
+	<span style="opacity:0.5;">[</span><span style="text-transform:uppercase;font-size:10px">'.htmlspecialchars($data["SU_FIRST_NAME"]).$error_first_name.'
+	'.htmlspecialchars($data["SU_LAST_NAME"]).$error_last_name.'
+	<span style="opacity:0.5;">-</span> '.htmlspecialchars($data["S_NAME"]).$error_school.'</span><span style="opacity:0.5;">]</span>'.$error_card.'
+	<span class="playertype">'.$player_type.$edit_button.'</span><br />
+	<span class="playerplatform"><span style="opacity:0.5;">'.$game_data["P_PSEUDO_NAME"].' :</span> '.htmlspecialchars($data["PU_PSEUDO"]).$error_pseudo.'
+	<span style="opacity:0.5;margin:0px 5px;">|</span> '.$data["SU_MAIL"].'</span>
+	<span class="playerrank">'.$game_profile[$data["GU_RANK"]].'</span>
+	</span><br />';
+}
+
 
 ?>
 <div id="content">
@@ -120,38 +194,6 @@ if (isset($_GET["gpage"]))
 		</div>
 		<br />
 <?php
-if (isset($_SESSION["sgl_id"]))
-{
-	if ($_GET["action"]=="create")
-	{
-		$database->req_post('CALL INSERT_SGL_TEAM(:id_user, :game)',
-		array(
-			"id_user" => $_SESSION['sgl_id'],
-			"game" => $get_game
-		));
-	}
-
-	$temp = $database->req_post('SELECT G_NAME, G_RANK_DESCRIPTION, G_NUM_PLAYERS, G_NUM_SUBSTITUTES, G_ID_P, P_PSEUDO_NAME FROM T_GAME, T_PLATFORM WHERE P_UID=G_ID_P AND G_UID = :game',
-		array(
-			"game" => $get_game
-		));
-	$data = $temp->fetch();
-
-	$game_data = $data;
-
-	$temp = $database->req_post('SELECT GU_ID_ST FROM T_GAME_USER WHERE GU_ID_SU=:id_user AND GU_ID_G = :game',
-		array(
-			"id_user" => $_SESSION['sgl_id'],
-			"game" => $get_game
-		));
-	$data = $temp->fetch();
-
-	$is_team = $data["GU_ID_ST"] > 0;
-	$team_id = $data["GU_ID_ST"];
-	$url_game = "&amp;gpage=".$get_game;
-
-
-
 
 	echo '<p id="'.$games_short[$get_game-1].'"><table class="line_table"><tr><td><hr class="line" /></td><td><img src="./style/img/games/'.$games_short[$get_game-1].'.png" alt="'.$games_name[$get_game-1].'" /></td><td><hr class="line" /></td></tr></table></p>';
 
@@ -215,6 +257,85 @@ if (isset($_SESSION["sgl_id"]))
 		<?php
 			break;
 	}
+if (isset($_SESSION["sgl_id"]))
+{
+	if ($_GET["action"]=="create")
+	{
+		$database->req_post('CALL INSERT_SGL_TEAM(:id_user, :game)',
+		array(
+			"id_user" => $_SESSION['sgl_id'],
+			"game" => $get_game
+		));
+	}
+
+	$error_teamtag ='';
+
+	if (isset($_POST["sent"]))
+	{
+		$form_teamtag = isset($_POST['teamtag']) ? $_POST['teamtag'] : '';
+		$form_teamname = isset($_POST['teamname']) ? $_POST['teamname'] : '';
+
+		if (strlen($form_teamtag) != 0)
+		{
+			if (!preg_match("/^[A-Za-z0-9]{3,4}$/", $form_teamtag))
+			{
+				$check_teamtag = -1;
+				$error_teamtag = "Hep ! Seulement 3 ou 4 caractères, et seulement des lettres et des chiffres !";
+				$form_teamtag = '';
+			}
+			else
+			{
+				$temp = $database->req_post('SELECT ST_TAG FROM T_SGL_TEAM WHERE ST_ID_G=:game AND ST_ID_LEAD_SU!=:id_user',
+					array(
+						"id_user" => $_SESSION['sgl_id'],
+						"game" => $get_game
+					));
+				$data = $temp->fetch();
+
+				if ($data["ST_TAG"])
+				{
+					$check_teamtag = -2;
+					$error_teamtag = "Désolé, mais ce TAG est déjà utilisé... Soyez plus original !";
+					$form_teamtag = '';
+				}
+			}
+		}
+		$database->req_post('UPDATE T_SGL_TEAM SET ST_NAME=:team_name, ST_TAG=:team_tag WHERE ST_ID_LEAD_SU=:id_user AND ST_ID_G=:game',
+		array(
+			"id_user" => $_SESSION['sgl_id'],
+			"game" => $get_game,
+			"team_tag" => $form_teamtag,
+			"team_name" => $form_teamname
+		));
+
+		if ($check_teamtag < 0)
+		{
+			$error_teamtag = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>".$error_teamtag."</div>";
+		}
+	}
+
+	$temp = $database->req_post('SELECT G_NAME, G_RANK_DESCRIPTION, G_NUM_PLAYERS, G_NUM_SUBSTITUTES, G_ID_P, P_PSEUDO_NAME FROM T_GAME, T_PLATFORM WHERE P_UID=G_ID_P AND G_UID = :game',
+		array(
+			"game" => $get_game
+		));
+	$data = $temp->fetch();
+
+	$game_data = $data;
+
+	$temp = $database->req_post('SELECT GU_ID_ST FROM T_GAME_USER WHERE GU_ID_SU=:id_user AND GU_ID_G = :game',
+		array(
+			"id_user" => $_SESSION['sgl_id'],
+			"game" => $get_game
+		));
+	$data = $temp->fetch();
+
+	$is_team = $data["GU_ID_ST"] > 0;
+	$team_id = $data["GU_ID_ST"];
+	$url_game = "&amp;gpage=".$get_game;
+
+
+
+
 
 	if ($is_team)
 	{
@@ -244,7 +365,7 @@ if (isset($_SESSION["sgl_id"]))
 				</table><br /><br />
 				<input type="hidden" name="sent" value="sent">
 				<button type="submit" value="Submit">Mettre à jour</button>
-				</form></div><br /><br /><br />';
+				</form></div><br />';
 		}
 		else
 		{
@@ -260,13 +381,40 @@ if (isset($_SESSION["sgl_id"]))
 
 		echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Joueurs</td><td><hr class="line" /></td></tr></table></p>';
 
-		$temp = $database->req_post('SELECT SU_LOGIN, SU_UID, SU_MAIL, PU_PSEUDO, GU_RANK, S_NAME, SU_FIRST_NAME, SU_LAST_NAME, GU_TYPE FROM T_SGL_USER
-			JOIN T_GAME_USER ON SU_UID=GU_ID_SU JOIN T_GAME ON GU_ID_G=G_UID LEFT JOIN T_PLATFORM_USER ON PU_ID_SU=SU_UID AND PU_ID_P=G_ID_P LEFT JOIN T_SCHOOL ON SU_ID_S=S_UID WHERE GU_ID_ST=:team_id',
+		echo '<p style="text-align: center;" class="smallquote">Si vous ajoutez un joueur non inscrit, vous pourrez compléter ses informations.<br />
+		Si vous invitez un joueur déjà inscrit, il devra remplir ses informations lui-même.</p>';
+
+		if (($_GET["action"]=="add") && ($is_lead))
+		{
+			if(filter_var($_GET["mail"], FILTER_VALIDATE_EMAIL))
+			{
+				$temp = $database->req_post('CALL INSERT_TEAM_MAIL(:id_team, :id_lead, :mail, :type, :id_game)',
+					array(
+						"id_team" => $team_id,
+						"id_lead" => $_SESSION["id"],
+						"mail" => $_GET["mail"],
+						"type" => $_GET["type"],
+						"id_game" => $get_game
+					));
+
+				$data = $temp->fetch();
+
+				if(!$data["RESULT"])
+				{
+					echo "<div style=\"text-align:center\" class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>
+					Le joueur ".htmlspecialchars($_GET["mail"])." est déjà dans une équipe.</div>";
+				}
+			}
+		}
+
+		$temp = $database->req_post('SELECT SU_ID_PARENT_SU, SU_ID_CARD_F, SU_LOGIN, SU_UID, SU_MAIL, PU_PSEUDO, GU_RANK, S_NAME, SU_FIRST_NAME, SU_LAST_NAME, GU_TYPE FROM T_SGL_USER
+			JOIN T_GAME_USER ON SU_UID=GU_ID_SU JOIN T_GAME ON GU_ID_G=G_UID LEFT JOIN T_PLATFORM_USER ON PU_ID_SU=SU_UID AND PU_ID_P=G_ID_P LEFT JOIN T_SCHOOL ON SU_ID_S=S_UID WHERE GU_ID_ST=:team_id
+			ORDER BY GU_TYPE, SU_UID',
 			array(
 				"team_id" => $team_id
 			));
 
-		$player_type = array("Aucun", "Capitaine", "Joueur", "Remplaçant");
+		$player_type = array("Aucun", "Capitaine", "Joueur", "Remplaçant", "Coach");
 
 		$nplayer = 0;
 		$nreps = 0;
@@ -275,19 +423,8 @@ if (isset($_SESSION["sgl_id"]))
 
 		$data = $temp->fetchAll();
 
-
 		$current_player = 0;
-
-		$hash = md5(strtolower(trim($data[$current_player]["SU_MAIL"])));
-		echo '<span class="playercard">
-		<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
-		<span class="playername">'.htmlspecialchars($data[$current_player]["SU_LOGIN"]).'</span>
-		('.htmlspecialchars($data[$current_player]["SU_FIRST_NAME"]).' '.htmlspecialchars($data[$current_player]["SU_LAST_NAME"]).', '.htmlspecialchars($data[$current_player]["S_NAME"]).')
-		<span class="playertype">'.$player_type[1].'</span><br />
-		<span class="playerplatform">'.$game_data["P_PSEUDO_NAME"].' : '.htmlspecialchars($data[$current_player]["PU_PSEUDO"]).'</span>
-		<span class="playerrank">'.$games_profile[$get_game]['rank'][$data[$current_player]["GU_RANK"]].'</span>
-		</span><br />';
-
+		display_card($data[$current_player], $player_type[1], $game_data, $get_game, $games_profile[$get_game]['rank'], $is_lead);
 		$current_player++;
 
 		$randhash= time();
@@ -298,15 +435,7 @@ if (isset($_SESSION["sgl_id"]))
 			{
 				if($data[$current_player]["GU_TYPE"] == 2)
 				{
-					$hash = md5(strtolower(trim($data[$current_player]["SU_MAIL"])));
-					echo '<span class="playercard">
-					<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
-					<span class="playername">'.htmlspecialchars($data[$current_player]["SU_LOGIN"]).'</span>
-					('.htmlspecialchars($data[$current_player]["SU_FIRST_NAME"]).' '.htmlspecialchars($data[$current_player]["SU_LAST_NAME"]).', '.htmlspecialchars($data[$current_player]["S_NAME"]).')
-					<span class="playertype">'.$player_type[2].'</span><br />
-					<span class="playerplatform">'.$game_data["P_PSEUDO_NAME"].' : '.htmlspecialchars($data[$current_player]["PU_PSEUDO"]).'</span>
-					<span class="playerrank">'.$games_profile[$get_game]['rank'][$data[$current_player]["GU_RANK"]].'</span>
-					</span><br />';
+					display_card($data[$current_player], $player_type[2], $game_data, $get_game, $games_profile[$get_game]['rank'], $is_lead);
 
 					$current_player++;
 
@@ -316,9 +445,9 @@ if (isset($_SESSION["sgl_id"]))
 			
 			$hash = md5("player".$iplayer.$randhash);
 			echo '<span class="playercard">
-			<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
-			<span class="playerbutton"><a href="#">Ajouter</a></span>
-			<span class="playertype">'.$player_type[2].'</span><br />
+			<span style="float:left"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></span>
+			<span class="playerbutton" onclick="addPlayer(this, 2)">Ajouter</span>
+			<span class="playertype">'.$player_type[2].'</span>
 			</span><br />';
 		}
 
@@ -328,15 +457,7 @@ if (isset($_SESSION["sgl_id"]))
 			{
 				if($data[$current_player]["GU_TYPE"] == 3)
 				{
-					$hash = md5(strtolower(trim($data[$current_player]["SU_MAIL"])));
-					echo '<span class="playercard">
-					<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
-					<span class="playername">'.htmlspecialchars($data[$current_player]["SU_LOGIN"]).'</span>
-					('.htmlspecialchars($data[$current_player]["SU_FIRST_NAME"]).' '.htmlspecialchars($data[$current_player]["SU_LAST_NAME"]).', '.htmlspecialchars($data[$current_player]["S_NAME"]).')
-					<span class="playertype">'.$player_type[3].'</span><br />
-					<span class="playerplatform">'.$game_data["P_PSEUDO_NAME"].' : '.htmlspecialchars($data[$current_player]["PU_PSEUDO"]).'</span>
-					<span class="playerrank">'.$games_profile[$get_game]['rank'][$data[$current_player]["GU_RANK"]].'</span>
-					</span><br />';
+					display_card($data[$current_player], $player_type[3], $game_data, $get_game, $games_profile[$get_game]['rank'], $is_lead);
 
 					$current_player++;
 
@@ -346,42 +467,32 @@ if (isset($_SESSION["sgl_id"]))
 			
 			$hash = md5("substitute".$iplayer.$randhash);
 			echo '<span class="playercard">
-			<a style="float:left" href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></a>
-			<span class="playerbutton"><a href="#">Ajouter</a></span>
-			<span class="playertype">'.$player_type[3].'</span><br />
+			<span style="float:left"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></span>
+			<span class="playerbutton" onclick="addPlayer(this, 3)">Ajouter</span>
+			<span class="playertype">'.$player_type[3].'</span>
 			</span><br />';
 		}
-		
 
-		if ($lasttype <= 2)
+		for ($iplayer=0;$iplayer<1;$iplayer++)
 		{
-			for ($j=0; $j<($games_team[$i]-$nplayer); $j++)
+			if (isset($data[$current_player]))
 			{
-				if ($is_lead)
+				if($data[$current_player]["GU_TYPE"] == 4)
 				{
-					//echo '<span class="buttoncard" onclick="morphIntoTextField(this, '.$games[$i].')()" data-type="2" data-game="'.$games[$i].'">Ajouter un joueur</span><br />';
-					echo '<span class="playercard"></span><br />';
-				}
-				else
-				{
-					echo '<span class="playercard"></span><br />';
+					display_card($data[$current_player], $player_type[4], $game_data, $get_game, $games_profile[$get_game]['rank'], $is_lead);
+
+					$current_player++;
+
+					continue;
 				}
 			}
-			echo "<br /><br />";
-			$lasttype = 2;
-		}
-
-		for ($j=0; $j<($games_reps[$i]-$nreps); $j++)
-		{
-			if ($is_lead)
-			{
-				//echo '<span class="buttoncard" onclick="morphIntoTextField(this, '.$games[$i].')()" data-type="3" data-game="'.$games[$i].'">Ajouter un remplaçant</span><br />';
-				echo '<span class="playercard"></span><br />';
-			}
-			else
-			{
-				echo '<span class="playercard"></span><br />';
-			}
+			
+			$hash = md5("coach".$iplayer.$randhash);
+			echo '<span class="playercard">
+			<span style="float:left"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=60" /></span>
+			<span class="playerbutton" onclick="addPlayer(this, 4)">Ajouter</span>
+			<span class="playertype">'.$player_type[4].'</span>
+			</span><br />';
 		}
 
 		echo '</div>';

@@ -29,7 +29,7 @@ DROP PROCEDURE IF EXISTS INSERT_PLATFORM_USER|
 DROP PROCEDURE IF EXISTS INSERT_GAME_USER|
 DROP PROCEDURE IF EXISTS INSERT_SCHOOL|
 DROP PROCEDURE IF EXISTS INSERT_SGL_TEAM|
-DROP PROCEDURE IF EXISTS INSERT_TEAM_REQUEST|
+DROP PROCEDURE IF EXISTS INSERT_TEAM_MAIL|
 
 -- ************************************************************************************************ --
 -- ----------------------------- Create Queries --------------------------------------------------- --
@@ -191,12 +191,32 @@ BEGIN
 END|
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
--- INSERT_TEAM_REQUEST
+-- INSERT_TEAM_MAIL
 -- ---
-
-CREATE PROCEDURE INSERT_TEAM_REQUEST(IN id_sgl_team INTEGER, IN id_game_user INTEGER, IN type INTEGER)
+CREATE PROCEDURE INSERT_TEAM_MAIL(IN id_team INTEGER, IN id_lead INTEGER, IN mail VARCHAR(256), IN type INTEGER, IN id_game INTEGER)
 BEGIN
-  INSERT INTO `T_TEAM_REQUEST` (`TR_ID_ST`,`TR_ID_GU`,`TR_TYPE`,`TR_SEND_DATE`) VALUES
-  (id_sgl_team,id_game_user,type, NOW());
-  SELECT TR_ID_ST, TR_ID_GU, TR_TYPE, TR_SEND_DATE FROM T_TEAM_REQUEST WHERE TR_UID=LAST_INSERT_ID();
+  DECLARE id_user INTEGER DEFAULT NULL;
+  DECLARE current_team INTEGER DEFAULT NULL;
+
+  SELECT SU_UID INTO id_user FROM T_SGL_USER WHERE LOWER(SU_MAIL)=LOWER(mail);
+  
+  IF id_user IS NULL THEN
+    INSERT INTO T_SGL_USER (SU_ID_PARENT_SU, SU_MAIL, SU_REGISTER_DATE) VALUES (id_lead, mail, NOW());
+    SELECT SU_UID INTO id_user FROM T_SGL_USER WHERE SU_UID=LAST_INSERT_ID();
+    INSERT INTO T_GAME_USER (GU_ID_SU, GU_ID_G, GU_ID_ST, GU_TYPE) VALUES (id_user, id_game, id_team, type);
+    SELECT TRUE as RESULT;
+  ELSE
+    SELECT GU_ID_ST INTO current_team FROM T_GAME_USER WHERE GU_ID_SU=id_user AND GU_ID_G=id_game;
+    IF current_team IS NULL THEN
+      IF EXISTS (SELECT * FROM T_GAME_USER WHERE GU_ID_SU=id_user AND GU_ID_G=id_game) THEN
+        UPDATE T_GAME_USER SET GU_ID_ST=id_team WHERE GU_ID_SU=id_user AND GU_ID_G=id_game;
+        SELECT TRUE as RESULT;
+  	  ELSE
+  	    INSERT INTO T_GAME_USER (GU_ID_SU, GU_ID_G, GU_ID_ST, GU_TYPE) VALUES (id_user, id_game, id_team, type);
+        SELECT TRUE as RESULT;
+      END IF;
+    ELSE
+      SELECT FALSE as RESULT;
+    END IF;
+  END IF;
 END|
