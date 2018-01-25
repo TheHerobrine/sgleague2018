@@ -85,6 +85,31 @@ $platform_profile[3]['comment'] = "<div class=\"smallquote\">Afin d'entendre vot
 
 $newpass_bool = false;
 
+$sgl_uid = $_SESSION["sgl_id"];
+
+$database = new Database();
+
+$url_more ='';
+
+$edit_other = false;
+
+if (isset($_GET["uid"]))
+{
+	$temp = $database->req_post('SELECT SU_ID_PARENT_SU FROM T_SGL_USER WHERE SU_UID=:id_user',
+		array(
+			"id_user" => $_GET["uid"]
+		));
+
+	$data = $temp->fetch();
+
+	if ($data["SU_ID_PARENT_SU"] == $_SESSION["sgl_id"])
+	{
+		$sgl_uid = $_GET["uid"];
+		$url_more ='&amp;uid='.$sgl_uid;
+		$edit_other = true;
+	}
+}
+
 debug("POST", $_POST);
 if (isset($_POST["sent"]) && $csrf_check)
 {
@@ -96,7 +121,7 @@ if (isset($_POST["sent"]) && $csrf_check)
 	//TODO: Verification for game pseudo
 
 	$fields = array(
-		'userid' => array('type' => 'value', 'value' => $_SESSION["sgl_id"]),
+		'userid' => array('type' => 'value', 'value' => $sgl_uid),
 		'mail' => array('type' => 'mail'),
 		'school' => array('type' => 'string', 'length' => '256'),
 		'first' => array('type' => 'string', 'length' => '128'),
@@ -123,13 +148,12 @@ if (isset($_POST["sent"]) && $csrf_check)
 		image_type_to_mime_type(IMAGETYPE_PNG)
 	);
 	$fields = array(
-		'user_id' => array('type' => 'value', 'value' => $_SESSION["sgl_id"]),
+		'user_id' => array('type' => 'value', 'value' => $sgl_uid),
 		'f_card' => array('type' => 'file', 'types' =>  $types, 'max_size' => 8000000, 'destination' => '\\', 'max_width' => 800, 'max_height' => 400)
 	);
 
 	$query = "CALL UPDATE_SGL_USER_CARD(:user_id, :f_card)";
 
-	$database = new Database();
 	$form = new Form($database, $query, $fields);
 
 	if($form->is_valid())
@@ -159,7 +183,7 @@ if (isset($_POST["sent"]) && $csrf_check)
 	for ($p_uid=1;$p_uid<=4;$p_uid++)
 	{
 		$database->req_post('CALL UPDATE_SGL_USER_PLATFORM(:id_user, :id_user, :id_platform, :pseudo)', array(
-			"id_user" => $_SESSION['sgl_id'],
+			"id_user" => $sgl_uid,
 			"id_platform" => $p_uid,
 			"pseudo" => $_POST['p_name_'.$p_uid]
 		));
@@ -170,7 +194,7 @@ if (isset($_POST["sent"]) && $csrf_check)
 	for ($g_uid=1;$g_uid<=4;$g_uid++)
 	{
 		$database->req_post('CALL UPDATE_SGL_USER_GAME(:id_user, :id_user, :id_game, :rank)', array(
-			"id_user" => $_SESSION['sgl_id'],
+			"id_user" => $sgl_uid,
 			"id_game" => $g_uid,
 			"rank" => $_POST['g_rank_'.$g_uid]
 		));
@@ -210,7 +234,7 @@ if (isset($_POST["sent"]) && $csrf_check)
 		else
 		{
 			$fields = array(
-				'id_user' => array('type' => 'value', 'value' => $_SESSION['sgl_id']),
+				'id_user' => array('type' => 'value', 'value' => $sgl_uid),
 				'old_pass' => array('type' => 'value', 'value' => $old_pass),
 				'new_pass' => array('type' => 'value', 'value' => $new_pass),
 				'new_salt' => array('type' => 'value', 'value' => $salt),
@@ -233,15 +257,15 @@ if (isset($_POST["sent"]) && $csrf_check)
 $database = new Database();
 
 $cursor = $database->req_post("CALL SELECT_GAME_USER_BY_SU(:id_user)", array(
-	"id_user" => $_SESSION['sgl_id']
+	"id_user" => $sgl_uid
 ));
 
 $game_users = $cursor->fetchAll();
 $cursor->closeCursor();
 
 $cursor = $database->req_post('CALL SELECT_SGL_USER_INFORMATION(:id_user, :id_parent)', array(
-	"id_user" => $_SESSION['sgl_id'],
-	"id_parent" =>$_SESSION['sgl_id']
+	"id_user" => $sgl_uid,
+	"id_parent" =>$sgl_uid
 ));
 
 $user_data = $cursor->fetch();
@@ -268,7 +292,7 @@ $card_file = new File($database);
 		</div>
 		<br />
 		<div class="form">
-			<form action="index.php?page=account" method="post" autocomplete="off" enctype="multipart/form-data">
+			<form action="index.php?page=account<?=$url_more?>" method="post" autocomplete="off" enctype="multipart/form-data">
 				<table class="form_table">
 					<tr><td><h3>Pseudo :</h3></td><td><input type="text" name="login" value="<?=htmlspecialchars($user_data["SU_LOGIN"])?>" disabled="disabled" style="width:464px"/>
 					<br />
@@ -290,7 +314,7 @@ $card_file = new File($database);
 					<?php } ?>
 					</tr>
 				</table>
-
+				<?php if (!$edit_other) { ?>
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Modification du mot de passe</td><td><hr class="line" /></td></tr></table></p>
 				<table class="form_table">
 					<tr><td><h3>Ancien :</h3></td><td><input type="password" name="oldpass" /><br />
@@ -301,6 +325,7 @@ $card_file = new File($database);
 				</table>
 
 				<?php
+				}
 				for ($igame=0; $igame<count($game_users); $igame++)
 				{
 					?>
@@ -339,7 +364,7 @@ $card_file = new File($database);
 				<table class="form_table">
 					<tr><td><h3>Mail :</h3></td><td><input type="mail" name="mail" value="<?=htmlspecialchars($user_data["SU_MAIL"])?>" disabled="disabled"/><br />
 					<div class="smallquote">Essayez de mettre votre mail étudiant, comme ça vous n'aurez pas à scanner votre carte étudiante.</div></td></tr>
-					<tr><td><h3>Ecole :</h3></td><td><input type="text" name="school" value="<?=htmlspecialchars($user_data["S_NAME"])?>"/><br />
+					<tr><td><h3>Ecole :</h3></td><td><input type="text" name="school" id="school_form" value="<?=htmlspecialchars($user_data["S_NAME"])?>"/><br />
 					<div class="smallquote">Pour ceux qui n'écoutent rien : on doit être étudiant pour participer à la SGL !</div></td></tr>
 					<tr><td><h3>Pseudo IRL :</h3></td><td>
 					<input style="width: 237px" type="text" placeholder="Prénom" name="first" value="<?=htmlspecialchars($user_data["SU_FIRST_NAME"])?>"/>
