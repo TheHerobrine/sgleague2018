@@ -91,6 +91,8 @@ $database = new Database();
 
 $url_more ='';
 
+$edit_other = false;
+
 if (isset($_GET["uid"]))
 {
 	$temp = $database->req_post('SELECT SU_ID_PARENT_SU FROM T_SGL_USER WHERE SU_UID=:id_user',
@@ -104,6 +106,7 @@ if (isset($_GET["uid"]))
 	{
 		$sgl_uid = $_GET["uid"];
 		$url_more ='&amp;uid='.$sgl_uid;
+		$edit_other = true;
 	}
 }
 
@@ -311,7 +314,7 @@ $card_file = new File($database);
 					<?php } ?>
 					</tr>
 				</table>
-
+				<?php if (!$edit_other) { ?>
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Modification du mot de passe</td><td><hr class="line" /></td></tr></table></p>
 				<table class="form_table">
 					<tr><td><h3>Ancien :</h3></td><td><input type="password" name="oldpass" /><br />
@@ -322,6 +325,7 @@ $card_file = new File($database);
 				</table>
 
 				<?php
+				}
 				for ($igame=0; $igame<count($game_users); $igame++)
 				{
 					?>
@@ -360,7 +364,7 @@ $card_file = new File($database);
 				<table class="form_table">
 					<tr><td><h3>Mail :</h3></td><td><input type="mail" name="mail" value="<?=htmlspecialchars($user_data["SU_MAIL"])?>" disabled="disabled"/><br />
 					<div class="smallquote">Essayez de mettre votre mail étudiant, comme ça vous n'aurez pas à scanner votre carte étudiante.</div></td></tr>
-					<tr><td><h3>Ecole :</h3></td><td><input type="text" name="school" value="<?=htmlspecialchars($user_data["S_NAME"])?>"/><br />
+					<tr><td><h3>Ecole :</h3></td><td><input type="text" name="school" id="school_form" value="<?=htmlspecialchars($user_data["S_NAME"])?>"/><br />
 					<div class="smallquote">Pour ceux qui n'écoutent rien : on doit être étudiant pour participer à la SGL !</div></td></tr>
 					<tr><td><h3>Pseudo IRL :</h3></td><td>
 					<input style="width: 237px" type="text" placeholder="Prénom" name="first" value="<?=htmlspecialchars($user_data["SU_FIRST_NAME"])?>"/>
