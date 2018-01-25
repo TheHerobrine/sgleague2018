@@ -161,3 +161,33 @@ CREATE PROCEDURE UPDATE_SGL_USER_CARD( IN id_user INTEGER, IN id_card INTEGER)
       SELECT TRUE as RESULT, FALSE as TO_DELETE;
     END IF;
   END|
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------- --
+-- SGL_USER_LEAVES_TEAM
+-- ---
+
+CREATE PROCEDURE SGL_USER_LEAVES_TEAM( IN id_user INTEGER, IN id_game INTEGER)
+  BEGIN
+    DECLARE is_lead BOOL DEFAULT FALSE;
+    DECLARE id_team INTEGER DEFAULT NULL;
+    DECLARE id_file INTEGER DEFAULT NULL;
+
+    SELECT ST_UID, ST_ID_PICTURE_F,(ST_ID_LEAD_SU=id_user) INTO id_team, id_file, is_lead FROM T_SGL_TEAM
+    JOIN T_GAME_USER ON GU_ID_ST=ST_UID
+    WHERE GU_ID_SU=id_user AND GU_ID_G=id_game;
+
+    IF is_lead IS TRUE THEN
+
+      UPDATE T_GAME_USER SET GU_ID_ST=NULL WHERE GU_ID_ST=id_team;
+      DELETE FROM T_SGL_TEAM WHERE ST_UID=id_team;
+
+      IF id_file IS NOT NULL THEN
+        SELECT TRUE as RESULT, TRUE as TO_DELETE, id_file as FILE;
+      ELSE
+        SELECT TRUE as RESULT, FALSE as TO_DELETE;
+      END IF ;
+
+    ELSE
+      SELECT TRUE as RESULT, FALSE as TO_DELETE;
+    END IF;
+  END |
