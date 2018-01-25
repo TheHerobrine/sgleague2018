@@ -841,6 +841,40 @@ input:disabled
 	right: 5px;
 }
 
+.searchtable
+{
+	width: 100%;
+}
+
+.searchtable td, .searchtable th
+{
+	width: 25%;
+	padding: 2px 10px;
+}
+
+.searchtable tr td:nth-child(1)
+{
+	color: #ff6600;
+}
+
+.searchtable tr:nth-child(2n)
+{
+	background: rgba(0,0,0,0.5);
+}
+
+.searchtable th
+{
+	text-align: left;
+	color: #ff6600;
+}
+
+.playersearch
+{
+	max-height: 200px;
+	overflow: auto;
+	border: 1px solid #ffc68f;
+}
+
 .dropdown
 {
 	position: absolute;

@@ -7,7 +7,7 @@ include_once("./class/Form.class.php");
 //  ----- [ Config CS ] --------------------------------------------------
 
 $platform_profile[2]['reggex'] = "/^STEAM_[0-5]:[0-1]:[0-9]+$/";
-$platform_profile[2]['error'] = "<div>Attention, ça doit être un truc du style STEAM_0:1:11539914.</div>";
+$platform_profile[2]['error'] = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Attention, ça doit être un truc du style STEAM_0:1:11539914.</div>";
 $platform_profile[2]['comment'] = "<div class=\"smallquote\">Votre Steam ID pour Counter Strike (ex : STEAM_0:1:11539914). Pour vous aider : <a target=\"_blank\" href=\"http://steamidfinder.com/\">SteamIDFinder.com</a></div>";
 $games_profile[3]['comment-rank'] = "<div class=\"smallquote\">Votre rang Counter Strike : Global Offensive</div>";
 $games_profile[3]['rank'] = array(
@@ -35,7 +35,7 @@ $games_profile[3]['rank'] = array(
 //  ----- [ Config OW / HS ] --------------------------------------------------
 
 $platform_profile[1]['reggex'] = "/#[0-9]{4,5}$/";
-$platform_profile[1]['error'] = "<div>Attention, vous avez pas oubliez la partie après le '#' par hasard ?</div>";
+$platform_profile[1]['error'] = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Attention, vous avez pas oubliez la partie après le '#' par hasard ?</div>";
 $platform_profile[1]['comment'] = "<div class=\"smallquote\">Votre BattleTag pour Hearthstone et Overwatch. On oublie pas la partie après le \"#\" !</div>";
 $games_profile[1]['comment-rank'] = "<div class=\"smallquote\">Votre nombre de points Overwatch</div>";
 $games_profile[1]['rank'] = array(
@@ -142,38 +142,50 @@ if (isset($_POST["sent"]) && $csrf_check)
 	}
 //  ----- [ Card Update ] --------------------------------------------------
 
-	$types = array(
-		image_type_to_mime_type(IMAGETYPE_JPEG),
-		image_type_to_mime_type(IMAGETYPE_JPEG2000),
-		image_type_to_mime_type(IMAGETYPE_PNG)
-	);
-	$fields = array(
-		'user_id' => array('type' => 'value', 'value' => $sgl_uid),
-		'f_card' => array('type' => 'file', 'types' =>  $types, 'max_size' => 8000000, 'destination' => '\\', 'max_width' => 800, 'max_height' => 400)
-	);
-
-	$query = "CALL UPDATE_SGL_USER_CARD(:user_id, :f_card)";
-
-	$form = new Form($database, $query, $fields);
-
-	if($form->is_valid())
+	debug("FILES", $_FILES);
+	$error_file = '';
+	if (isset($_FILES["f_card"]))
 	{
-		$return = $form->send();
-		if($data = $return->fetch())
+		if ($_FILES["f_card"]["error"] == 0)
 		{
-			$return->closeCursor();
-			if($data['TO_DELETE'])
+			$types = array(
+				image_type_to_mime_type(IMAGETYPE_JPEG),
+				image_type_to_mime_type(IMAGETYPE_JPEG2000),
+				image_type_to_mime_type(IMAGETYPE_PNG)
+			);
+			$fields = array(
+				'user_id' => array('type' => 'value', 'value' => $sgl_uid),
+				'f_card' => array('type' => 'file', 'types' =>  $types, 'max_size' => 8000000, 'destination' => '\\', 'max_width' => 800, 'max_height' => 800)
+			);
+
+			$query = "CALL UPDATE_SGL_USER_CARD(:user_id, :f_card)";
+
+			$form = new Form($database, $query, $fields);
+
+			if($form->is_valid())
 			{
-				$file = new File($database);
-				if($file->init_for_get($data['FILE']))
+				$return = $form->send();
+				if($data = $return->fetch())
 				{
-					$file->delete();
+					$return->closeCursor();
+					if($data['TO_DELETE'])
+					{
+						$file = new File($database);
+						if($file->init_for_get($data['FILE']))
+						{
+							$file->delete();
+						}
+					}
+				}
+				else
+				{
+					$return->closeCursor();
 				}
 			}
 		}
-		else
+		else if ($_FILES["f_card"]["error"] == 1)
 		{
-			$return->closeCursor();
+			$error_file = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Ce fichier est trop gros, on a pas un espace de stockage infini, hein !</div>";
 		}
 	}
 
@@ -182,11 +194,18 @@ if (isset($_POST["sent"]) && $csrf_check)
 
 	for ($p_uid=1;$p_uid<=4;$p_uid++)
 	{
-		$database->req_post('CALL UPDATE_SGL_USER_PLATFORM(:id_user, :id_user, :id_platform, :pseudo)', array(
-			"id_user" => $sgl_uid,
-			"id_platform" => $p_uid,
-			"pseudo" => $_POST['p_name_'.$p_uid]
-		));
+		if (isset($platform_profile[$p_uid]['reggex']))
+		{
+
+		}
+		else
+		{
+			$database->req_post('CALL UPDATE_SGL_USER_PLATFORM(:id_user, :id_user, :id_platform, :pseudo)', array(
+				"id_user" => $sgl_uid,
+				"id_platform" => $p_uid,
+				"pseudo" => $_POST['p_name_'.$p_uid]
+			));
+		}
 	}
 
 //  ----- [ Game Update ] --------------------------------------------------
@@ -198,6 +217,47 @@ if (isset($_POST["sent"]) && $csrf_check)
 			"id_game" => $g_uid,
 			"rank" => $_POST['g_rank_'.$g_uid]
 		));
+	}
+
+//  ----- [ Login Update ] --------------------------------------------------
+
+	$error_login = '';
+	if (strlen($_POST["login"]) > 0)
+	{
+		if (strlen($_POST["login"]) >= 3)
+		{
+			if (!(preg_match("/[^A-Za-z0-9\!\?\.\-\#_]/", $_POST["login"])))
+			{
+
+				$temp = $database->req_post('SELECT COUNT(*) AS total FROM T_SGL_USER WHERE LOWER(TRIM(SU_LOGIN)) = LOWER(TRIM(:login)) AND SU_UID != :id_user', array(
+						"login" => $_POST["login"],
+						"id_user" => $_SESSION["sgl_id"]
+					));
+
+				$data = $temp->fetch();
+
+
+				if ($data["total"] > 0)
+				{
+					$error_login = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Désolé, quelqu'un est passé avant vous pour ce pseudo...</div>";
+				}
+				else
+				{
+					$database->req_post('UPDATE T_SGL_USER SET SU_LOGIN=TRIM(:login) WHERE SU_UID = :id_user', array(
+						"login" => $_POST["login"],
+						"id_user" => $_SESSION["sgl_id"]
+					));
+				}
+			}
+			else
+			{
+				$error_login = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Pas de caractères chelous ! Les admins vous pas réussir à taper votre pseudo...<br />Vous avez droit aux chiffres, aux lettres (sans accent) et à . ? ! # _ -</div>";
+			}
+		}
+		else
+		{
+			$error_login = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Moins de 3 caractères le pseudo 0_o ? C'est une blague ?</div>";
+		}
 	}
 
 //  ----- [ Pass Update ] --------------------------------------------------
@@ -294,24 +354,25 @@ $card_file = new File($database);
 		<div class="form">
 			<form action="index.php?page=account<?=$url_more?>" method="post" autocomplete="off" enctype="multipart/form-data">
 				<table class="form_table">
-					<tr><td><h3>Pseudo :</h3></td><td><input type="text" name="login" value="<?=htmlspecialchars($user_data["SU_LOGIN"])?>" disabled="disabled" style="width:464px"/>
+					<tr><td><h3>Pseudo :</h3></td><td><input type="text" name="login" value="<?=htmlspecialchars($user_data["SU_LOGIN"])?>" style="width:464px"/>
 					<br />
-					<div class="smallquote">Non, c'est même pas la peine d'essayer de le changer.</div></td><td>
+					<?=$error_login?>
+					<div class="smallquote">Vous pourrez vous identifier avec ce pseudo.</div></td><td>
 						<?php
-						$hash = md5(strtolower(trim($_SESSION["sgl_mail"])));
+						$hash = md5(strtolower(trim($user_data["SU_MAIL"])));
 						echo '<a href="https://www.gravatar.com/'.$hash.'"><img style="border: 1px solid #ffc68f;" src="https://www.gravatar.com/avatar/'.$hash.'.png?d=retro&amp;s=33" /></a>';
 						?>
 					</td></tr>
 					<tr><td><h3>Carte Étudiante :</h3></td><td><input style="padding: 5px 10px;width: 464px;" type="file" name="f_card" accept="image/png, image/jpeg" size="10000000"/>
 						<br/>
+						<?=$error_file?>
 						<div class="smallquote">Afin que l'on confirme que vous êtes bien un étudiant et pas un espion reptilien.</div>
 					</td>
-
-					<?php if($card_file->init_for_get($user_data['SU_ID_CARD_F'])) { ?>
-						<td>
+					<td>
+						<?php if($card_file->init_for_get($user_data['SU_ID_CARD_F'])) { ?>
 							<a href="<?=$card_file->get_url()?>" target="_blank"><img style="width: 33px;height: 33px;border: 1px solid #ffc68f;" src="<?=$card_file->get_url()?>" alt="carte étudiante"/></a>
-						</td>
-					<?php } ?>
+						<?php } ?>
+					</td>
 					</tr>
 				</table>
 				<?php if (!$edit_other) { ?>
@@ -363,7 +424,7 @@ $card_file = new File($database);
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Informations personnelles</td><td><hr class="line" /></td></tr></table></p>
 				<table class="form_table">
 					<tr><td><h3>Mail :</h3></td><td><input type="mail" name="mail" value="<?=htmlspecialchars($user_data["SU_MAIL"])?>" disabled="disabled"/><br />
-					<div class="smallquote">Essayez de mettre votre mail étudiant, comme ça vous n'aurez pas à scanner votre carte étudiante.</div></td></tr>
+					<div class="smallquote">Non, c'est même pas la peine d'essayer de la changer ! (ou contactez un admin sur discord)</div></td></tr>
 					<tr><td><h3>Ecole :</h3></td><td><input type="text" name="school" id="school_form" value="<?=htmlspecialchars($user_data["S_NAME"])?>"/><br />
 					<div class="smallquote">Pour ceux qui n'écoutent rien : on doit être étudiant pour participer à la SGL !</div></td></tr>
 					<tr><td><h3>Pseudo IRL :</h3></td><td>

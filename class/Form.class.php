@@ -287,6 +287,10 @@ class Form
 		}
 
 		debug("SQL VALID(".($this->valid?"VALID":"ERROR").")",$this->values);
+		if (!$this->valid)
+		{
+			debug("Error", array($this->unvalidated_code, $this->unvalidated_message));
+		}
 		
 		return $this->valid;
 	}

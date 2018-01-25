@@ -23,7 +23,7 @@ class Template
 			unset($page_head);
 			unset($page_script);
 		}
-		else if (CLOSE && isset($need_open))
+		else if (CLOSE && isset($need_open) && !isset($_GET["force"]))
 		{
 			$this->page = "418";
 

@@ -3,6 +3,7 @@
 global $csrf_check;
 
 include_once("./class/Database.class.php");
+include_once("./class/Form.class.php");
 
 $database = new Database();
 
@@ -275,6 +276,15 @@ if (isset($_SESSION["sgl_id"]))
 		));
 	}
 
+	if ($_GET["action"]=="leave")
+	{
+		$database->req_post('CALL UPDATE_SGL_USER_LEAVES_TEAM(:id_user, :game)',
+		array(
+			"id_user" => $_SESSION['sgl_id'],
+			"game" => $get_game
+		));
+	}
+
 	$error_teamtag ='';
 
 	if (isset($_POST["sent"]))
@@ -319,6 +329,57 @@ if (isset($_SESSION["sgl_id"]))
 		{
 			$error_teamtag = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>".$error_teamtag."</div>";
 		}
+
+		//  ----- [ Card Update ] --------------------------------------------------
+
+		debug("FILES", $_FILES);
+		$error_file = '';
+		if (isset($_FILES["f_logo"]))
+		{
+			if ($_FILES["f_logo"]["error"] == 0)
+			{
+				$types = array(
+					image_type_to_mime_type(IMAGETYPE_JPEG),
+					image_type_to_mime_type(IMAGETYPE_JPEG2000),
+					image_type_to_mime_type(IMAGETYPE_PNG)
+				);
+				$fields = array(
+					'id_user' => array('type' => 'value', 'value' => $_SESSION["sgl_id"]),
+					'id_game' => array('type' => 'value', 'value' => $get_game),
+					'f_logo' => array('type' => 'file', 'types' =>  $types, 'max_size' => 8000000, 'destination' => '\\', 'max_width' => 1600, 'max_height' => 1600)
+				);
+
+				$query = "CALL UPDATE_SGL_TEAM_LOGO(:id_user, :id_game, :f_logo)";
+
+				$form = new Form($database, $query, $fields);
+
+				if($form->is_valid())
+				{
+					$return = $form->send();
+					if($data = $return->fetch())
+					{
+						$return->closeCursor();
+						if($data['TO_DELETE'])
+						{
+							$file = new File($database);
+							if($file->init_for_get($data['FILE']))
+							{
+								$file->delete();
+							}
+						}
+					}
+					else
+					{
+						$return->closeCursor();
+					}
+				}
+			}
+			else if ($_FILES["f_logo"]["error"] == 1)
+			{
+				$error_file = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>Ce fichier est trop gros, on a pas un espace de stockage infini, hein !</div>";
+			}
+		}
+
 	}
 
 	$temp = $database->req_post('SELECT G_NAME, G_RANK_DESCRIPTION, G_NUM_PLAYERS, G_NUM_SUBSTITUTES, G_ID_P, P_PSEUDO_NAME FROM T_GAME, T_PLATFORM WHERE P_UID=G_ID_P AND G_UID = :game',
@@ -343,10 +404,10 @@ if (isset($_SESSION["sgl_id"]))
 	if ($is_team)
 	{
 		echo '<p style="text-align:center; font-weight: bold">Yay ! <b>Vous êtes inscrit</b> à ce tournoi ! Un premier pas vers la victoire...</p>';
-		echo '<p style="text-align: center;" class="smallquote">Plus qu\'à hard train jusqu\'à fin Février. [ <a href="index.php?page=games'.$url_game.'&amp;game='.$games[$i].'&amp;action=leave">Se désinscrire du tournoi</a> ]</p><br />';
+		echo '<p style="text-align: center;" class="smallquote">Plus qu\'à hard train jusqu\'à fin Février. [ <a href="index.php?page=games'.$url_game.'&amp;action=leave">Se désinscrire du tournoi</a> ]</p><br />';
 		//echo '<p style="text-align: center;" class="smallquote">Le tournoi a commencé... Bon courage !</p><br />';
 
-		$temp = $database->req_post('SELECT ST_TAG, ST_NAME, ST_STATUS, ST_RANK, ST_ID_LEAD_SU FROM T_SGL_TEAM WHERE ST_UID=:team_id',
+		$temp = $database->req_post('SELECT ST_TAG, ST_NAME, ST_STATUS, ST_RANK, ST_ID_LEAD_SU, ST_ID_PICTURE_F FROM T_SGL_TEAM WHERE ST_UID=:team_id',
 			array(
 				"team_id" => $team_id
 			));
@@ -357,16 +418,27 @@ if (isset($_SESSION["sgl_id"]))
 		{
 			echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Equipe</td><td><hr class="line" /></td></tr></table></p>';
 
+			$logo_file = new File($database);
 
 			if($is_lead)
 			{
-				echo '<div class="form"><form action="index.php?page=games'.$url_game.'&amp;game='.$get_game.'" method="post">
+				echo '<div class="form"><form action="index.php?page=games'.$url_game.'" method="post" enctype="multipart/form-data">
 					<table class="form_table">
-						<tr><td><h3>Nom d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_NAME"]).'" name="teamname" type="text"><br />
+						<tr><td><h3>Nom d\'équipe :</h3></td><td colspan="2"><input value="'.htmlspecialchars($data["ST_NAME"]).'" name="teamname" type="text"><br />
 						<div class="smallquote">Le nom de votre équipe, genre "Télécom Bretagne Gaming"</div></td></tr>
-						<tr><td><h3>TAG d\'équipe :</h3></td><td><input value="'.htmlspecialchars($data["ST_TAG"]).'" name="teamtag" type="text"><br />
+						<tr><td><h3>TAG d\'équipe :</h3></td><td colspan="2"><input value="'.htmlspecialchars($data["ST_TAG"]).'" name="teamtag" type="text"><br />
 						'.$error_teamtag.'
 						<div class="smallquote">Votre tag en 3 ou 4 caractères, genre "TBG" ou "TBG2" (que des lettres et des chiffres par contre !)</div></td></tr>
+											<tr><td><h3>Logo :</h3></td><td><input style="padding: 5px 10px;width: 464px;" type="file" name="f_logo" accept="image/png, image/jpeg" size="10000000"/>
+						<br/>
+						'.$error_file.'
+						<div class="smallquote">Il sera affiché sur les infographies de récap de vos matchs !</div>
+					</td>
+					<td>
+						'.($logo_file->init_for_get($data["ST_ID_PICTURE_F"])?
+						'<a href="'.$logo_file->get_url().'" target="_blank"><img style="width: 33px;height: 33px;border: 1px solid #ffc68f;" src="'.$logo_file->get_url().'" alt="logo"/></a>':'').'
+					</td>
+					</tr>
 					</table><br /><br />
 					<input type="hidden" name="sent" value="sent">
 					<button type="submit" value="Submit">Mettre à jour</button>
@@ -539,7 +611,7 @@ if (isset($_SESSION["sgl_id"]))
 		if ($game_data["G_NUM_PLAYERS"] > 1)
 		{
 			echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Rejoindre une équipe</td><td><hr class="line" /></td></tr></table></p>';
-			echo '<br /><p style="text-align: center;" class="smallquote">Si vous souhaitez <span style="font-weight:bold;">rejoindre une équipe</span>,<br /><u>votre chef d\'équipe doit d\'abord vous inviter</u>.</p><br /<br />';
+			echo '<br /><p style="text-align: center;" class="smallquote">Si vous souhaitez <span style="font-weight:bold;">rejoindre une équipe</span>,<br /><u>votre chef d\'équipe doit d\'abord vous inviter</u>.</p><br />';
 
 			/*
 
@@ -563,10 +635,39 @@ if (isset($_SESSION["sgl_id"]))
 			echo '<br /><p style="text-align: center;"><a href="index.php?page=games'.$url_game.'&amp;action=create" class="button">S\'inscrire à la compétition</a></p>';
 		}
 
-		if ($game_data["G_NUM_PLAYERS"] > 1)
+		
+	}
+	if ($game_data["G_NUM_PLAYERS"] > 1)
+	{
+		echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Chercher des joueurs</td><td><hr class="line" /></td></tr></table></p>';
+
+		echo '<p style="text-align: center;" class="smallquote">Seuls les joueurs sans équipe ayant rempli leur rang sont affichés.<br />Utilisez <span style="font-weight:bold;">Discord</span> pour les contacter.</p>';
+
+		$temp = $database->req_post('SELECT SU_LOGIN, PU_PSEUDO, GU_RANK, S_NAME FROM T_SGL_USER
+			JOIN T_GAME_USER ON SU_UID=GU_ID_SU AND GU_ID_G=:game AND GU_ID_ST IS NULL AND GU_RANK>0 JOIN T_PLATFORM_USER ON PU_ID_P=3 AND PU_ID_SU=SU_UID JOIN T_SCHOOL ON SU_ID_S=S_UID
+			WHERE SU_LOGIN IS NOT NULL ORDER BY GU_RANK, SU_UID',
+			array(
+				"game" => $get_game
+			));
+
+		echo '<table class="searchtable"><tr><th>Pseudo</th><th>Ecole</th><th>Discord</th><th>Rang</th></table><div class="playersearch"><table class="searchtable">';
+
+
+
+		$count = 0;
+
+		while($data = $temp->fetch())
 		{
-			echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Chercher des joueurs</td><td><hr class="line" /></td></tr></table></p>';
+			echo "<tr><td>".$data["SU_LOGIN"]."</td><td>".$data["S_NAME"]."</td><td>".$data["PU_PSEUDO"]."</td><td>".$games_profile[$get_game]['rank'][$data["GU_RANK"]]."</td></tr>";
+			$count++;
 		}
+
+		if($count == 0)
+		{
+			echo "<tr><td colspan=\"4\" style=\"text-align:center;\">Aucun joueur trouvé :(... Revenez un peu plus tard !</td></tr>";
+		}
+
+		echo '</table></div>';
 	}
 }
 else
@@ -577,9 +678,6 @@ else
 echo '<br /><br />';
 
 echo '<p style="text-align:center;"><b><i class="fa fa-question-circle" aria-hidden="true" style="padding-right: 5px;"></i></b> Des questions ? Besoin d\'aide ? A le recherche de joueurs ?<br />Venez nous rejoindre sur <a target="_blank" href="https://discord.gg/sgnw">Discord</a> :D !</p>';
-
-
-
 
 	}
 }
