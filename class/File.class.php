@@ -158,7 +158,7 @@ class File
 
 		do
 		{
-			$this->path = $folder.random_str(10,"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+			$this->path = $folder.random_str(10,"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ").".png";
 		}
 		while(file_exists(ABSOLUTE_FILES_DIRECTORY.$this->path));
 
@@ -198,14 +198,14 @@ class File
 				case image_type_to_mime_type(IMAGETYPE_JPEG):
 					$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
 					imagecopyresized($thumb, $source,0, 0, 0, 0, $new_width, $new_height, $width, $height);
-					imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
+					imagepng($thumb, $_FILES[$this->key]['tmp_name']);
 					imagedestroy($source);
 					break;
 
 				case image_type_to_mime_type(IMAGETYPE_JPEG2000):
 					$source = imagecreatefromjpeg($_FILES[$this->key]['tmp_name']);
 					imagecopyresized($thumb, $source,0, 0, 0, 0, $new_width, $new_height, $width, $height);
-					imagejpeg($thumb, $_FILES[$this->key]['tmp_name']);
+					imagepng($thumb, $_FILES[$this->key]['tmp_name']);
 					imagedestroy($source);
 					break;
 

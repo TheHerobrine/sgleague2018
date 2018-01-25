@@ -16,7 +16,7 @@
 				<hr class="sepline" />
 			</div>
 			Powered by <a href="https://sgnw.fr">Student Gaming Network</a> - Designed by <a href="https://fr.linkedin.com/in/hugoattal">Hugo Attal</a> - Developed by <a href="https://fr.linkedin.com/in/hugoattal">Hugo Attal</a> &amp; <a href="https://www.linkedin.com/in/victor-rouquette-93b222a4/">Victor Rouquette</a><br/>
-			Copyright © 2017 Student Gaming Network - <a href="#">Mention Légales</a>
+			Copyright © 2018 Student Gaming Network - <a href="#">Mention Légales</a>
 		</div>
 	</body>
 </html>

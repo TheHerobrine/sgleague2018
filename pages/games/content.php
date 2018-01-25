@@ -346,7 +346,7 @@ if (isset($_SESSION["sgl_id"]))
 				$fields = array(
 					'id_user' => array('type' => 'value', 'value' => $_SESSION["sgl_id"]),
 					'id_game' => array('type' => 'value', 'value' => $get_game),
-					'f_logo' => array('type' => 'file', 'types' =>  $types, 'max_size' => 8000000, 'destination' => '\\', 'max_width' => 1600, 'max_height' => 1600)
+					'f_logo' => array('type' => 'file', 'types' =>  $types, 'max_size' => 8000000, 'destination' => '/', 'max_width' => 1600, 'max_height' => 1600)
 				);
 
 				$query = "CALL UPDATE_SGL_TEAM_LOGO(:id_user, :id_game, :f_logo)";

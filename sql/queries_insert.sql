@@ -39,7 +39,8 @@ DROP PROCEDURE IF EXISTS INSERT_TEAM_MAIL|
 -- INSERT_FILE
 -- ---
 
-CREATE PROCEDURE INSERT_FILE(IN name VARCHAR(256), IN path VARCHAR(512), IN size INTEGER, IN type VARCHAR(64), IN md5 VARCHAR(65))
+CREATE PROCEDURE INSERT_FILE(IN name VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN path VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN size INTEGER,
+	IN type VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN md5 VARCHAR(65) CHARACTER SET utf8 COLLATE utf8_unicode_ci)
 BEGIN
   INSERT INTO `T_FILE` (`F_NAME`,`F_PATH`,`F_SIZE`,`F_TYPE`,`F_MD5`) VALUES
   (name,path,size,type,md5);
@@ -54,9 +55,11 @@ END |
 -- ---
 
 CREATE PROCEDURE INSERT_SGL_USER_FROM_PARENT( IN id_su_parent INTEGER, IN id_file_card INTEGER, IN id_school INTEGER,
-                                  IN login VARCHAR(32), IN pass VARCHAR(512), IN salt VARCHAR(512), IN config_salt VARCHAR(512), IN mail VARCHAR(256), IN activation VARCHAR(256),
+                                  IN login VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN pass VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+                                  IN salt VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN config_salt VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+                                  IN mail VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN activation VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci,
                                   IN type INTEGER(2), IN gender INTEGER(2), IN birth_date DATE,
-                                  IN first_name VARCHAR(128), IN last_name VARCHAR(128), IN knowledge INTEGER(4))
+                                  IN first_name VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN last_name VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN knowledge INTEGER(4))
 query:BEGIN
   DECLARE is_user_existing INTEGER DEFAULT NULL;
 
@@ -83,7 +86,9 @@ END |
 -- Error:2 <= Mail already used
 -- ---
 
-CREATE PROCEDURE INSERT_SGL_USER(IN login VARCHAR(32), IN pass VARCHAR(512), IN salt VARCHAR(512), IN config_salt VARCHAR(512), IN mail VARCHAR(256), IN activation VARCHAR(256), IN school VARCHAR(256))
+CREATE PROCEDURE INSERT_SGL_USER(IN login VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN pass VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+	IN salt VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN config_salt VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+	IN mail VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN activation VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN school VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci)
 query:BEGIN
   DECLARE is_user_existing INTEGER DEFAULT NULL;
   DECLARE school_id INTEGER DEFAULT NULL;
@@ -122,7 +127,7 @@ END |
 -- INSERT_PLATFORM_USER
 -- ---
 
-CREATE PROCEDURE INSERT_PLATFORM_USER(IN id_sgl_user INTEGER, IN id_platform INTEGER, IN pseudo VARCHAR(256))
+CREATE PROCEDURE INSERT_PLATFORM_USER(IN id_sgl_user INTEGER, IN id_platform INTEGER, IN pseudo VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci)
 BEGIN
   INSERT INTO `T_PLATFORM_USER` (`PU_ID_SU`,`PU_ID_P`,`PU_PSEUDO`) VALUES
   (id_sgl_user,id_platform,pseudo);
@@ -133,7 +138,7 @@ END |
 -- INSERT_GAME_USER
 -- ---
 
-CREATE PROCEDURE INSERT_GAME_USER( IN id_p_user INTEGER, IN id_game INTEGER, IN id_team INTEGER, IN pseudo VARCHAR(64), IN rank INTEGER)
+CREATE PROCEDURE INSERT_GAME_USER( IN id_p_user INTEGER, IN id_game INTEGER, IN id_team INTEGER, IN pseudo VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN rank INTEGER)
 BEGIN
   DECLARE bool_p_pseudo INTEGER DEFAULT 0;
   SELECT G_USE_PLATEFORM_PSEUDO FROM T_GAME WHERE G_UID=id_game;
@@ -152,7 +157,7 @@ END |
 -- INSERT_SCHOOL
 -- ---
 
-CREATE PROCEDURE INSERT_SCHOOL(IN name_school VARCHAR(1024), OUT school_id INTEGER)
+CREATE PROCEDURE INSERT_SCHOOL(IN name_school VARCHAR(1024) CHARACTER SET utf8 COLLATE utf8_unicode_ci, OUT school_id INTEGER)
 BEGIN
   SET school_id = NULL;
 
@@ -193,7 +198,7 @@ END|
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- INSERT_TEAM_MAIL
 -- ---
-CREATE PROCEDURE INSERT_TEAM_MAIL(IN id_team INTEGER, IN id_lead INTEGER, IN mail VARCHAR(256), IN type INTEGER, IN id_game INTEGER)
+CREATE PROCEDURE INSERT_TEAM_MAIL(IN id_team INTEGER, IN id_lead INTEGER, IN mail VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN type INTEGER, IN id_game INTEGER)
 BEGIN
   DECLARE id_user INTEGER DEFAULT NULL;
   DECLARE current_team INTEGER DEFAULT NULL;

@@ -16,6 +16,11 @@ class Template
 		
 		include("./pages/".$this->page."/config.php");
 
+		if (isset($_GET["force"]))
+		{
+			$_SESSION["sgl_force"] = true;
+		}
+
 		if (isset($need_connection) && (!isset($_SESSION["sgl_id"])))
 		{
 			$this->page = "403";
@@ -23,7 +28,7 @@ class Template
 			unset($page_head);
 			unset($page_script);
 		}
-		else if (CLOSE && isset($need_open) && !isset($_GET["force"]))
+		else if (CLOSE && isset($need_open) && !isset($_SESSION["sgl_force"]))
 		{
 			$this->page = "418";
 

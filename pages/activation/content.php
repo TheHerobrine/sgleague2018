@@ -11,16 +11,22 @@ if ((isset($_GET["key"])) AND (isset($_GET["mvp"])))
 
 		$database = new Database();
 
-		$temp = $database->req('SELECT id, activation, mail FROM sgl_users WHERE login="'.addslashes($_GET["mvp"]).'"');
+		$temp = $database->req_post('SELECT SU_UID, SU_MAIL, SU_ACTIVATION FROM T_SGL_USER WHERE LOWER(SU_LOGIN)=LOWER(:login)', array(
+			"login" => $_GET["mvp"]
+		));
+
 		$data = $temp->fetch();
 
-		if ($data["activation"] == $_GET["key"])
+		if ($data["SU_ACTIVATION"] == $_GET["key"])
 		{
-			$database->req('UPDATE sgl_users SET activation="", activmail="'.addslashes($data["mail"]).'" WHERE id="'.$data["id"].'"');
+			$database->req_post('UPDATE T_SGL_USER SET SU_ACTIVATION=NULL, SU_MAIL=:mail, SU_ACTIVMAIL=:mail WHERE SU_UID=:id_user', array(
+				"mail" => $data["SU_MAIL"],
+				"id_user" => $data["SU_UID"],
+			));
 		}
 		else
 		{
-			if (strlen($data["activation"]) == 20)
+			if (strlen($data["SU_ACTIVATION"]) == 20)
 			{
 				$check_data = -4;
 				$error_data = "Ce n'est pas la bonne clé d'activation !";
@@ -59,18 +65,20 @@ else if ((isset($_GET["key"])) AND (isset($_GET["wvp"])))
 
 		$query = "CALL UPDATE_SGL_USER_RESET_PASS(:wvp, :new_salt, :config_salt, :key, :new_pass)";
 
-		$form = new Form(new Database(), $query, $fields, METHOD_GET, DEBUG);
+		$form = new Form(new Database(), $query, $fields, METHOD_GET);
 		
 		if($form->is_valid())
 		{
 			$return = $form->send();
+
+			debug("data", $return);
 			$data = $return->fetch();
 
 			if ($data["RESULT"])
 			{
 				$subject = "Votre nouveau mot de passe !";
 				$content = "Et le voici, tout beau, tout neuf : ".$new_pass."\n
-	Ne le perdez pas celui là ! Vous pouvez vous connecter ici : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=connect>\n\nL'équipe de la Student Gaming League 2018";
+Ne le perdez pas celui là ! Vous pouvez vous connecter ici : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=connect>\n\nL'équipe de la Student Gaming League 2018";
 
 				include_once("./class/Mail.class.php");
 				new Mail($data["SU_MAIL"], $subject, $content);
@@ -108,7 +116,7 @@ else
 			</span>
 		</div>
 		<?=($check_data<0)?'<div class="error" style="text-align:center;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'.$error_data.'</div>':
-		'<p style="text-align:center;">'.isset($_GET["mvp"])?'C\'est bon, vous êtes activés :D ! Vous pouvez vous connecter !':'Votre nouveau mot de passe a été envoyé par mail ;)'.'</p>'?>
+		'<p style="text-align:center;">'.(isset($_GET["mvp"])?'C\'est bon, vous êtes activés :D ! Vous pouvez vous connecter !':'Votre nouveau mot de passe a été envoyé par mail ;)').'</p>'?>
 		<br />
 		<p style="text-align: center;"><a href="index.php" class="button">Revenir à la page d'accueil</a></p>
 		<br />

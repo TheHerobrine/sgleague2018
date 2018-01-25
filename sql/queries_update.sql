@@ -47,7 +47,8 @@ DROP PROCEDURE IF EXISTS UPDATE_SGL_USER_LEAVES_TEAM|
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- UPDATE_SGL_USER_PASS
 -- ---
-CREATE PROCEDURE UPDATE_SGL_USER_PASS( IN id_user INTEGER, IN old_pass VARCHAR(512), IN reset_pass VARCHAR(512), IN new_pass VARCHAR(512), IN new_salt VARCHAR(512), IN config_salt VARCHAR(512))
+CREATE PROCEDURE UPDATE_SGL_USER_PASS( IN id_user INTEGER, IN old_pass VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN reset_pass VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+	IN new_pass VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN new_salt VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN config_salt VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci)
 BEGIN
   DECLARE id_user_confirmed INTEGER DEFAULT NULL;
 
@@ -64,8 +65,8 @@ END |
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- UPDATE_SGL_USER_INFORMATION
 -- ---
-CREATE PROCEDURE UPDATE_SGL_USER_INFORMATION( IN id_user INTEGER, IN id_user_check INTEGER, IN school VARCHAR(128), IN gender INTEGER(2), IN birth_date DATE,
-                                              IN first_name VARCHAR(128), IN last_name VARCHAR(128))
+CREATE PROCEDURE UPDATE_SGL_USER_INFORMATION( IN id_user INTEGER, IN id_user_check INTEGER, IN school VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN gender INTEGER(2), IN birth_date DATE,
+                                              IN first_name VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN last_name VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci)
 BEGIN
   DECLARE id_user_confirmed INTEGER DEFAULT NULL;
   DECLARE school_id INTEGER DEFAULT NULL;
@@ -110,7 +111,7 @@ END |
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- UPDATE_SGL_USER_PLATFORM
 -- ---
-CREATE PROCEDURE UPDATE_SGL_USER_PLATFORM( IN id_user INTEGER, IN id_user_check INTEGER, IN id_platform INTEGER, IN pseudo VARCHAR(128))
+CREATE PROCEDURE UPDATE_SGL_USER_PLATFORM( IN id_user INTEGER, IN id_user_check INTEGER, IN id_platform INTEGER, IN pseudo VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci)
 BEGIN
   DECLARE id_user_confirmed INTEGER DEFAULT NULL;
 
@@ -131,7 +132,8 @@ END |
 -- -------------------------------------------------------------------------------------------------------------------------------------------- --
 -- UPDATE_SGL_USER_RESET_PASS
 -- ---
-CREATE PROCEDURE UPDATE_SGL_USER_RESET_PASS( IN login VARCHAR(128), IN new_salt VARCHAR(512), IN config_salt VARCHAR(512), IN reset_pass VARCHAR(128), IN new_pass VARCHAR(128))
+CREATE PROCEDURE UPDATE_SGL_USER_RESET_PASS( IN login VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN new_salt VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+	IN config_salt VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN reset_pass VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci, IN new_pass VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci)
 BEGIN
   DECLARE id_user_confirmed INTEGER DEFAULT NULL;
 

@@ -155,7 +155,7 @@ if (isset($_POST["sent"]) && $csrf_check)
 			);
 			$fields = array(
 				'user_id' => array('type' => 'value', 'value' => $sgl_uid),
-				'f_card' => array('type' => 'file', 'types' =>  $types, 'max_size' => 8000000, 'destination' => '\\', 'max_width' => 800, 'max_height' => 800)
+				'f_card' => array('type' => 'file', 'types' =>  $types, 'max_size' => 8000000, 'destination' => '/', 'max_width' => 800, 'max_height' => 800)
 			);
 
 			$query = "CALL UPDATE_SGL_USER_CARD(:user_id, :f_card)";
@@ -377,10 +377,11 @@ $card_file = new File($database);
 				</table>
 				<?php if (!$edit_other) { ?>
 				<p><table class="line_table"><tr><td><hr class="line" /></td><td>Modification du mot de passe</td><td><hr class="line" /></td></tr></table></p>
+				<input type="password" style="display:none">
 				<table class="form_table">
-					<tr><td><h3>Ancien :</h3></td><td><input type="password" name="oldpass" /><br />
+					<tr><td><h3>Ancien :</h3></td><td><input type="password" name="oldpass" autocomplete="off" /><br />
 					<div class="smallquote">Juste pour être sûr que c'est bien vous et pas votre mère qui essaie de vous empêcher de venir jouer.</div></td></tr>
-					<tr><td><h3>Nouveau :</h3></td><td><input type="password" name="newpass" /><br />
+					<tr><td><h3>Nouveau :</h3></td><td><input type="password" name="newpass" autocomplete="off" /><br />
 					<?=$newpass_bool?$error_pass:''?>
 					<div class="smallquote">On va dire au moins 8 caractères chiffres + lettres. 100% incraquable par la NSA.</div></td></tr>
 				</table>
