@@ -116,7 +116,7 @@ else
 			</span>
 		</div>
 		<?=($check_data<0)?'<div class="error" style="text-align:center;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'.$error_data.'</div>':
-		'<p style="text-align:center;">'.(isset($_GET["mvp"])?'C\'est bon, vous êtes activés :D ! Vous pouvez vous connecter !':'Votre nouveau mot de passe a été envoyé par mail ;)').'</p>'?>
+		'<p style="text-align:center;">'.(isset($_GET["mvp"])?'C\'est bon, vous êtes activé :D ! Vous pouvez vous connecter !':'Votre nouveau mot de passe a été envoyé par mail ;)').'</p>'?>
 		<br />
 		<p style="text-align: center;"><a href="index.php" class="button">Revenir à la page d'accueil</a></p>
 		<br />

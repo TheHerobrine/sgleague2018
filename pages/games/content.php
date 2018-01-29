@@ -219,7 +219,7 @@ if (isset($_GET["gpage"]))
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 34 équipes l'année dernière<br /><br />
 		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span><!--<br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p><br />
+		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p>
 		<?php
 			break;
 		case 2:
@@ -233,7 +233,7 @@ if (isset($_GET["gpage"]))
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 102 équipes l'année dernière<br /><br />
 		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span><!--<br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p><br />
+		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p>
 		<?php
 			break;
 		case 3:
@@ -247,7 +247,7 @@ if (isset($_GET["gpage"]))
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 62 équipes l'année dernière<br /><br />
 		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span><!--<br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p><br />
+		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p>
 		<?php
 			break;
 		case 4:
@@ -261,7 +261,7 @@ if (isset($_GET["gpage"]))
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 384 joueurs l'année dernière<br /><br />
 		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span><!--<br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p><br />
+		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p>
 		<?php
 			break;
 	}
@@ -401,6 +401,9 @@ if (isset($_SESSION["sgl_id"]))
 	$team_id = $data["GU_ID_ST"];
 	$url_game = "&amp;gpage=".$get_game;
 
+	echo '<p class="smallquote" style="text-align:center;">
+	Vous devez rejoindre notre <a href="https://discord.gg/sgnw">serveur discord</a> pour participer au tournoi !</p>';
+
 	if ($is_team)
 	{
 		echo '<p style="text-align:center; font-weight: bold">Yay ! <b>Vous êtes inscrit</b> à ce tournoi ! Un premier pas vers la victoire...</p>';
@@ -480,7 +483,7 @@ if (isset($_SESSION["sgl_id"]))
 					$temp = $database->req_post('CALL INSERT_TEAM_MAIL(:id_team, :id_lead, :mail, :type, :id_game)',
 						array(
 							"id_team" => $team_id,
-							"id_lead" => $_SESSION["id"],
+							"id_lead" => $_SESSION["sgl_id"],
 							"mail" => $_GET["mail"],
 							"type" => $_GET["type"],
 							"id_game" => $get_game
@@ -641,7 +644,7 @@ if (isset($_SESSION["sgl_id"]))
 	{
 		echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Chercher des joueurs</td><td><hr class="line" /></td></tr></table></p>';
 
-		echo '<p style="text-align: center;" class="smallquote">Seuls les joueurs sans équipe ayant rempli leur rang sont affichés.<br />Utilisez <span style="font-weight:bold;">Discord</span> pour les contacter.</p>';
+		echo '<p style="text-align: center;" class="smallquote">Seuls les joueurs sans équipe ayant rempli leur rang <a href="index.php?page=account">dans leur profil</a> sont affichés.<br />Utilisez <span style="font-weight:bold;">Discord</span> pour les contacter.</p>';
 
 		$temp = $database->req_post('SELECT SU_LOGIN, PU_PSEUDO, GU_RANK, S_NAME FROM T_SGL_USER
 			JOIN T_GAME_USER ON SU_UID=GU_ID_SU AND GU_ID_G=:game AND GU_ID_ST IS NULL AND GU_RANK>0 JOIN T_PLATFORM_USER ON PU_ID_P=3 AND PU_ID_SU=SU_UID JOIN T_SCHOOL ON SU_ID_S=S_UID
@@ -677,7 +680,7 @@ else
 
 echo '<br /><br />';
 
-echo '<p style="text-align:center;"><b><i class="fa fa-question-circle" aria-hidden="true" style="padding-right: 5px;"></i></b> Des questions ? Besoin d\'aide ? A le recherche de joueurs ?<br />Venez nous rejoindre sur <a target="_blank" href="https://discord.gg/sgnw">Discord</a> :D !</p>';
+echo '<p style="text-align:center;"><b><i class="fa fa-question-circle" aria-hidden="true" style="padding-right: 5px;"></i></b> Des questions ? Besoin d\'aide ? A la recherche de joueurs ?<br />Venez nous rejoindre sur <a target="_blank" href="https://discord.gg/sgnw">Discord</a> :D !</p>';
 
 	}
 }

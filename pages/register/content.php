@@ -40,7 +40,7 @@ if (isset($_POST["sent"]))
 		{
 			if (!(preg_match("/[^A-Za-z0-9\!\?\.\-\#_]/", $form_login)))
 			{
-				$temp = $database->req_post('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE SU_LOGIN=:login', array('login' => '"'.addslashes($form_login).'"'));
+				$temp = $database->req_post('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE LOWER(SU_LOGIN)=LOWER(:login)', array('login' => $form_login));
 				$data = $temp->fetch();
 
 				if ($data["exist"] != 0)
@@ -201,7 +201,7 @@ if ($register_flag)
 			$subject = "Confirmation d'inscription à la Student Gaming League";
 			$content = "Bienvenue à la Student Gaming League !\n\n
 Pour confirmer votre inscription, cliquez sur le lien suivant : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=activation&mvp=".strtolower($form_login)."&key=".$activation.">\n
-Vous pourrez ensuite créer ou rejoindre une équipe pour vos jeux préférés.\n\nL'équipe de la Student Gaming League 2017";
+Vous pourrez ensuite créer ou rejoindre une équipe pour vos jeux préférés.\n\nL'équipe de la Student Gaming League 2018";
 
 			include_once("./class/Mail.class.php");
 			new Mail($form_mail, $subject, $content);
@@ -255,7 +255,7 @@ else
 					<div class="smallquote">On va dire au moins 8 caractères chiffres + lettres. 100% incraquable par la NSA.</div></td></tr>
 					<tr><td><h3>Mail <b>*</b> :</h3></td><td><input type="mail" name="mail" <?=isset($form_mail)?'value="'.$form_mail.'"':''?>/><br />
 					<?=$error_mail?>
-					<div class="smallquote">Essayez de mettre votre mail étudiant, comme ça vous n'aurez pas à scanner votre carte étudiante.</div></td></tr>
+					<div class="smallquote">Vous allez recevoir un mail de confirmation, alors ne mettez pas n'importe quoi !</div></td></tr>
 					<tr><td><h3>Ecole <b>*</b> :</h3></td><td><input type="text" name="school" id="school_form" <?=isset($form_school)?'value="'.$form_school.'"':''?>/><br />
 					<?=$error_school?>
 					<div class="smallquote">Pour ceux qui n'écoutent rien : on doit être étudiant pour participer à la SGL !</div></td></tr>

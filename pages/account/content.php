@@ -79,7 +79,7 @@ $games_profile[2]['rank'] = array(
 
 $platform_profile[3]['reggex'] = "/#[0-9]{4,5}$/";
 $platform_profile[3]['error'] = "Attention, vous n'avez pas oublié la partie après le '#' par hasard ?";
-$platform_profile[3]['comment'] = "<div class=\"smallquote\">Afin d'entendre votre svelte et suave voix</div>";
+$platform_profile[3]['comment'] = "<div class=\"smallquote\">Afin d'entendre votre svelte et suave voix. On oublie pas la partie après le \"#\" !</div>";
 
 //  ----- [ Global Update ] --------------------------------------------------
 
@@ -110,9 +110,13 @@ if (isset($_GET["uid"]))
 	}
 }
 
+$update = "";
+
 debug("POST", $_POST);
 if (isset($_POST["sent"]) && $csrf_check)
 {
+	$update = '<p style="text-align: center">Votre profil a bien été mis à jour !</p>';
+
 	$birth = date('Y-m-d',mktime(0,0,0, (int)$_POST['bmonth'], (int)$_POST['bday'], (int)$_POST['byear']));
 	
 	$gender = (int)$_POST['gender'];
@@ -194,16 +198,38 @@ if (isset($_POST["sent"]) && $csrf_check)
 
 	for ($p_uid=1;$p_uid<=4;$p_uid++)
 	{
-		if (isset($platform_profile[$p_uid]['reggex']))
+		if ($_POST['p_name_'.$p_uid] != "")
 		{
-
+			if (isset($platform_profile[$p_uid]['reggex']))
+			{
+				if (preg_match($platform_profile[$p_uid]['reggex'], $_POST['p_name_'.$p_uid]))
+				{
+					$database->req_post('CALL UPDATE_SGL_USER_PLATFORM(:id_user, :id_user, :id_platform, :pseudo)', array(
+						"id_user" => $sgl_uid,
+						"id_platform" => $p_uid,
+						"pseudo" => $_POST['p_name_'.$p_uid]
+					));
+				}
+				else
+				{
+					$error_platform[$p_uid] = $platform_profile[$p_uid]['error'];
+				}
+			}
+			else
+			{
+				$database->req_post('CALL UPDATE_SGL_USER_PLATFORM(:id_user, :id_user, :id_platform, :pseudo)', array(
+					"id_user" => $sgl_uid,
+					"id_platform" => $p_uid,
+					"pseudo" => $_POST['p_name_'.$p_uid]
+				));
+			}
 		}
 		else
 		{
 			$database->req_post('CALL UPDATE_SGL_USER_PLATFORM(:id_user, :id_user, :id_platform, :pseudo)', array(
 				"id_user" => $sgl_uid,
 				"id_platform" => $p_uid,
-				"pseudo" => $_POST['p_name_'.$p_uid]
+				"pseudo" => NULL
 			));
 		}
 	}
@@ -353,6 +379,7 @@ $card_file = new File($database);
 		<br />
 		<div class="form">
 			<form action="index.php?page=account<?=$url_more?>" method="post" autocomplete="off" enctype="multipart/form-data">
+				<?=$update?>
 				<table class="form_table">
 					<tr><td><h3>Pseudo :</h3></td><td><input type="text" name="login" value="<?=htmlspecialchars($user_data["SU_LOGIN"])?>" style="width:464px"/>
 					<br />
@@ -396,6 +423,7 @@ $card_file = new File($database);
 					<tr>
 						<td><h3><?=$game_users[$igame]['P_PSEUDO_NAME']?> :</h3></td>
 						<td><input type="text" name="p_name_<?=$game_users[$igame]['P_UID']?>" value="<?=htmlspecialchars($game_users[$igame]['PU_PSEUDO'])?>" />
+							<?=$error_platform[$game_users[$igame]["P_UID"]]?>
 							<?=$platform_profile[$game_users[$igame]["P_UID"]]['comment']?></td>
 					</tr>
 					<?php if($game_users[$igame]['G_UID'])

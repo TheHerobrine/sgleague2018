@@ -30,7 +30,7 @@ function zero(num)
 	}
 }
 
-var countDownDate = new Date("January 29, 2018 00:00:00").getTime();
+var countDownDate = new Date("January 29, 2018 18:00:00").getTime();
 
 var x = setInterval(function()
 {
@@ -49,6 +49,6 @@ var x = setInterval(function()
 	if (distance < 0)
 	{
 		clearInterval(x);
-		document.getElementById("mainlink").innerHTML = "EXPIRED";
+		document.getElementById("mainlink").innerHTML = "Inscriptions ouvertes !";
 	}
 }, 10);
