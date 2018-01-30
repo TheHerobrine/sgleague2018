@@ -107,7 +107,7 @@ if (isset($_POST["sent"]))
 	{
 		if (filter_var($form_mail, FILTER_VALIDATE_EMAIL) == true)
 		{
-			$temp = $database->req_post('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE SU_MAIL=:mail AND SU_PASS IS NOT NULL', array('mail' => '"'.addslashes($form_mail).'"'));
+			$temp = $database->req_post('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE SU_MAIL=:mail AND SU_PASS IS NOT NULL', array('mail' => $form_mail));
 			$data = $temp->fetch();
 
 			if ($data["exist"] != 0)

@@ -267,6 +267,12 @@ if (isset($_GET["gpage"]))
 	}
 if (isset($_SESSION["sgl_id"]))
 {
+	$url_game = "&amp;gpage=".$get_game;
+	if($_SESSION["sgl_type"] > 5)
+	{
+		echo '<p style="text-align:center;">[ <a href="index.php?page=admin'.$url_game.'">Panneau d\'administration</a> ]</a>';
+	}
+
 	if ($_GET["action"]=="create")
 	{
 		$database->req_post('CALL INSERT_SGL_TEAM(:id_user, :game)',
@@ -400,7 +406,6 @@ if (isset($_SESSION["sgl_id"]))
 
 	$is_team = $data["GU_ID_ST"] > 0;
 	$team_id = $data["GU_ID_ST"];
-	$url_game = "&amp;gpage=".$get_game;
 
 	echo '<p class="smallquote" style="text-align:center;">
 	Vous devez rejoindre notre <a href="https://discord.gg/sgnw">serveur discord</a> pour participer au tournoi !</p>';

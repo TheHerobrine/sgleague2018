@@ -214,7 +214,7 @@ BEGIN
     SELECT GU_ID_ST INTO current_team FROM T_GAME_USER WHERE GU_ID_SU=id_user AND GU_ID_G=id_game;
     IF current_team IS NULL THEN
       IF EXISTS (SELECT * FROM T_GAME_USER WHERE GU_ID_SU=id_user AND GU_ID_G=id_game) THEN
-        UPDATE T_GAME_USER SET GU_ID_ST=id_team WHERE GU_ID_SU=id_user AND GU_ID_G=id_game;
+        UPDATE T_GAME_USER SET GU_ID_ST=id_team, GU_TYPE=type WHERE GU_ID_SU=id_user AND GU_ID_G=id_game;
         SELECT TRUE as RESULT;
   	  ELSE
   	    INSERT INTO T_GAME_USER (GU_ID_SU, GU_ID_G, GU_ID_ST, GU_TYPE) VALUES (id_user, id_game, id_team, type);
