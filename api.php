@@ -7,7 +7,7 @@ function debug($a, $b){/*print_r($b);*/}
 
 $get_type = isset($_GET['type']) ? $_GET['type'] : '';
 
-if (isset($_SESSION["sgl_id"]) || $get_type=="search_school")
+if (isset($_SESSION["sgl_id"]) || $get_type=="search_school" || $get_type=="bot")
 {
 
 	switch($get_type)
@@ -77,152 +77,82 @@ if (isset($_SESSION["sgl_id"]) || $get_type=="search_school")
 			}
 			break;
 
-		break;
-
-		case "team_add":
+		case "bot":
 
 			header('Content-Type: application/json');
-			include_once("./class/Database.class.php");
+			include_once("./class/Form.class.php");
 
-			$database = new Database();
-
-			$get_player = isset($_GET['player']) ? intval($_GET['player']) : '';
-
-			$get_game = isset($_GET['game']) ? intval($_GET['game']) : '';
-			$get_game = in_array($get_game, array(1,2,3,4))?$get_game:1;
-
-			$get_ptype = isset($_GET['ptype']) ? intval($_GET['ptype']) : '';
-			$get_ptype = ($get_ptype==3)?3:2;
-
-//  ----- [ Check rights ] --------------------------------------------------
-
-			$temp = $database->req('SELECT COUNT(*) as existuser FROM sgl_users WHERE id="'.$get_player.'" AND activation=""');
-			$data = $temp->fetch();
-
-			if ($data["existuser"] > 0)
+			if ($_GET["key"] == API_KEY)
 			{
-				$temp = $database->req('SELECT COUNT(*) as existplayer FROM sgl_teams WHERE user="'.$get_player.'" AND game="'.$get_game.'" AND register > 0');
-				$data = $temp->fetch();
-
-				if ($data["existplayer"] == 0)
+				$database = new Database();
+				if ($_GET["player"])
 				{
-					$temp = $database->req('SELECT COUNT(*) as existteam FROM sgl_teams WHERE lead="'.$_SESSION["sgl_id"].'" AND game="'.$get_game.'"');
-					$data = $temp->fetch();
+					$temp = $database->req_post('SELECT SU_LOGIN, SU_MAIL, SU_FIRST_NAME, SU_LAST_NAME, S_NAME, GU_TYPE, GU_RANK, ST_UID, ST_NAME, ST_TAG FROM T_SGL_USER LEFT JOIN T_SCHOOL ON SU_ID_S=S_UID LEFT JOIN T_GAME_USER ON GU_ID_G=:game AND GU_ID_SU = SU_UID LEFT JOIN T_SGL_TEAM ON GU_ID_ST=ST_UID WHERE SU_UID=:id_user',
+						array(
+							"id_user" => $_GET["player"],
+							"game" => $_GET["game"]
+						));
+					$result = $temp->fetch(PDO::FETCH_ASSOC);
 
-					if ($data["existteam"] > 0)
+					if ($result)
 					{
-						$temp = $database->req('SELECT COUNT(*) as players FROM sgl_teams WHERE lead="'.$_SESSION["sgl_id"].'" AND game="'.$get_game.'" AND type="'.$get_ptype.'"');
-						$data = $temp->fetch();
-
-						$games_team = array(6, 5, 5, 1);
-						$games_reps = array(2, 2, 2, 0);
-
-						if ((($get_ptype==2) && ($data["players"]+1 < $games_team[$get_game-1])) || (($get_ptype==3) && ($data["players"] < $games_reps[$get_game-1])))
-						{
-							$database->req('INSERT INTO sgl_teams (user, game, lead, type, register) VALUES("'.$get_player.'", "'.$get_game.'", "'.$_SESSION["sgl_id"].'", "'.$get_ptype.'", 0)');
-
-							echo '{"success": "Player added"}';
-						}
-						else
-						{
-							echo '{"error": "Team already full"}';
-						}
+						echo json_encode($result);
 					}
 					else
 					{
-						echo '{"error": "Team do not exist"}';
+						echo '{"error": -2, "description": "No player found"}';
+					}
+				}
+				else if ($_GET["team"])
+				{
+
+
+					$temp = $database->req_post('SELECT ST_UID, ST_NAME, ST_TAG FROM T_SGL_TEAM WHERE ST_UID=:id_team',
+						array(
+							"id_team" => $_GET["team"]
+						));
+
+					$result = $temp->fetch(PDO::FETCH_ASSOC);
+
+					$temp = $database->req_post('SELECT SU_UID, SU_LOGIN, SU_MAIL, SU_FIRST_NAME, SU_LAST_NAME, S_NAME, GU_TYPE, GU_RANK FROM T_SGL_TEAM LEFT JOIN T_GAME_USER ON GU_ID_ST=ST_UID LEFT JOIN T_SGL_USER ON SU_UID=GU_ID_SU LEFT JOIN T_SCHOOL ON SU_ID_S=S_UID WHERE ST_UID=:id_team',
+						array(
+							"id_team" => $_GET["team"]
+						));
+
+					while ($data = $temp->fetch(PDO::FETCH_ASSOC))
+					{
+						$result["players"][] = $data;
+					}
+
+					if ($result)
+					{
+						echo json_encode($result);
+					}
+					else
+					{
+						echo '{"error": -2, "description": "No team found"}';
 					}
 				}
 				else
 				{
-					echo '{"error": "Player already in team"}';
+					echo '{"error": -3, "description": "Missing keyword"}';
 				}
 			}
 			else
 			{
-				echo '{"error": "User do not exist"}';
+				echo '{"error": -1, "description": "Wrong key"}';
 			}
 
-		break;
-
-		case "mail_add":
-
+			break;
+		default:
 			header('Content-Type: application/json');
-			include_once("./class/Database.class.php");
-
-			$database = new Database();
-
-			$get_mail = isset($_GET['player']) ? $_GET['player'] : '';
-
-			$get_game = isset($_GET['game']) ? intval($_GET['game']) : '';
-			$get_game = in_array($get_game, array(1,2,3,4))?$get_game:1;
-
-			$get_ptype = isset($_GET['ptype']) ? intval($_GET['ptype']) : '';
-			$get_ptype = ($get_ptype==3)?3:2;
-
-//  ----- [ Check rights ] --------------------------------------------------
-
-			if (filter_var($get_mail, FILTER_VALIDATE_EMAIL) == true)
-			{
-				$temp = $database->req('SELECT COUNT(*) as existuser FROM sgl_users WHERE mail="'.addslashes($get_mail).'"');
-				$data = $temp->fetch();
-
-				if ($data["existuser"] == 0)
-				{
-					$temp = $database->req('SELECT COUNT(*) as existteam FROM sgl_teams WHERE lead="'.$_SESSION["sgl_id"].'" AND game="'.$get_game.'"');
-					$data = $temp->fetch();
-
-					if ($data["existteam"] > 0)
-					{
-						$temp = $database->req('SELECT COUNT(*) as players FROM sgl_teams WHERE lead="'.$_SESSION["sgl_id"].'" AND game="'.$get_game.'" AND type="'.$get_ptype.'"');
-						$data = $temp->fetch();
-
-						$games_team = array(6, 5, 5, 1);
-						$games_reps = array(2, 2, 2, 0);
-
-						if ((($get_ptype==2) && ($data["players"]+1 < $games_team[$get_game-1])) || (($get_ptype==3) && ($data["players"] < $games_reps[$get_game-1])))
-						{
-							$database->req('INSERT INTO sgl_users (mail, activation) VALUES("'.addslashes($get_mail).'", "PENDING")');
-
-							$temp = $database->req('SELECT MAX(Id) AS player FROM sgl_users');
-							// TODO : Not really safe...
-
-							$data = $temp->fetch();
-
-							$database->req('INSERT INTO sgl_teams (user, game, lead, type, register) VALUES("'.$data["player"].'", "'.$get_game.'", "'.$_SESSION["sgl_id"].'", "'.$get_ptype.'", 0)');
-
-							$subject = "Invitation à la Student Gaming League";
-							$content = $_SESSION["sgl_login"]." vous invite à rejoindre son équipe à la Student Gaming League !
-Pour vous inscrire, cliquez sur le lien suivant : <https://".SERVER_ADDR.SERVER_REP."/index.php?page=register&mail=".strtolower($get_mail).">\n
-Vous devrez ensuite accepter son invitation sur le site pour rejoindre son équipe.\n\nL'équipe de la Student Gaming League 2017";
-
-							include_once("./class/Mail.class.php");
-							new Mail($get_mail, $subject, $content);
-
-							echo '{"success": "Player added"}';
-						}
-						else
-						{
-							echo '{"error": "Team already full"}';
-						}
-					}
-					else
-					{
-						echo '{"error": "Team do not exist"}';
-					}
-				}
-				else
-				{
-					echo '{"error": "Player already exist"}';
-				}
-			}
-			else
-			{
-				echo '{"error": "Mail not valid"}';
-			}
-
-		break;
+			echo '{"error": -1000, "description": "Wrong use of API"}';
 	}
+}
+else
+{
+	header('Content-Type: application/json');
+	echo '{"error": -1000, "description": "Wrong use of API"}';
 }
 
 ?>

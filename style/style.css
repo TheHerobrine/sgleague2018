@@ -850,6 +850,7 @@ input:disabled
 {
 	width: 25%;
 	padding: 2px 10px;
+	vertical-align:middle;
 }
 
 .searchtable tr td:nth-child(1)

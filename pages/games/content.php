@@ -218,8 +218,8 @@ if (isset($_GET["gpage"]))
 		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompenses à venir ;)
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 34 équipes l'année dernière<br /><br />
-		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span><!--<br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p>
+		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span>
+		[ <a href="https://docs.google.com/document/d/142RfeE7yDd-iONubaD7HjAxqYmWjR0UI4fBiMy_1S0o/">Afficher le règlement</a> ]</p>
 		<?php
 			break;
 		case 2:
@@ -232,8 +232,8 @@ if (isset($_GET["gpage"]))
 		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompenses à venir ;)
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 102 équipes l'année dernière<br /><br />
-		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span><!--<br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p>
+		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span>
+		[ <a href="https://docs.google.com/document/d/142RfeE7yDd-iONubaD7HjAxqYmWjR0UI4fBiMy_1S0o/">Afficher le règlement</a> ]</p>
 		<?php
 			break;
 		case 3:
@@ -246,8 +246,8 @@ if (isset($_GET["gpage"]))
 		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompenses à venir ;)
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 62 équipes l'année dernière<br /><br />
-		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span><!--<br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p>
+		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">12 Mai</b></span>
+		[ <a href="https://docs.google.com/document/d/142RfeE7yDd-iONubaD7HjAxqYmWjR0UI4fBiMy_1S0o/">Afficher le règlement</a> ]</p>
 		<?php
 			break;
 		case 4:
@@ -260,8 +260,8 @@ if (isset($_GET["gpage"]))
 		<b><i class="fa fa-trophy" aria-hidden="true" style="padding-right: 5px;"></i></b> Récompenses à venir ;)
 		<span style="padding: 0px 10px;">|</span>
 		<b><i class="fa fa-line-chart" aria-hidden="true" style="padding-right: 5px;"></i></b> 384 joueurs l'année dernière<br /><br />
-		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span><!--<br /><br />
-		<a href="./files/rules_sgl2017.pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger le règlement</a>--></p>
+		<span style="padding: 10px;">Finale le <b style="font-weight:bold;">5 Mai</b></span>
+		[ <a href="https://docs.google.com/document/d/142RfeE7yDd-iONubaD7HjAxqYmWjR0UI4fBiMy_1S0o/">Afficher le règlement</a> ]</p>
 		<?php
 			break;
 	}
@@ -646,14 +646,14 @@ if (isset($_SESSION["sgl_id"]))
 
 		echo '<p style="text-align: center;" class="smallquote">Seuls les joueurs sans équipe ayant rempli leur rang <a href="index.php?page=account">dans leur profil</a> sont affichés.<br />Utilisez <span style="font-weight:bold;">Discord</span> pour les contacter.</p>';
 
-		$temp = $database->req_post('SELECT SU_LOGIN, PU_PSEUDO, GU_RANK, S_NAME FROM T_SGL_USER
+		$temp = $database->req_post('SELECT SU_LOGIN, PU_PSEUDO, GU_RANK, S_NAME, SU_MAIL FROM T_SGL_USER
 			JOIN T_GAME_USER ON SU_UID=GU_ID_SU AND GU_ID_G=:game AND GU_ID_ST IS NULL AND GU_RANK>0 JOIN T_PLATFORM_USER ON PU_ID_P=3 AND PU_ID_SU=SU_UID JOIN T_SCHOOL ON SU_ID_S=S_UID
 			WHERE SU_LOGIN IS NOT NULL ORDER BY GU_RANK, SU_UID',
 			array(
 				"game" => $get_game
 			));
 
-		echo '<table class="searchtable"><tr><th>Pseudo</th><th>Ecole</th><th>Discord</th><th>Rang</th></table><div class="playersearch"><table class="searchtable">';
+		echo '<table class="searchtable"><th>Pseudo</th><th>Ecole</th><th>Discord</th><th>Rang</th></table><div class="playersearch"><table class="searchtable">';
 
 
 
@@ -661,7 +661,10 @@ if (isset($_SESSION["sgl_id"]))
 
 		while($data = $temp->fetch())
 		{
-			echo "<tr><td>".$data["SU_LOGIN"]."</td><td>".$data["S_NAME"]."</td><td>".$data["PU_PSEUDO"]."</td><td>".$games_profile[$get_game]['rank'][$data["GU_RANK"]]."</td></tr>";
+			$hash = md5(strtolower(trim($data["SU_MAIL"])));
+			echo "<tr><td><img style=\"border: 1px solid #ffc68f;margin-top:3px;margin-right: 10px;\" src=\"https://www.gravatar.com/avatar/".$hash.".png?d=retro&amp;s=16\" />
+			<span style=\"position: relative; top: -4px\">".$data["SU_LOGIN"]."</span></td>
+			<td>".$data["S_NAME"]."</td><td>".$data["PU_PSEUDO"]."</td><td>".$games_profile[$get_game]['rank'][$data["GU_RANK"]]."</td></tr>";
 			$count++;
 		}
 

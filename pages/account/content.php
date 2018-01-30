@@ -81,6 +81,8 @@ $platform_profile[3]['reggex'] = "/#[0-9]{4,5}$/";
 $platform_profile[3]['error'] = "Attention, vous n'avez pas oublié la partie après le '#' par hasard ?";
 $platform_profile[3]['comment'] = "<div class=\"smallquote\">Afin d'entendre votre svelte et suave voix. On oublie pas la partie après le \"#\" !</div>";
 
+$platform_profile[5]['comment'] = "<div class=\"smallquote\">Pour avoir une émoticone et un badge unique. Et tenter de gagner 1000€ de lots chaque mois !</div>";
+
 //  ----- [ Global Update ] --------------------------------------------------
 
 $newpass_bool = false;
