@@ -49,6 +49,6 @@ var x = setInterval(function()
 	if (distance < 0)
 	{
 		clearInterval(x);
-		document.getElementById("mainlink").innerHTML = "Inscriptions ouvertes !";
+		document.getElementById("mainlink").innerHTML = "Inscriptions gratuites !";
 	}
 }, 10);

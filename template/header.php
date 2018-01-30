@@ -17,7 +17,7 @@
 		<meta property="og:image:type" content="image/png" />
 
 		<?=isset($page_head)?$page_head:'';?>
-		<?=isset($page_script)?'<script src="./pages/'.CURRENT_PAGE.'/script.js?v=2018" charset="utf-8"></script>':''?>
+		<?=isset($page_script)?'<script src="./pages/'.CURRENT_PAGE.'/script.js?v=2018-2" charset="utf-8"></script>':''?>
 	</head>
 	<body>
 		<div id="topmenu">
