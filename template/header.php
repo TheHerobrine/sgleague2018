@@ -81,9 +81,9 @@ else
 ?>
 						<a href="index.php" <?=$page_tab=="home"?'class="selected"':''?>>Accueil</a>
 						<a href="index.php?page=games&amp;gpage=2" <?=$gpage==2?'class="selected"':''?>>L<i>eague of </i>L<i>egends</i></a>
-						<a href="index.php?page=games&amp;gpage=4" <?=$gpage==4?'class="selected"':''?>>H<i>earth</i>S<i>tone</i></a>
+						<a href="index.php?page=games&amp;gpage=4" <?=$gpage==4?'class="selected"':''?>>H<i>earthstone</i></a>
 						<a href="index.php?page=games&amp;gpage=3" <?=$gpage==3?'class="selected"':''?>>C<i>ounter </i>S<i>trike</i></a>
-						<a href="index.php?page=games&amp;gpage=1" <?=$gpage==1?'class="selected"':''?>>O<i>ver</i>W<i>atch</i></a>
+						<a href="index.php?page=games&amp;gpage=1" <?=$gpage==1?'class="selected"':''?>>O<i>verwatch</i></a>
 						<a href="index.php?page=contact" <?=$page_tab=="contact"?'class="selected"':''?>>Contact</a>
 					</div>
 				</div>

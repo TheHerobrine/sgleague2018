@@ -128,12 +128,11 @@ if (isset($_POST["sent"]) && $csrf_check)
 
 	$fields = array(
 		'userid' => array('type' => 'value', 'value' => $sgl_uid),
-		'mail' => array('type' => 'mail'),
 		'school' => array('type' => 'string', 'length' => '256'),
 		'first' => array('type' => 'string', 'length' => '128'),
 		'name' => array('type' => 'string', 'length' => '128'),
 		'gender' => array('type' => 'value', 'value' => $gender),
-		'birth' => array('type' => 'value', 'value' => $birth),
+		'birth' => array('type' => 'value', 'value' => $birth)
 	);
 
 	$query = "CALL UPDATE_SGL_USER_INFORMATION(:userid, :userid, :school, :gender, :birth, :first, :name)";

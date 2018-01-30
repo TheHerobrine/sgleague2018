@@ -302,14 +302,15 @@ if (isset($_SESSION["sgl_id"]))
 			}
 			else
 			{
-				$temp = $database->req_post('SELECT ST_TAG FROM T_SGL_TEAM WHERE ST_ID_G=:game AND ST_ID_LEAD_SU!=:id_user',
+				$temp = $database->req_post('SELECT COUNT(*) AS total FROM T_SGL_TEAM WHERE ST_ID_G=:game AND ST_ID_LEAD_SU!=:id_user AND ST_TAG=:tag',
 					array(
 						"id_user" => $_SESSION['sgl_id'],
-						"game" => $get_game
+						"game" => $get_game,
+						"tag" => $form_teamtag
 					));
 				$data = $temp->fetch();
 
-				if ($data["ST_TAG"])
+				if ($data["total"] > 0)
 				{
 					$check_teamtag = -2;
 					$error_teamtag = "Désolé, mais ce TAG est déjà utilisé... Soyez plus original !";
@@ -317,7 +318,7 @@ if (isset($_SESSION["sgl_id"]))
 				}
 			}
 		}
-		$database->req_post('UPDATE T_SGL_TEAM SET ST_NAME=:team_name, ST_TAG=:team_tag WHERE ST_ID_LEAD_SU=:id_user AND ST_ID_G=:game',
+		$database->req_post('UPDATE T_SGL_TEAM SET ST_NAME=:team_name, ST_TAG=UPPER(:team_tag) WHERE ST_ID_LEAD_SU=:id_user AND ST_ID_G=:game',
 		array(
 			"id_user" => $_SESSION['sgl_id'],
 			"game" => $get_game,
