@@ -620,7 +620,7 @@ if (isset($_SESSION["sgl_id"]))
 		if ($game_data["G_NUM_PLAYERS"] > 1)
 		{
 			echo '<p><table class="line_table"><tr><td><hr class="line" /></td><td>Rejoindre une équipe</td><td><hr class="line" /></td></tr></table></p>';
-			echo '<br /><p style="text-align: center;" class="smallquote">Si vous souhaitez <span style="font-weight:bold;">rejoindre une équipe</span>,<br /><u>votre chef d\'équipe doit d\'abord vous inviter</u>.</p><br />';
+			echo '<p style="text-align: center;" class="smallquote">Si vous souhaitez <span style="font-weight:bold;">rejoindre une équipe</span>,<br /><u>votre chef d\'équipe doit d\'abord vous inviter</u>.</p><br />';
 
 			/*
 
@@ -637,6 +637,9 @@ if (isset($_SESSION["sgl_id"]))
 
 		if ($game_data["G_NUM_PLAYERS"] > 1)
 		{
+			echo '<p style="text-align: center;" class="smallquote">Inscrire votre équipe une fois que vous avez réunis tous vos joueurs.<br />
+			<span style="font-weight: bold">Attention</span> : une fois inscrit, vous n\'apparaitrez plus dans la recherche des joueurs !</p>';
+
 			echo '<br /><p style="text-align: center;"><a href="index.php?page=games'.$url_game.'&amp;action=create" class="button">Créer son équipe</a></p><br />';
 		}
 		else

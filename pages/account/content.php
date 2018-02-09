@@ -197,7 +197,7 @@ if (isset($_POST["sent"]) && $csrf_check)
 
 //  ----- [ Platform Update ] --------------------------------------------------
 
-	for ($p_uid=1;$p_uid<=4;$p_uid++)
+	for ($p_uid=1;$p_uid<=5;$p_uid++)
 	{
 		if ($_POST['p_name_'.$p_uid] != "")
 		{
@@ -253,12 +253,12 @@ if (isset($_POST["sent"]) && $csrf_check)
 	{
 		if (strlen($_POST["login"]) >= 3)
 		{
-			if (!(preg_match("/[^A-Za-z0-9\!\?\.\-\#_]/", $_POST["login"])))
+			if (!(preg_match("/[^A-Za-z0-9\!\?\.\-_]/", $_POST["login"])))
 			{
 
 				$temp = $database->req_post('SELECT COUNT(*) AS total FROM T_SGL_USER WHERE LOWER(TRIM(SU_LOGIN)) = LOWER(TRIM(:login)) AND SU_UID != :id_user', array(
 						"login" => $_POST["login"],
-						"id_user" => $_SESSION["sgl_id"]
+						"id_user" => $sgl_uid
 					));
 
 				$data = $temp->fetch();
@@ -272,7 +272,7 @@ if (isset($_POST["sent"]) && $csrf_check)
 				{
 					$database->req_post('UPDATE T_SGL_USER SET SU_LOGIN=TRIM(:login) WHERE SU_UID = :id_user', array(
 						"login" => $_POST["login"],
-						"id_user" => $_SESSION["sgl_id"]
+						"id_user" => $sgl_uid
 					));
 				}
 			}
@@ -299,7 +299,7 @@ if (isset($_POST["sent"]) && $csrf_check)
 			$check_pass = -1;
 			$error_pass = "Non vraiment, c'est plus sécuritaire si vous en mettez un :/";
 		}
-		else if (strlen($new_pass) <= 8)
+		else if (strlen($new_pass) < 8)
 		{
 			$check_pass = -2;
 			$error_pass = "On a dit au moins 8 caractères ! C'est pour que la NSA puisse pas le décrypter è_é !";

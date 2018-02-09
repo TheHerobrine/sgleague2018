@@ -38,7 +38,7 @@ if (isset($_POST["sent"]))
 	{
 		if (strlen($form_login) >= 3)
 		{
-			if (!(preg_match("/[^A-Za-z0-9\!\?\.\-\#_]/", $form_login)))
+			if (!(preg_match("/[^A-Za-z0-9\!\?\.\-_]/", $form_login)))
 			{
 				$temp = $database->req_post('SELECT COUNT(*) as exist FROM T_SGL_USER WHERE LOWER(SU_LOGIN)=LOWER(:login)', array('login' => $form_login));
 				$data = $temp->fetch();
@@ -221,6 +221,9 @@ Vous pourrez ensuite créer ou rejoindre une équipe pour vos jeux préférés.\
 			</span>
 		</div>
 		<p>Et voilà, la première étape vers la victoire et la domination mondiale ! Plus qu'à aller cliquer sur le lien d'activation qu'on vient de vous envoyer (à cette adresse si vous avez déjà oublié ce que vous aviez mis : <?=htmlspecialchars($form_mail)?>).<br /><br />PENSEZ A CHECKER VOS SPAMS !</p>
+		<script>
+		  fbq('track', 'CompleteRegistration');
+		</script>
 		<br />
 	</div>
 </div>

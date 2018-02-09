@@ -65,7 +65,7 @@ if ($_SESSION["sgl_type"] > 5)
 		include_once("./class/Database.class.php");
 		$database = new Database();
 
-		$temp = $database->req_post('SELECT ST_UID, ST_NAME, ST_TAG FROM T_SGL_TEAM WHERE ST_ID_G=:game',
+		$temp = $database->req_post('SELECT ST_UID, ST_NAME, ST_TAG, F_PATH FROM T_SGL_TEAM LEFT JOIN T_FILE ON F_UID=ST_ID_PICTURE_F WHERE ST_ID_G=:game',
 			array(
 					"game" => $get_game
 				));
@@ -77,7 +77,7 @@ if ($_SESSION["sgl_type"] > 5)
 			$data["ST_TAG"] = $data["ST_TAG"]??"___";
 			$data["ST_NAME"] = $data["ST_NAME"]??"Unnamed";
 
-			echo '<h2>[ <b>'.$data["ST_TAG"].'</b> ] '.$data["ST_NAME"].'</h2><br />';
+			echo '<h2>[ <b>'.$data["ST_TAG"].'</b> ] '.$data["ST_NAME"].($data["F_PATH"]==""?'':' <a href="'.RELATIVE_FILES_DIRECTORY.$data["F_PATH"].'"><i class="fa fa-picture-o"></i></a>').'</h2><br />';
 
 			echo '<table>';
 

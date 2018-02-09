@@ -16,6 +16,24 @@
 		<meta property="og:image:secure_url" content="https://league.sgnw.fr/style/img/social.png?v=2018" />
 		<meta property="og:image:type" content="image/png" />
 
+		<!-- Facebook Pixel Code -->
+		<script>
+		  !function(f,b,e,v,n,t,s)
+		  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+		  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+		  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+		  n.queue=[];t=b.createElement(e);t.async=!0;
+		  t.src=v;s=b.getElementsByTagName(e)[0];
+		  s.parentNode.insertBefore(t,s)}(window, document,'script',
+		  'https://connect.facebook.net/en_US/fbevents.js');
+		  fbq('init', '144764022857455');
+		  fbq('track', 'PageView');
+		</script>
+		<noscript><img height="1" width="1" style="display:none"
+		  src="https://www.facebook.com/tr?id=144764022857455&ev=PageView&noscript=1"
+		/></noscript>
+		<!-- End Facebook Pixel Code -->
+
 		<?=isset($page_head)?$page_head:'';?>
 		<?=isset($page_script)?'<script src="./pages/'.CURRENT_PAGE.'/script.js?v=2018-2" charset="utf-8"></script>':''?>
 	</head>
@@ -33,6 +51,11 @@
 <?php
 if (isset($_SESSION["sgl_id"]))
 {
+	echo "<script>
+  fbq('track', 'ViewContent', {
+    content_ids: '".$_SESSION["sgl_id"]."',
+  });
+</script>";
 ?>
 						<a href="index.php?page=account">
 							<i class="fa fa-angle-right" aria-hidden="true"></i>
