@@ -20,7 +20,11 @@ define ("MAILGUN_KEY", "...");
 
 define('API_KEY', '...');
 
-//define ("DEBUG", true);
-//define ("CLOSE", true);
+define ("DEBUG", true);
+define ("CLOSE", false);
+
+define('TOORNAMENT_ID', '...');
+define('TOORNAMENT_SECRET', '...');
+define('TOORNAMENT_API', '...');
 
 ?>
